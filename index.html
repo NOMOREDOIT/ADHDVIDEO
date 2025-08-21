@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Meme Maker Studio</title>
     <link rel="icon" type="image/png" href="favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display-swap" rel="stylesheet">
 <style>
     :root {
         --bg: #f2efe8; --ink: #2b2b2b; --mid: #c2c2c2; --light: #faf9f5;
@@ -141,7 +141,6 @@
         pointer-events: auto;
     }
 
-    /* === NEW: ASK GPT HERE TOO I AM COOKED, FIGURE OUT THE ABSOLUTE POSITION ISSUE. Minimalist Volume Controls Styling === */
     #video-volume-controls {
         position: absolute;
         bottom: 10px;
@@ -199,12 +198,12 @@
         border: none;
     }
 
-    #mg-asset-library-overlay {
+    .mg-overlay-base {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;
         display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden;
         pointer-events: none; transition: opacity 0.3s, visibility 0s 0.3s; background: rgba(10, 10, 10, 0.25);
     }
-    #mg-asset-library-overlay.visible { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 0.3s, visibility 0s 0s; }
+    .mg-overlay-base.visible { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 0.3s, visibility 0s 0s; }
 
     .overlay-close-btn {
         position: absolute; top: 8px; right: 10px; background: none; border: none;
@@ -281,6 +280,29 @@
         font-size: 1rem;
     }
 
+    /* === NEW: Minimal Preview Popup Styling === */
+    #mg-preview-container {
+        position: relative;
+        background: var(--light);
+        border: 2px solid var(--ink);
+        box-shadow: 4px 4px 0px var(--ink);
+        padding: 10px;
+    }
+    #mg-preview-container .overlay-close-btn {
+        top: -10px;
+        right: -10px;
+        background: var(--danger-color);
+        color: var(--light);
+        border: 2px solid var(--ink);
+    }
+    #mg-preview-video {
+        display: block;
+        max-width: 80vw;
+        max-height: 75vh;
+        background: #000;
+    }
+
+
     @media (max-width: 1024px) {
         #studio-container { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; }
         #controls-panel { overflow-y: auto; max-height: 45vh; }
@@ -304,7 +326,10 @@
                 <button class="mg-btn" id="mg-record-pause-btn" disabled>Record</button>
                 <button class="mg-btn hidden" id="mg-finish-btn">Finish</button>
             </div>
-            <div class="action-buttons" style="margin-top: 0.5rem;"><button class="mg-btn hidden" id="mg-movie-download">Download</button></div>
+            <div class="action-buttons" id="post-record-actions" style="margin-top: 0.5rem;">
+                 <button class="mg-btn hidden" id="mg-preview-btn">Preview</button>
+                 <button class="mg-btn hidden" id="mg-movie-download">Download</button>
+            </div>
             <div id="recording-status" class="hidden"><div id="recording-indicator"></div><span id="recording-timer">00:00</span></div>
         </fieldset>
         <fieldset>
@@ -337,7 +362,7 @@
 
 <input type="file" id="initial-background-input" accept="image/*,video/*" style="display:none;">
 </div>
-<div id="mg-asset-library-overlay">
+<div id="mg-asset-library-overlay" class="mg-overlay-base">
     <div id="mg-asset-picker-grid-wrapper" class="window">
         <button id="mg-asset-library-close" class="overlay-close-btn">X</button>
         <h4>Click an asset to add it to the canvas</h4>
@@ -345,6 +370,12 @@
         <div id="mg-asset-picker-actions">
             <label class="mg-btn">Upload Custom<input type="file" id="mg-asset-picker-file" accept="image/png" style="display:none;"/></label>
         </div>
+    </div>
+</div>
+<div id="mg-preview-popup" class="mg-overlay-base">
+    <div id="mg-preview-container">
+         <button id="mg-preview-close-btn" class="overlay-close-btn">X</button>
+         <video id="mg-preview-video" controls autoplay></video>
     </div>
 </div>
 <div id="mg-toast"></div>
@@ -375,13 +406,18 @@
         const recordingStatus = document.getElementById('recording-status');
         const recordingTimer = document.getElementById('recording-timer');
         const sceneTray = document.getElementById('scene-tray');
-        const studioContainer = document.getElementById('studio-container');
         const newSceneBackgroundInput = document.createElement('input');
         newSceneBackgroundInput.type = 'file';
         newSceneBackgroundInput.accept = 'image/*,video/*';
         const videoVolumeControls = document.getElementById('video-volume-controls');
         const videoVolumeSlider = document.getElementById('video-volume-slider');
         const videoVolumeBtn = document.getElementById('video-volume-btn');
+        const recordingCanvas = document.createElement('canvas');
+        const recordingCtx = recordingCanvas.getContext('2d');
+        const previewBtn = document.getElementById('mg-preview-btn');
+        const previewPopup = document.getElementById('mg-preview-popup');
+        const previewVideo = document.getElementById('mg-preview-video');
+
 
         // === State Variables ===
         const DAMPING_FACTOR = 0.5;
@@ -417,7 +453,7 @@
             const hasScenes = scenes.length > 0;
             changeBackgroundLabel.classList.toggle('disabled', !hasScenes);
             recordPauseBtn.disabled = !hasScenes;
-            renderLayerPalette(); // Re-render palette to update its own state
+            renderLayerPalette();
         }
 
         function handleBackgroundUpload(file, mode) {
@@ -462,8 +498,7 @@
                     thumbCanvas.width = video.videoWidth;
                     thumbCanvas.height = video.videoHeight;
                     thumbCanvas.getContext('2d').drawImage(video, 0, 0);
-                    const thumb = thumbCanvas.toDataURL('image/jpeg');
-                    handleNewScene(video, 'video', thumb);
+                    handleNewScene(video, 'video', thumbCanvas.toDataURL('image/jpeg'));
                     video.currentTime = 0;
                 };
                 video.addEventListener('seeked', generateThumbnail);
@@ -500,16 +535,10 @@
             const currentScene = getCurrentScene(); if (!currentScene) return;
             activeMovieLayerId = null;
 
-            let w, h;
-            if (currentScene.backgroundType === 'video') {
-                w = currentScene.backgroundElement.videoWidth;
-                h = currentScene.backgroundElement.videoHeight;
-            } else {
-                w = currentScene.backgroundElement.naturalWidth;
-                h = currentScene.backgroundElement.naturalHeight;
-            }
+            const bg = currentScene.backgroundElement;
+            const w = bg.naturalWidth || bg.videoWidth;
+            const h = bg.naturalHeight || bg.videoHeight;
             const aspectRatio = w / h;
-
             const qualityWidth = 1280;
             movieCanvas.width = controlsOverlayCanvas.width = qualityWidth;
             movieCanvas.height = controlsOverlayCanvas.height = qualityWidth / aspectRatio;
@@ -517,13 +546,15 @@
             const panelWidth = canvasPanel.clientWidth;
             const panelHeight = canvasPanel.clientHeight;
             const panelAspectRatio = panelWidth / panelHeight;
+            const canvasAspectRatio = movieCanvas.width / movieCanvas.height;
             let displayWidth, displayHeight;
-            if (aspectRatio > panelAspectRatio) {
+
+            if (canvasAspectRatio > panelAspectRatio) {
                 displayWidth = panelWidth;
-                displayHeight = panelWidth / aspectRatio;
+                displayHeight = panelWidth / canvasAspectRatio;
             } else {
                 displayHeight = panelHeight;
-                displayWidth = panelHeight * aspectRatio;
+                displayWidth = panelHeight * canvasAspectRatio;
             }
             [movieCanvas, controlsOverlayCanvas].forEach(c => {
                 c.style.width = `${displayWidth}px`;
@@ -535,7 +566,7 @@
                 currentScene.backgroundElement.volume = videoVolumeSlider.value;
             } else {
                 videoVolumeControls.classList.add('hidden');
-                videoVolumeControls.classList.remove('open'); // Close slider if open
+                videoVolumeControls.classList.remove('open');
             }
 
             renderSceneTray();
@@ -592,7 +623,6 @@
             const currentScene = getCurrentScene();
             const layers = currentScene ? currentScene.layers : [];
             const MAX_LAYERS = 8;
-            // Determine how many total slots to display. A minimum of 4. If 4 or more assets exist, show 8.
             const slotsToShow = (currentScene && layers.length >= 4) ? 8 : 4;
 
             layerReorderNote.classList.toggle('hidden', layers.length === 0);
@@ -609,11 +639,10 @@
                     thumb.innerHTML = `<img src="${layer.src}"><div class="layer-controls"><div class="layer-btn duplicate" title="Duplicate Layer">+</div><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
 
                     thumb.addEventListener('click', (e) => {
-                        if (!e.target.classList.contains('layer-btn')) {
-                            activeMovieLayerId = layer.id;
-                            renderLayerPalette();
-                            drawControlsOverlay();
-                        }
+                        if (e.target.classList.contains('layer-btn')) return;
+                        activeMovieLayerId = layer.id;
+                        renderLayerPalette();
+                        drawControlsOverlay();
                     });
 
                     thumb.querySelector('.delete').onclick = (e) => { e.stopPropagation(); deleteMovieLayer(layer.id); };
@@ -627,7 +656,6 @@
                     const emptySlot = document.createElement('div');
                     emptySlot.className = 'palette-slot empty';
                     emptySlot.innerHTML = '+';
-                     // Check if we can add more layers
                     if (currentScene && layers.length < MAX_LAYERS) {
                         emptySlot.title = "Add a new asset to this slot";
                         emptySlot.onclick = openAssetLibrary;
@@ -727,12 +755,13 @@
         function drawMovieFrame() {
             const currentScene = getCurrentScene();
             if (!currentScene || !currentScene.backgroundElement) {
-                movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height); return;
+                movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height);
+                return;
             }
             const { backgroundElement, layers: movieLayers } = currentScene;
+
             movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height);
             movieCtx.drawImage(backgroundElement, 0, 0, movieCanvas.width, movieCanvas.height);
-
             movieLayers.forEach(l => {
                 if (l.img && l.img.complete) {
                     const dWidth = l.size; const dHeight = l.size * (l.img.naturalHeight / l.img.naturalWidth);
@@ -742,7 +771,60 @@
                     movieCtx.restore();
                 }
             });
+
+
+            if (isRecording) {
+                const bg = backgroundElement;
+                const bgWidth = bg.naturalWidth || bg.videoWidth;
+                const bgHeight = bg.naturalHeight || bg.videoHeight;
+
+                recordingCtx.clearRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+                recordingCtx.fillStyle = '#000000';
+                recordingCtx.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
+
+                const bgRatio = bgWidth / bgHeight;
+                const recRatio = recordingCanvas.width / recordingCanvas.height;
+                let drawWidth, drawHeight, drawX, drawY;
+
+                if (bgRatio > recRatio) {
+                    drawHeight = recordingCanvas.height;
+                    drawWidth = drawHeight * bgRatio;
+                    drawX = (recordingCanvas.width - drawWidth) / 2;
+                    drawY = 0;
+                } else {
+                    drawWidth = recordingCanvas.width;
+                    drawHeight = drawWidth / bgRatio;
+                    drawY = (recordingCanvas.height - drawHeight) / 2;
+                    drawX = 0;
+                }
+                recordingCtx.drawImage(bg, drawX, drawY, drawWidth, drawHeight);
+
+                const previewCanvasWidth = movieCanvas.width;
+                const previewCanvasHeight = movieCanvas.height;
+
+                movieLayers.forEach(l => {
+                    if (l.img && l.img.complete) {
+                        const percentX = l.x / previewCanvasWidth;
+                        const percentY = l.y / previewCanvasHeight;
+                        const percentSize = l.size / previewCanvasWidth;
+
+                        const finalX = drawX + (percentX * drawWidth);
+                        const finalY = drawY + (percentY * drawHeight);
+                        const finalSize = percentSize * drawWidth;
+
+                        const dWidth = finalSize;
+                        const dHeight = finalSize * (l.img.naturalHeight / l.img.naturalWidth);
+
+                        recordingCtx.save();
+                        recordingCtx.translate(finalX, finalY);
+                        recordingCtx.rotate(l.rot * Math.PI / 180);
+                        recordingCtx.drawImage(l.img, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
+                        recordingCtx.restore();
+                    }
+                });
+            }
         }
+
 
         function drawControlsOverlay() {
             controlsCtx.clearRect(0, 0, controlsOverlayCanvas.width, controlsOverlayCanvas.height);
@@ -796,13 +878,27 @@
         }
 
         function startMovieRecording() {
+            if (scenes.length === 0) return;
+            let minWidth = Infinity;
+            let minHeight = Infinity;
+            scenes.forEach(scene => {
+                const bg = scene.backgroundElement;
+                const w = bg.naturalWidth || bg.videoWidth;
+                const h = bg.naturalHeight || bg.videoHeight;
+                if (w > 0 && w < minWidth) minWidth = w;
+                if (h > 0 && h < minHeight) minHeight = h;
+            });
+
+            recordingCanvas.width = minWidth;
+            recordingCanvas.height = minHeight;
+
             recordPauseBtn.textContent = 'Pause';
             recordPauseBtn.classList.add('active');
             recordPauseBtn.disabled = true;
             finishBtn.classList.remove('hidden');
             movieDownloadBtn.classList.add('hidden');
+            previewBtn.classList.add('hidden');
             recordingStatus.classList.remove('hidden');
-            document.getElementById('recording-indicator').style.animationPlayState = 'paused';
             runCountdown(() => {
                 isRecording = true;
                 isPaused = false;
@@ -814,35 +910,28 @@
                 recordingIntervalId = setInterval(updateTimer, 1000);
                 if (recordingUrl) URL.revokeObjectURL(recordingUrl);
 
-                const canvasStream = movieCanvas.captureStream(30);
+                const canvasStream = recordingCanvas.captureStream(30);
                 const currentScene = getCurrentScene();
 
                 if (currentScene?.backgroundType === 'video') {
                     const videoElement = currentScene.backgroundElement;
                     videoElement.volume = videoVolumeSlider.value;
-
                     let audioStream;
-                    if (videoElement.captureStream) {
-                        audioStream = videoElement.captureStream();
-                    } else if (videoElement.mozCaptureStream) {
-                        audioStream = videoElement.mozCaptureStream();
-                    }
-
+                    if (videoElement.captureStream) audioStream = videoElement.captureStream();
+                    else if (videoElement.mozCaptureStream) audioStream = videoElement.mozCaptureStream();
                     if (audioStream && audioStream.getAudioTracks().length > 0) {
-                        const audioTrack = audioStream.getAudioTracks()[0];
-                        canvasStream.addTrack(audioTrack);
+                        canvasStream.addTrack(audioStream.getAudioTracks()[0]);
                     }
                 }
 
-                const mimeType = canvasStream.getAudioTracks().length > 0
-                    ? 'video/webm; codecs=vp9,opus'
-                    : 'video/webm; codecs=vp9';
-
+                const mimeType = canvasStream.getAudioTracks().length > 0 ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
                 mediaRecorder = new MediaRecorder(canvasStream, { mimeType });
                 mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
                 mediaRecorder.onstop = () => {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    recordingUrl = URL.createObjectURL(blob); movieDownloadBtn.classList.remove('hidden');
+                    recordingUrl = URL.createObjectURL(blob);
+                    movieDownloadBtn.classList.remove('hidden');
+                    previewBtn.classList.remove('hidden');
                 };
                 mediaRecorder.start();
 
@@ -892,9 +981,9 @@
             finishBtn.classList.add('hidden'); recordingStatus.classList.add('hidden');
             clearInterval(recordingIntervalId); recordingTimer.textContent = '00:00';
             toast('Recording finished. Ready to download.');
-            if (getCurrentScene()?.backgroundType === 'image') stopAnimationLoop();
-            renderLayerPalette(); drawMovieFrame(); drawControlsOverlay();
+            if (getCurrentScene()?.backgroundType === 'image' && !isPaused) stopAnimationLoop();
         }
+
 
         // --- Interaction Logic ---
         function getMovieCanvasPoint(e) {
@@ -1109,6 +1198,18 @@
                 } else toast('No recording available.');
             });
 
+            previewBtn.addEventListener('click', () => {
+                if(recordingUrl) {
+                    previewVideo.src = recordingUrl;
+                    previewPopup.classList.add('visible');
+                }
+            });
+            document.getElementById('mg-preview-close-btn').addEventListener('click', () => {
+                previewVideo.pause();
+                previewPopup.classList.remove('visible');
+            });
+
+
             movieCanvas.addEventListener('mousedown', handleMovieInteractionStart);
             movieCanvas.addEventListener('mousemove', handleMovieInteractionMove);
             window.addEventListener('mouseup', handleMovieInteractionEnd);
@@ -1118,7 +1219,6 @@
             window.addEventListener('touchend', handleMovieInteractionEnd);
             window.addEventListener('keydown', handleKeyDown);
 
-            // === NEW: Event listeners for discreet volume control === IDK ASK GPT IM COOKED HERE
             videoVolumeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 videoVolumeControls.classList.toggle('open');
@@ -1129,8 +1229,8 @@
                     currentScene.backgroundElement.volume = e.target.value;
                 }
             });
-            videoVolumeControls.addEventListener('click', e => e.stopPropagation()); 
-            window.addEventListener('click', () => { // Click off to close
+            videoVolumeControls.addEventListener('click', e => e.stopPropagation());
+            window.addEventListener('click', () => {
                 if (videoVolumeControls.classList.contains('open')) {
                     videoVolumeControls.classList.remove('open');
                 }
@@ -1149,7 +1249,7 @@
             });
         };
 
-        updateControlsState(); 
+        updateControlsState();
         setupEventListeners();
     })();
 </script>
