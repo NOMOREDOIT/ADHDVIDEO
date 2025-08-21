@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Meme Maker Studio</title>
+    <link rel="icon" type="image/png" href="favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #f2efe8; --ink: #2b2b2b; --mid: #c2c2c2; --light: #faf9f5;
+        --shadow: #7a7a7a; --danger-color: #cc4444; --action-color: #4477cc;
+        --success-color: #55cc55;
+    }
+    body {
+        font-family: 'VT323', monospace; background: var(--bg) url('./assets/wallpaper.png') repeat fixed;
+        color: var(--ink); display: flex; flex-direction: column; align-items: center;
+        padding: 10px; margin: 0; height: 100vh; overflow: hidden;
+    }
+    * { box-sizing: border-box; }
+    .window {
+        background: var(--light); border: 2px solid var(--ink); box-shadow: 4px 4px 0px var(--ink);
+        width: 100%; max-width: 1600px; margin: 0 auto; height: calc(100vh - 40px);
+        display: flex; flex-direction: column;
+        overflow: hidden;
+    }
+    .titlebar {
+        height: 28px; background: var(--mid); display: flex; align-items: center;
+        justify-content: space-between; padding: 0 8px; border-bottom: 2px solid var(--ink);
+        font-size: 20px; flex-shrink: 0; cursor: default;
+    }
+    .controls-fake { display: flex; gap: 4px; }
+    .btn-square { width: 16px; height: 16px; background: var(--light); border: 2px solid var(--ink); }
+    .controls-fake .btn-square:first-child { background-color: var(--success-color); }
+    .controls-fake .btn-square:last-child { background-color: var(--danger-color); }
+
+    .mg-btn {
+        font-family: inherit; font-size: 18px; background: var(--light); border: 2px solid var(--ink);
+        padding: 8px 16px; margin: 4px; cursor: pointer; text-decoration: none;
+        color: var(--ink); transition: .2s all; box-shadow: 2px 2px 0px var(--shadow); width: 100%;
+    }
+    .mg-btn:hover { transform: translate(2px, 2px); box-shadow: 0px 0px 0px var(--shadow); }
+    .mg-btn:disabled, .mg-btn.disabled {
+        opacity: 0.5; pointer-events: none; box-shadow: none; transform: none;
+    }
+    .mg-btn.active { background-color: var(--danger-color); color: var(--light); box-shadow: none; transform: translate(2px, 2px); }
+    .hidden { display: none !important; }
+    #studio-container {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        grid-template-rows: minmax(0, 1fr);
+        gap: 1.5rem;
+        padding: 1.5rem;
+        flex-grow: 1;
+        min-height: 0;
+    }
+    #controls-panel {
+        display: flex; flex-direction: column; gap: 1rem; overflow-y: auto; min-height: 0;
+    }
+    #canvas-panel {
+        display: flex; align-items: center; justify-content: center;
+        border: 2px solid var(--ink); background-color: var(--mid);
+        position: relative;
+        min-height: 0;
+    }
+    #controls-panel fieldset {
+        background: var(--light); border: 2px solid var(--ink);
+        padding: .8rem; margin: 0; text-align: left;
+    }
+    #controls-panel legend { font-size: 1.2rem; font-weight: normal; padding: 0 .25rem; }
+    .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    #recording-status {
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        font-size: 1.2rem; margin-top: 0.5rem; color: var(--danger-color);
+    }
+    #recording-indicator {
+        width: 12px; height: 12px; background-color: var(--danger-color);
+        border: 1px solid var(--ink); border-radius: 50%; animation: blink 1s infinite;
+    }
+    @keyframes blink { 50% { opacity: 0.3; } }
+    .placeholder-text { color: var(--shadow); font-size: 0.9rem; text-align: center; padding: 1rem; width: 100%; }
+
+    #mg-asset-palette {
+        display: flex; gap: 0.5rem; flex-wrap: wrap;
+        min-height: 70px; align-content: flex-start;
+    }
+
+    .palette-slot, .layer-thumb {
+        width: 60px; height: 60px; border: 2px solid var(--ink); background: var(--light);
+        cursor: pointer; position: relative; box-shadow: 2px 2px 0px var(--shadow);
+    }
+    .layer-thumb { cursor: grab; }
+    .palette-slot.empty {
+        display: flex; align-items: center; justify-content: center;
+        font-size: 3rem; line-height: 1; color: var(--mid);
+        transition: all .2s;
+    }
+    .palette-slot.empty:hover { background-color: #e0e0e0; color: var(--ink); }
+    .layer-thumb img {
+        width: 100%; height: 100%; object-fit: cover; pointer-events: none;
+    }
+    .layer-thumb.active { border: 2px solid var(--action-color); transform: scale(1.05); box-shadow: none; }
+    .layer-thumb.dragging { opacity: 0.4; cursor: grabbing; box-shadow: none; }
+    .layer-controls { position: absolute; top: -5px; right: -5px; display: flex; gap: 2px; }
+    .layer-btn {
+        background-color: var(--danger-color); border: 1px solid var(--ink);
+        color: #fff; font-size: .8rem; font-weight: bold; line-height: 1; padding: 1px 4px;
+        cursor: pointer; width: 18px; height: 18px; text-align: center;
+    }
+    .layer-btn.duplicate { background-color: var(--action-color); }
+
+    #scene-tray {
+        display: flex; gap: 0.5rem; flex-wrap: wrap; min-height: 65px;
+        align-content: flex-start; padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--mid); margin-bottom: 0.5rem;
+    }
+    .scene-thumb {
+        width: 80px; height: 55px; border: 2px solid var(--ink); background-color: var(--mid);
+        cursor: pointer; position: relative; box-shadow: 2px 2px 0px var(--shadow);
+        background-size: cover; background-position: center; display: flex;
+        color: var(--light); text-shadow: 1px 1px 0 var(--ink); align-items: center;
+        justify-content: center; font-size: 1.5rem; transition: all .2s;
+    }
+    .scene-thumb.active { border-color: var(--action-color); transform: scale(1.05); box-shadow: 0px 0px 0px var(--shadow); }
+    .scene-delete-btn {
+        position: absolute; top: -5px; right: -5px; background-color: var(--danger-color);
+        border: 1px solid var(--ink); color: #fff; font-size: .8rem; font-weight: bold;
+        line-height: 1; padding: 1px 4px; cursor: pointer; width: 18px; height: 18px;
+        text-align: center; opacity: 0; transition: opacity .2s;
+    }
+    .scene-thumb:hover .scene-delete-btn { opacity: 1; }
+    .scene-thumb.active:hover .scene-delete-btn { display: none; }
+
+    #mg-movie-canvas, #mg-controls-overlay-canvas {
+        position: absolute;
+    }
+    #mg-controls-overlay-canvas {
+        pointer-events: none;
+    }
+    #mg-movie-canvas {
+        pointer-events: auto;
+    }
+
+    /* === NEW: Minimalist Volume Controls Styling === */
+    #video-volume-controls {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        z-index: 10;
+        height: 34px;
+    }
+    #video-volume-btn {
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 4px;
+        user-select: none;
+        background: none;
+        border: none;
+    }
+    #volume-slider-wrapper {
+        display: flex;
+        align-items: center;
+        width: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: width 0.35s ease-in-out, opacity 0.35s ease-in-out;
+    }
+    #video-volume-controls.open #volume-slider-wrapper {
+        width: 100px;
+        opacity: 1;
+        margin-right: 8px;
+    }
+    #video-volume-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 2px;
+        background: var(--ink);
+        outline: none;
+    }
+    #video-volume-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: var(--ink);
+        border-radius: 50%;
+        cursor: pointer;
+    }
+    #video-volume-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: var(--ink);
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+    }
+
+    #mg-asset-library-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;
+        display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden;
+        pointer-events: none; transition: opacity 0.3s, visibility 0s 0.3s; background: rgba(10, 10, 10, 0.25);
+    }
+    #mg-asset-library-overlay.visible { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 0.3s, visibility 0s 0s; }
+
+    .overlay-close-btn {
+        position: absolute; top: 8px; right: 10px; background: none; border: none;
+        line-height: 1; cursor: pointer; padding: 5px; font-family: 'VT323', monospace;
+        color: var(--ink);
+        font-size: 2rem; z-index: 10;
+        transition: opacity 0.2s;
+    }
+    .overlay-close-btn:hover {
+        opacity: 0.6;
+    }
+
+    #mg-asset-picker-grid-wrapper {
+        background: var(--light); border: 2px solid var(--ink); box-shadow: 4px 4px 0px var(--ink);
+        padding: 1.5rem; max-width: 800px; width: 90vw; max-height: 85vh;
+        display: flex; flex-direction: column; position: relative;
+    }
+    #mg-asset-picker-grid-wrapper h4 { font-size: 1.5rem; text-align: center; font-weight: normal; margin: 0 0 1rem; }
+    #mg-asset-picker-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.5rem; overflow-y: auto; padding: 0.5rem; flex-grow: 1;
+    }
+    .mg-template { width: auto; height: 80px; }
+    .mg-template img { width: 100%; height: 100%; object-fit: contain; cursor: pointer; }
+    #mg-asset-picker-actions { margin-top: 1rem; text-align: center; display: flex; gap: 0.5rem; justify-content: center; }
+    #mg-toast {
+        visibility: hidden; position: fixed; bottom: 20px; left: 50%;
+        transform: translateX(-50%); background: var(--light); border: 2px solid var(--ink);
+        padding: .5rem 1rem; color: var(--ink); font-size: 1rem;
+        z-index: 2000; box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    #mg-countdown-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: transparent;
+        display: flex; align-items: center;
+        justify-content: center; z-index: 3000; color: var(--light);
+        text-shadow: 2px 2px 0 var(--ink), -2px -2px 0 var(--ink), 2px -2px 0 var(--ink), -2px 2px 0 var(--ink);
+        font-size: 15vw;
+        pointer-events: auto;
+    }
+
+    #canvas-placeholder {
+        position: absolute;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        border: 4px dashed var(--shadow);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        cursor: pointer;
+        color: var(--shadow);
+        transition: all .2s;
+        padding: 2rem;
+    }
+    #canvas-placeholder h3 {
+        font-size: 2rem;
+        margin: 0 0 0.5rem;
+    }
+    #canvas-placeholder:hover, #canvas-panel.drag-over #canvas-placeholder {
+        border-color: var(--ink);
+        color: var(--ink);
+        background-color: rgba(255,255,255,0.5);
+    }
+    #canvas-panel.drag-over {
+         background-color: var(--shadow);
+    }
+    #layer-reorder-note {
+        padding: 0 0 0.5rem 0;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        #studio-container { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; }
+        #controls-panel { overflow-y: auto; max-height: 45vh; }
+        .window { height: auto; max-height: calc(100vh - 20px); overflow-y: auto; }
+    }
+</style>
+</head>
+<body>
+<div class="window">
+    <div class="titlebar">
+      <span>Movie-Maker-Studio.exe</span>
+      <div class="controls-fake"><div class="btn-square"></div><div class="btn-square"></div></div>
+    </div>
+
+<main id="studio-container">
+    <div id="controls-panel">
+        <fieldset><legend>Scenes</legend><div id="scene-tray"></div><button class="mg-btn" id="add-scene-btn" style="margin-top: 0.5rem;" title="Add a new scene with an image or video background">+ Add Scene</button></fieldset>
+        <fieldset>
+            <legend>Actions</legend>
+            <div class="action-buttons">
+                <button class="mg-btn" id="mg-record-pause-btn">Record</button>
+                <button class="mg-btn hidden" id="mg-finish-btn">Finish</button>
+            </div>
+            <div class="action-buttons" style="margin-top: 0.5rem;"><button class="mg-btn hidden" id="mg-movie-download">Download</button></div>
+            <div id="recording-status" class="hidden"><div id="recording-indicator"></div><span id="recording-timer">00:00</span></div>
+        </fieldset>
+        <fieldset>
+            <legend>Project</legend>
+            <label class="mg-btn disabled" id="change-background-label" title="Upload a new background image or video for the current scene">Change Background<input type="file" id="background-file-input" accept="image/*,video/*" style="display:none;"></label>
+        </fieldset>
+        <fieldset>
+            <legend>Layers</legend>
+            <p id="layer-reorder-note" class="placeholder-text hidden">
+                Drag & drop thumbnails to reorder layers.
+            </p>
+            <div id="mg-asset-palette"></div>
+            <button class="mg-btn" id="add-asset-btn" style="margin-top: 0.5rem;" disabled>Add Asset from Library</button>
+        </fieldset>
+    </div>
+    <div id="canvas-panel">
+        <canvas id="mg-movie-canvas"></canvas>
+        <canvas id="mg-controls-overlay-canvas"></canvas>
+        <div id="canvas-placeholder">
+            <h3>Click or Drag & Drop File</h3>
+            <p>to add a background image or video</p>
+        </div>
+        <div id="video-volume-controls" class="hidden">
+            <div id="volume-slider-wrapper">
+                 <input type="range" id="video-volume-slider" min="0" max="1" step="0.05" value="1">
+            </div>
+            <button id="video-volume-btn">🔊</button>
+        </div>
+    </div>
+</main>
+
+<input type="file" id="initial-background-input" accept="image/*,video/*" style="display:none;">
+</div>
+<div id="mg-asset-library-overlay">
+    <div id="mg-asset-picker-grid-wrapper" class="window">
+        <button id="mg-asset-library-close" class="overlay-close-btn">X</button>
+        <h4>Click an asset to add it to the canvas</h4>
+        <div id="mg-asset-picker-grid"></div>
+        <div id="mg-asset-picker-actions">
+            <label class="mg-btn">Upload Custom<input type="file" id="mg-asset-picker-file" accept="image/png" style="display:none;"/></label>
+        </div>
+    </div>
+</div>
+<div id="mg-toast"></div>
+<div id="mg-countdown-overlay" class="hidden"><span id="mg-countdown-span">3</span></div>
+<script>
+    (function () {
+        // === DOM Elements ===
+        const addAssetBtn = document.getElementById('add-asset-btn');
+        const addSceneBtn = document.getElementById('add-scene-btn');
+        const assetLibraryOverlay = document.getElementById('mg-asset-library-overlay');
+        const assetPalette = document.getElementById('mg-asset-palette');
+        const assetPickerFileInput = document.getElementById('mg-asset-picker-file');
+        const assetPickerGrid = document.getElementById('mg-asset-picker-grid');
+        const backgroundFileInput = document.getElementById('background-file-input');
+        const changeBackgroundLabel = document.getElementById('change-background-label');
+        const canvasPanel = document.getElementById('canvas-panel');
+        const canvasPlaceholder = document.getElementById('canvas-placeholder');
+        const controlsOverlayCanvas = document.getElementById('mg-controls-overlay-canvas');
+        const controlsCtx = controlsOverlayCanvas.getContext('2d');
+        const countdownOverlay = document.getElementById('mg-countdown-overlay');
+        const countdownSpan = document.getElementById('mg-countdown-span');
+        const finishBtn = document.getElementById('mg-finish-btn');
+        const initialBackgroundInput = document.getElementById('initial-background-input');
+        const layerReorderNote = document.getElementById('layer-reorder-note');
+        const movieCanvas = document.getElementById('mg-movie-canvas');
+        const movieCtx = movieCanvas.getContext('2d');
+        const movieDownloadBtn = document.getElementById('mg-movie-download');
+        const recordPauseBtn = document.getElementById('mg-record-pause-btn');
+        const recordingStatus = document.getElementById('recording-status');
+        const recordingTimer = document.getElementById('recording-timer');
+        const sceneTray = document.getElementById('scene-tray');
+        const studioContainer = document.getElementById('studio-container');
+        const newSceneBackgroundInput = document.createElement('input');
+        newSceneBackgroundInput.type = 'file';
+        newSceneBackgroundInput.accept = 'image/*,video/*';
+        const videoVolumeControls = document.getElementById('video-volume-controls');
+        const videoVolumeSlider = document.getElementById('video-volume-slider');
+        const videoVolumeBtn = document.getElementById('video-volume-btn');
+
+        // === State Variables ===
+        const DAMPING_FACTOR = 0.5;
+        const assetCache = {};
+        let scenes = [];
+        let activeSceneId = null;
+        let activeMovieLayerId = null;
+        let movieInteraction = { active: false };
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let isPaused = false;
+        let recordingUrl = null;
+        let animationFrameId = null;
+        let recordingIntervalId = null;
+        let recordingStartTime = 0;
+        let timePaused = 0;
+        let pauseStartTime = 0;
+
+        const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
+
+        let toastTimeoutId;
+        const toast = (msg, duration = 2400) => {
+            const t = document.getElementById('mg-toast');
+            clearTimeout(toastTimeoutId);
+            t.textContent = msg; t.style.opacity = 1; t.style.visibility = 'visible';
+            if (duration !== null) {
+                toastTimeoutId = setTimeout(() => { t.style.opacity = 0; t.style.visibility = 'hidden'; }, duration);
+            }
+        };
+
+        function updateControlsState() {
+            const hasScenes = scenes.length > 0;
+            changeBackgroundLabel.classList.toggle('disabled', !hasScenes);
+            addAssetBtn.disabled = !hasScenes;
+            renderLayerPalette(); // Re-render palette to update its own state
+        }
+
+        function handleBackgroundUpload(file, mode) {
+            if (!file) return;
+            const fileURL = URL.createObjectURL(file);
+            const handleNewScene = (element, type, thumb) => {
+                const scene = { id: Date.now(), backgroundElement: element, backgroundType: type, thumbnail: thumb, layers: [] };
+                if (mode === 'initial' || mode === 'add') {
+                    scenes.push(scene);
+                    if (mode === 'initial') {
+                        canvasPlaceholder.classList.add('hidden');
+                        toast('Background set! Add assets to your scene.', 3000);
+                    }
+                    switchScene(scene.id);
+                } else if (mode === 'change') {
+                    const currentScene = getCurrentScene();
+                    if (currentScene) {
+                        currentScene.backgroundElement = element;
+                        currentScene.backgroundType = type;
+                        currentScene.thumbnail = thumb;
+                        switchScene(currentScene.id);
+                    }
+                }
+                updateControlsState();
+                if (type === 'video') {
+                    toast('Video will play when recording starts.', 5000);
+                }
+            };
+
+            if (file.type.startsWith('image/')) {
+                const img = new Image();
+                img.onload = () => handleNewScene(img, 'image', img.src);
+                img.onerror = () => toast('Could not load background image.');
+                img.src = fileURL;
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.autoplay = false; video.loop = true; video.muted = false; video.playsinline = true;
+                video.volume = videoVolumeSlider.value;
+                const generateThumbnail = () => {
+                    video.removeEventListener('seeked', generateThumbnail);
+                    const thumbCanvas = document.createElement('canvas');
+                    thumbCanvas.width = video.videoWidth;
+                    thumbCanvas.height = video.videoHeight;
+                    thumbCanvas.getContext('2d').drawImage(video, 0, 0);
+                    const thumb = thumbCanvas.toDataURL('image/jpeg');
+                    handleNewScene(video, 'video', thumb);
+                    video.currentTime = 0;
+                };
+                video.addEventListener('seeked', generateThumbnail);
+                video.onerror = () => toast('Could not load background video.');
+                video.src = fileURL;
+                video.currentTime = 1;
+            } else {
+                toast('Unsupported file type. Please use an image or video.');
+            }
+        }
+
+        function renderSceneTray() {
+            sceneTray.innerHTML = '';
+            scenes.forEach((scene, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'scene-thumb';
+                thumb.style.backgroundImage = `url(${scene.thumbnail})`;
+                thumb.classList.toggle('active', scene.id === activeSceneId);
+                thumb.innerHTML = `<span>${index + 1}</span>`;
+                if (scenes.length > 1) {
+                    const deleteBtn = document.createElement('div');
+                    deleteBtn.className = 'scene-delete-btn'; deleteBtn.innerHTML = 'x';
+                    deleteBtn.onclick = (e) => { e.stopPropagation(); deleteScene(scene.id); };
+                    thumb.appendChild(deleteBtn);
+                }
+                thumb.onclick = () => { if (scene.id !== activeSceneId) switchScene(scene.id); };
+                sceneTray.appendChild(thumb);
+            });
+        }
+
+        function switchScene(sceneId) {
+            stopAnimationLoop();
+            activeSceneId = sceneId;
+            const currentScene = getCurrentScene(); if (!currentScene) return;
+            activeMovieLayerId = null;
+
+            let w, h;
+            if (currentScene.backgroundType === 'video') {
+                w = currentScene.backgroundElement.videoWidth;
+                h = currentScene.backgroundElement.videoHeight;
+            } else {
+                w = currentScene.backgroundElement.naturalWidth;
+                h = currentScene.backgroundElement.naturalHeight;
+            }
+            const aspectRatio = w / h;
+
+            const qualityWidth = 1280;
+            movieCanvas.width = controlsOverlayCanvas.width = qualityWidth;
+            movieCanvas.height = controlsOverlayCanvas.height = qualityWidth / aspectRatio;
+
+            const panelWidth = canvasPanel.clientWidth;
+            const panelHeight = canvasPanel.clientHeight;
+            const panelAspectRatio = panelWidth / panelHeight;
+            let displayWidth, displayHeight;
+            if (aspectRatio > panelAspectRatio) {
+                displayWidth = panelWidth;
+                displayHeight = panelWidth / aspectRatio;
+            } else {
+                displayHeight = panelHeight;
+                displayWidth = panelHeight * aspectRatio;
+            }
+            [movieCanvas, controlsOverlayCanvas].forEach(c => {
+                c.style.width = `${displayWidth}px`;
+                c.style.height = `${displayHeight}px`;
+            });
+
+            if (currentScene.backgroundType === 'video') {
+                videoVolumeControls.classList.remove('hidden');
+                currentScene.backgroundElement.volume = videoVolumeSlider.value;
+            } else {
+                videoVolumeControls.classList.add('hidden');
+                videoVolumeControls.classList.remove('open'); // Close slider if open
+            }
+
+            renderSceneTray();
+            renderLayerPalette();
+            drawControlsOverlay();
+
+            if (currentScene.backgroundType === 'video' || isRecording) {
+                startAnimationLoop();
+            } else {
+                drawMovieFrame();
+            }
+        }
+
+        function deleteScene(sceneIdToDelete) {
+            if (scenes.length <= 1) { toast("Cannot delete the last scene.", 2000); return; }
+            const sceneIndex = scenes.findIndex(s => s.id === sceneIdToDelete);
+            scenes.splice(sceneIndex, 1);
+            if (activeSceneId === sceneIdToDelete) {
+                const newActiveIndex = Math.max(0, sceneIndex - 1);
+                switchScene(scenes[newActiveIndex].id);
+            } else {
+                renderSceneTray();
+            }
+            updateControlsState();
+        }
+
+        function populateAssetLibraryGrid() {
+            assetPickerGrid.innerHTML = '';
+            const addAssetFromLibrary = (src) => {
+                const currentScene = getCurrentScene();
+                if(!currentScene) { toast('Please add a background to the scene first.'); return; }
+                if(currentScene.layers.length >= 4) { toast('Maximum 4 layers reached.'); return; }
+                addMovieLayer(src);
+                closeAssetLibrary();
+            };
+            Array.from({length: 107}, (_, i) => i + 1).forEach(i => {
+                const src = `./assets/maker/${i}.png`;
+                const div = document.createElement('div');
+                div.className = 'mg-template';
+                div.innerHTML = `<img src="${src}" alt="Asset ${i}">`;
+                div.addEventListener('click', () => addAssetFromLibrary(src));
+                assetPickerGrid.appendChild(div);
+            });
+        }
+
+        function openAssetLibrary() {
+            populateAssetLibraryGrid();
+            assetLibraryOverlay.classList.add('visible');
+        }
+        function closeAssetLibrary() { assetLibraryOverlay.classList.remove('visible'); }
+
+        function renderLayerPalette() {
+            assetPalette.innerHTML = '';
+            const currentScene = getCurrentScene();
+            const layers = currentScene ? currentScene.layers : [];
+            const MAX_LAYERS = 4;
+
+            layerReorderNote.classList.toggle('hidden', layers.length === 0);
+
+            for (let i = 0; i < MAX_LAYERS; i++) {
+                const layer = layers[i];
+                if (layer) {
+                    const thumb = document.createElement('div');
+                    thumb.className = 'layer-thumb';
+                    thumb.classList.toggle('active', layer.id === activeMovieLayerId);
+                    thumb.dataset.layerId = layer.id;
+                    thumb.draggable = true;
+                    thumb.title = "Click to select, drag to reorder";
+                    thumb.innerHTML = `<img src="${layer.src}"><div class="layer-controls"><div class="layer-btn duplicate" title="Duplicate Layer">+</div><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
+
+                    thumb.addEventListener('click', (e) => {
+                        if (!e.target.classList.contains('layer-btn')) {
+                            activeMovieLayerId = layer.id;
+                            renderLayerPalette();
+                            drawControlsOverlay();
+                        }
+                    });
+
+                    thumb.querySelector('.delete').onclick = (e) => { e.stopPropagation(); deleteMovieLayer(layer.id); };
+                    thumb.querySelector('.duplicate').onclick = (e) => { e.stopPropagation(); duplicateMovieLayer(layer.id); };
+
+                    thumb.addEventListener('dragstart', handleDragStart);
+                    thumb.addEventListener('dragend', handleDragEnd);
+
+                    assetPalette.appendChild(thumb);
+                } else {
+                    const emptySlot = document.createElement('div');
+                    emptySlot.className = 'palette-slot empty';
+                    emptySlot.innerHTML = '+';
+                    if (currentScene) {
+                        emptySlot.title = "Add a new asset to this slot";
+                        emptySlot.onclick = openAssetLibrary;
+                    } else {
+                        emptySlot.title = "Add a scene background to enable layers.";
+                        emptySlot.style.cursor = 'not-allowed';
+                        emptySlot.style.opacity = '0.5';
+                    }
+                    assetPalette.appendChild(emptySlot);
+                }
+            }
+        }
+
+        function addMovieLayer(src, properties = {}) {
+            const currentScene = getCurrentScene();
+            if (!currentScene || currentScene.layers.length >= 4) {
+                toast('Maximum 4 layers reached.'); return;
+            }
+            const createLayer = (img) => {
+                const newLayer = { id: Date.now() + Math.random(), src, img, x: properties.x || movieCanvas.width / 2, y: properties.y || movieCanvas.height / 2, size: properties.size || movieCanvas.width * 0.25, rot: properties.rot || 0 };
+                currentScene.layers.push(newLayer);
+                activeMovieLayerId = newLayer.id;
+                renderLayerPalette();
+                drawMovieFrame();
+                drawControlsOverlay();
+                toast('Asset Added!', 3000);
+            };
+            if (assetCache[src]) {
+                createLayer(assetCache[src]);
+            } else {
+                const image = new Image();
+                image.onload = () => { assetCache[src] = image; createLayer(image); };
+                image.onerror = () => toast(`Could not load asset: ${src}`);
+                image.src = src;
+            }
+        }
+
+        function deleteMovieLayer(layerId) {
+            const currentScene = getCurrentScene(); if (!currentScene) return;
+            currentScene.layers = currentScene.layers.filter(l => l.id !== layerId);
+            if (activeMovieLayerId === layerId) activeMovieLayerId = null;
+            renderLayerPalette();
+            drawMovieFrame();
+            drawControlsOverlay();
+        }
+
+        function duplicateMovieLayer(layerId) {
+            const currentScene = getCurrentScene(); if (!currentScene) return;
+            if (currentScene.layers.length >= 4) {
+                toast('Maximum 4 layers reached. Cannot duplicate.'); return;
+            }
+            const originalLayer = currentScene.layers.find(l => l.id === layerId);
+            if (originalLayer) {
+                addMovieLayer(originalLayer.src, { x: originalLayer.x + 20, y: originalLayer.y + 20, size: originalLayer.size, rot: originalLayer.rot });
+            }
+        }
+
+        let draggedElement = null;
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => { if(draggedElement) draggedElement.classList.add('dragging'); }, 0);
+        }
+        function handleDragEnd(e) {
+            if(draggedElement) draggedElement.classList.remove('dragging');
+            draggedElement = null;
+        }
+        assetPalette.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(assetPalette, e.clientX);
+            if (draggedElement) {
+                if (afterElement == null) { assetPalette.appendChild(draggedElement); }
+                else { assetPalette.insertBefore(draggedElement, afterElement); }
+            }
+        });
+        assetPalette.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const currentScene = getCurrentScene(); if (!currentScene || !draggedElement) return;
+            const newOrderIds = [...assetPalette.querySelectorAll('.layer-thumb')].map(thumb => parseFloat(thumb.dataset.layerId));
+            currentScene.layers.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
+            drawMovieFrame();
+        });
+        function getDragAfterElement(container, x) {
+            const draggableElements = [...container.querySelectorAll('.layer-thumb:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = x - box.left - box.width / 2;
+                if (offset < 0 && offset > closest.offset) { return { offset: offset, element: child }; }
+                else { return closest; }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function drawMovieFrame() {
+            const currentScene = getCurrentScene();
+            if (!currentScene || !currentScene.backgroundElement) {
+                movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height); return;
+            }
+            const { backgroundElement, layers: movieLayers } = currentScene;
+            movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height);
+            movieCtx.drawImage(backgroundElement, 0, 0, movieCanvas.width, movieCanvas.height);
+
+            movieLayers.forEach(l => {
+                if (l.img && l.img.complete) {
+                    const dWidth = l.size; const dHeight = l.size * (l.img.naturalHeight / l.img.naturalWidth);
+                    movieCtx.save();
+                    movieCtx.translate(l.x, l.y); movieCtx.rotate(l.rot * Math.PI / 180);
+                    movieCtx.drawImage(l.img, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
+                    movieCtx.restore();
+                }
+            });
+        }
+
+        function drawControlsOverlay() {
+            controlsCtx.clearRect(0, 0, controlsOverlayCanvas.width, controlsOverlayCanvas.height);
+            const currentScene = getCurrentScene();
+            if (!currentScene) return;
+
+            const activeLayer = currentScene.layers.find(l => l.id === activeMovieLayerId);
+            if (activeLayer) {
+                const dWidth = activeLayer.size; const dHeight = activeLayer.size * (activeLayer.img.naturalHeight / activeLayer.img.naturalWidth);
+                const HANDLE_SIZE = 16; const ho = HANDLE_SIZE / 2; const ROTATION_HANDLE_OFFSET = 30;
+                controlsCtx.save();
+                controlsCtx.translate(activeLayer.x, activeLayer.y);
+                controlsCtx.rotate(activeLayer.rot * Math.PI / 180);
+                controlsCtx.strokeStyle = '#00FF00'; controlsCtx.lineWidth = 2;
+                controlsCtx.strokeRect(-dWidth / 2, -dHeight / 2, dWidth, dHeight);
+                controlsCtx.fillStyle = '#00FF00';
+                controlsCtx.fillRect(-dWidth/2-ho, -dHeight/2-ho, HANDLE_SIZE, HANDLE_SIZE);
+                controlsCtx.fillRect(dWidth/2-ho, -dHeight/2-ho, HANDLE_SIZE, HANDLE_SIZE);
+                controlsCtx.fillRect(-dWidth/2-ho, dHeight/2-ho, HANDLE_SIZE, HANDLE_SIZE);
+                controlsCtx.fillRect(dWidth/2-ho, dHeight/2-ho, HANDLE_SIZE, HANDLE_SIZE);
+                controlsCtx.beginPath(); controlsCtx.moveTo(0, -dHeight / 2);
+                controlsCtx.lineTo(0, -dHeight / 2 - ROTATION_HANDLE_OFFSET);
+                controlsCtx.stroke(); controlsCtx.beginPath();
+                controlsCtx.arc(0, -dHeight / 2 - ROTATION_HANDLE_OFFSET, HANDLE_SIZE / 2, 0, 2 * Math.PI);
+                controlsCtx.fill(); controlsCtx.restore();
+            }
+        }
+
+        function animationLoop() {
+            drawMovieFrame();
+            drawControlsOverlay();
+            animationFrameId = requestAnimationFrame(animationLoop);
+        }
+        function startAnimationLoop() { if (animationFrameId) return; animationLoop(); }
+        function stopAnimationLoop() { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
+
+        function updateTimer() {
+            const elapsed = Math.floor(((Date.now() - recordingStartTime) - timePaused) / 1000);
+            recordingTimer.textContent = `${String(Math.floor(elapsed/60)).padStart(2,'0')}:${String(elapsed%60).padStart(2,'0')}`;
+        }
+
+        function runCountdown(onComplete) {
+            let count = 3;
+            countdownSpan.textContent = count;
+            countdownOverlay.classList.remove('hidden');
+            const intervalId = setInterval(() => {
+                count--;
+                if (count > 0) { countdownSpan.textContent = count; }
+                else { clearInterval(intervalId); countdownOverlay.classList.add('hidden'); onComplete(); }
+            }, 1000);
+        }
+
+        function startMovieRecording() {
+            recordPauseBtn.textContent = 'Pause';
+            recordPauseBtn.classList.add('active');
+            recordPauseBtn.disabled = true;
+            finishBtn.classList.remove('hidden');
+            movieDownloadBtn.classList.add('hidden');
+            recordingStatus.classList.remove('hidden');
+            document.getElementById('recording-indicator').style.animationPlayState = 'paused';
+            runCountdown(() => {
+                isRecording = true;
+                isPaused = false;
+                recordedChunks = [];
+                timePaused = 0;
+                recordPauseBtn.disabled = false;
+                document.getElementById('recording-indicator').style.animationPlayState = 'running';
+                recordingStartTime = Date.now();
+                recordingIntervalId = setInterval(updateTimer, 1000);
+                if (recordingUrl) URL.revokeObjectURL(recordingUrl);
+
+                const canvasStream = movieCanvas.captureStream(30);
+                const currentScene = getCurrentScene();
+
+                if (currentScene?.backgroundType === 'video') {
+                    const videoElement = currentScene.backgroundElement;
+                    videoElement.volume = videoVolumeSlider.value;
+
+                    let audioStream;
+                    if (videoElement.captureStream) {
+                        audioStream = videoElement.captureStream();
+                    } else if (videoElement.mozCaptureStream) {
+                        audioStream = videoElement.mozCaptureStream();
+                    }
+
+                    if (audioStream && audioStream.getAudioTracks().length > 0) {
+                        const audioTrack = audioStream.getAudioTracks()[0];
+                        canvasStream.addTrack(audioTrack);
+                    }
+                }
+
+                const mimeType = canvasStream.getAudioTracks().length > 0
+                    ? 'video/webm; codecs=vp9,opus'
+                    : 'video/webm; codecs=vp9';
+
+                mediaRecorder = new MediaRecorder(canvasStream, { mimeType });
+                mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    recordingUrl = URL.createObjectURL(blob); movieDownloadBtn.classList.remove('hidden');
+                };
+                mediaRecorder.start();
+
+                if (currentScene && currentScene.backgroundType === 'video') {
+                    currentScene.backgroundElement.play();
+                }
+                startAnimationLoop();
+                toast('Recording started!', 2000);
+            });
+        }
+        function pauseRecording() {
+            if (!isRecording || isPaused) return;
+            const currentScene = getCurrentScene();
+            if (currentScene?.backgroundType === 'video') currentScene.backgroundElement.pause();
+            mediaRecorder.pause(); isPaused = true; pauseStartTime = Date.now();
+            clearInterval(recordingIntervalId);
+            recordPauseBtn.textContent = 'Resume';
+            document.getElementById('recording-indicator').style.animationPlayState = 'paused';
+            toast('Recording paused.', null);
+            if (getCurrentScene()?.backgroundType === 'image') stopAnimationLoop();
+            drawControlsOverlay();
+        }
+        function resumeRecording() {
+            if (!isRecording || !isPaused) return;
+            recordPauseBtn.textContent = 'Pause'; recordPauseBtn.disabled = true;
+            document.getElementById('recording-indicator').style.animationPlayState = 'paused';
+            runCountdown(() => {
+                mediaRecorder.resume(); isPaused = false;
+                timePaused += (Date.now() - pauseStartTime);
+                recordingIntervalId = setInterval(updateTimer, 1000);
+                recordPauseBtn.disabled = false;
+                document.getElementById('recording-indicator').style.animationPlayState = 'running';
+                const currentScene = getCurrentScene();
+                if (currentScene?.backgroundType === 'video') currentScene.backgroundElement.play();
+                startAnimationLoop(); toast('Recording resumed.');
+            });
+        }
+        function finishMovieRecording() {
+            const currentScene = getCurrentScene();
+            if (currentScene?.backgroundType === 'video') {
+                currentScene.backgroundElement.pause();
+                currentScene.backgroundElement.currentTime = 0;
+            }
+            if (mediaRecorder?.state !== 'inactive') mediaRecorder.stop();
+            isRecording = false; isPaused = false;
+            recordPauseBtn.textContent = 'Record'; recordPauseBtn.classList.remove('active');
+            finishBtn.classList.add('hidden'); recordingStatus.classList.add('hidden');
+            clearInterval(recordingIntervalId); recordingTimer.textContent = '00:00';
+            toast('Recording finished. Ready to download.');
+            if (getCurrentScene()?.backgroundType === 'image') stopAnimationLoop();
+            renderLayerPalette(); drawMovieFrame(); drawControlsOverlay();
+        }
+
+        // --- Interaction Logic ---
+        function getMovieCanvasPoint(e) {
+            const rect = movieCanvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: (clientX - rect.left) / rect.width * movieCanvas.width, y: (clientY - rect.top) / rect.height * movieCanvas.height };
+        }
+        function getMovieHandleAtPoint(point, layer) {
+            const l = layer; const dWidth = l.size; const dHeight = l.size * (l.img.naturalHeight / l.img.naturalWidth);
+            const radius = Math.max(16, 30);
+            const angle = l.rot * Math.PI / 180; const cos = Math.cos(angle); const sin = Math.sin(angle);
+            const ROTATION_HANDLE_OFFSET = 30;
+            const rotHandleY = -dHeight / 2 - ROTATION_HANDLE_OFFSET;
+            const rotHandleWorldX = l.x - (rotHandleY * sin); const rotHandleWorldY = l.y + (rotHandleY * cos);
+            if (Math.hypot(point.x - rotHandleWorldX, point.y - rotHandleWorldY) < radius) return 'rotate';
+            const handles = { tl: { x: -dWidth / 2, y: -dHeight / 2 }, tr: { x:  dWidth / 2, y: -dHeight / 2 }, bl: { x: -dWidth / 2, y:  dHeight / 2 }, br: { x:  dWidth / 2, y:  dHeight / 2 } };
+            for (const name in handles) {
+                const h = handles[name];
+                const handleWorldX = l.x + h.x * cos - h.y * sin; const handleWorldY = l.y + h.x * sin + h.y * cos;
+                if (Math.hypot(point.x - handleWorldX, point.y - handleWorldY) < radius) return name;
+            }
+            return null;
+        }
+        function isPointInMovieLayer(point, layer) {
+            const l = layer; const dWidth = l.size; const dHeight = l.size * (l.img.naturalHeight / l.img.naturalWidth);
+            const dx = point.x - l.x; const dy = point.y - l.y; const angle = -l.rot * Math.PI / 180;
+            const localX = dx * Math.cos(angle) - dy * Math.sin(angle); const localY = dx * Math.sin(angle) + dy * Math.cos(angle);
+            return (Math.abs(localX) < dWidth / 2 && Math.abs(localY) < dHeight / 2);
+        }
+
+        function handleMovieInteractionStart(e) {
+            e.preventDefault();
+            const point = getMovieCanvasPoint(e);
+            const currentScene = getCurrentScene();
+            if (!currentScene) return;
+
+            const activeLayer = currentScene.layers.find(l => l.id === activeMovieLayerId);
+
+            if (activeLayer) {
+                const handle = getMovieHandleAtPoint(point, activeLayer);
+                if (handle) {
+                    movieInteraction = { active: true, type: handle === 'rotate' ? 'rotate' : 'resize', layerId: activeLayer.id, handle, startX: point.x, startY: point.y, initialState: JSON.parse(JSON.stringify(activeLayer)) };
+                    if (!animationFrameId) startAnimationLoop();
+                    return;
+                }
+            }
+
+            for (let i = currentScene.layers.length - 1; i >= 0; i--) {
+                const l = currentScene.layers[i];
+                if (isPointInMovieLayer(point, l)) {
+                    if (activeMovieLayerId !== l.id) {
+                        activeMovieLayerId = l.id;
+                        renderLayerPalette();
+                        drawControlsOverlay();
+                    }
+                    movieInteraction = {
+                        active: true, type: 'drag', layerId: l.id,
+                        offsetX: point.x - l.x,
+                        offsetY: point.y - l.y,
+                        targetX: l.x,
+                        targetY: l.y,
+                        smoothingLoopActive: false
+                    };
+                    return;
+                }
+            }
+
+            if (activeMovieLayerId) {
+                 activeMovieLayerId = null;
+                 renderLayerPalette();
+                 drawControlsOverlay();
+            }
+        }
+
+        function smoothingLoop() {
+            if (!movieInteraction.active || movieInteraction.type !== 'drag') {
+                movieInteraction.smoothingLoopActive = false;
+                if (!animationFrameId) { drawMovieFrame(); drawControlsOverlay(); }
+                return;
+            }
+
+            const l = getCurrentScene()?.layers.find(layer => layer.id === movieInteraction.layerId);
+            if (!l) { movieInteraction.smoothingLoopActive = false; return; }
+
+            const dx = movieInteraction.targetX - l.x;
+            const dy = movieInteraction.targetY - l.y;
+
+            if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) {
+                l.x = movieInteraction.targetX;
+                l.y = movieInteraction.targetY;
+            } else {
+                l.x += dx * DAMPING_FACTOR;
+                l.y += dy * DAMPING_FACTOR;
+            }
+
+            if (!animationFrameId) { drawMovieFrame(); drawControlsOverlay(); }
+            requestAnimationFrame(smoothingLoop);
+        }
+        function startSmoothingLoop() {
+            if (movieInteraction.smoothingLoopActive) return;
+            movieInteraction.smoothingLoopActive = true;
+            smoothingLoop();
+        }
+
+        function handleMovieInteractionMove(e) {
+            if (!movieInteraction.active) { updateCursor(e); return; }
+            e.preventDefault();
+            const point = getMovieCanvasPoint(e);
+            const l = getCurrentScene()?.layers.find(layer => layer.id === movieInteraction.layerId); if (!l) return;
+
+            if (movieInteraction.type === 'drag') {
+                movieInteraction.targetX = point.x - movieInteraction.offsetX;
+                movieInteraction.targetY = point.y - movieInteraction.offsetY;
+                if (!movieInteraction.smoothingLoopActive) startSmoothingLoop();
+            } else if (movieInteraction.type === 'resize') {
+                const iState = movieInteraction.initialState;
+                const initialDist = Math.hypot(movieInteraction.startX - iState.x, movieInteraction.startY - iState.y);
+                const currentDist = Math.hypot(point.x - iState.x, point.y - iState.y);
+                if (initialDist > 1) { l.size = Math.max(20, iState.size * (currentDist / initialDist)); }
+            } else if (movieInteraction.type === 'rotate') {
+                const iState = movieInteraction.initialState;
+                const initialAngle = Math.atan2(movieInteraction.startY - iState.y, movieInteraction.startX - iState.x) * 180 / Math.PI;
+                const currentAngle = Math.atan2(point.y - iState.y, point.x - iState.x) * 180 / Math.PI;
+                l.rot = iState.rot + (currentAngle - initialAngle);
+            }
+        }
+        function handleMovieInteractionEnd(e) {
+            if (movieInteraction.active && (movieInteraction.type === 'resize' || movieInteraction.type === 'rotate')) {
+                 if (getCurrentScene()?.backgroundType === 'image' && !isRecording) stopAnimationLoop();
+            }
+            movieInteraction.active = false;
+        }
+
+        function updateCursor(e) {
+            const point = getMovieCanvasPoint(e);
+            const currentScene = getCurrentScene(); if (!currentScene) return;
+            let newCursor = 'default';
+            const activeLayer = currentScene.layers.find(l => l.id === activeMovieLayerId);
+            if (activeLayer) {
+                const handle = getMovieHandleAtPoint(point, activeLayer);
+                if (handle) {
+                    newCursor = handle === 'rotate' ? 'grab' : (handle === 'tl' || handle === 'br' ? 'nwse-resize' : 'nesw-resize');
+                } else if (isPointInMovieLayer(point, activeLayer)) {
+                    newCursor = 'move';
+                }
+            }
+            if (newCursor === 'default') {
+                 for (let i = currentScene.layers.length - 1; i >= 0; i--) {
+                     if (isPointInMovieLayer(point, currentScene.layers[i])) {
+                         newCursor = 'pointer'; break;
+                     }
+                 }
+            }
+            movieCanvas.style.cursor = newCursor;
+        }
+        function handleKeyDown(e) {
+            const activeLayer = getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
+            if (document.activeElement.tagName === 'INPUT') return;
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
+                if(activeLayer && !isRecording) { e.preventDefault(); duplicateMovieLayer(activeLayer.id); }
+            }
+            if (!activeLayer) return;
+
+            const move = e.shiftKey ? 10 : 1;
+            switch (e.key) {
+                case 'Delete':
+                case 'Backspace':
+                    if(!isRecording) { e.preventDefault(); deleteMovieLayer(activeLayer.id); toast('Layer deleted'); }
+                    break;
+                case 'ArrowUp': e.preventDefault(); activeLayer.y -= move; break;
+                case 'ArrowDown': e.preventDefault(); activeLayer.y += move; break;
+                case 'ArrowLeft': e.preventDefault(); activeLayer.x -= move; break;
+                case 'ArrowRight': e.preventDefault(); activeLayer.x += move; break;
+                default: return;
+            }
+            if(!animationFrameId) { drawMovieFrame(); drawControlsOverlay(); }
+        }
+
+        const setupEventListeners = () => {
+            const setValNull = e => e.target.value = null;
+            initialBackgroundInput.addEventListener('change', e => { handleBackgroundUpload(e.target.files[0], 'initial'); setValNull(e); });
+            backgroundFileInput.addEventListener('change', e => { handleBackgroundUpload(e.target.files[0], 'change'); setValNull(e); });
+            addSceneBtn.addEventListener('click', () => {
+                if (scenes.length === 0) {
+                    initialBackgroundInput.click();
+                } else {
+                    newSceneBackgroundInput.click();
+                }
+            });
+            newSceneBackgroundInput.addEventListener('change', e => { handleBackgroundUpload(e.target.files[0], 'add'); setValNull(e); });
+            addAssetBtn.addEventListener('click', openAssetLibrary);
+            document.getElementById('mg-asset-library-close').addEventListener('click', closeAssetLibrary);
+            assetLibraryOverlay.addEventListener('click', (e) => { if (e.target === assetLibraryOverlay) closeAssetLibrary(); });
+            assetPickerFileInput.addEventListener('change', e => {
+                const file = e.target.files[0]; if (!file) return;
+                if (!file.type.startsWith('image/')) { toast('Invalid file type, please use PNG.'); setValNull(e); return; }
+                const reader = new FileReader();
+                reader.onload = () => {
+                     const currentScene = getCurrentScene();
+                     if (!currentScene) { toast('Please add a background to the scene first.'); return; }
+                     if(currentScene.layers.length >= 4) { toast('Maximum 4 layers reached.'); return; }
+                     addMovieLayer(reader.result);
+                };
+                reader.readAsDataURL(file); setValNull(e);
+            });
+            recordPauseBtn.addEventListener('click', () => { if (!isRecording) startMovieRecording(); else if (isPaused) resumeRecording(); else pauseRecording(); });
+            finishBtn.addEventListener('click', finishMovieRecording);
+            movieDownloadBtn.addEventListener('click', () => {
+                if (recordingUrl) {
+                    const link = document.createElement('a'); link.href = recordingUrl; link.download = 'movie-maker-masterpiece.webm';
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                } else toast('No recording available.');
+            });
+
+            movieCanvas.addEventListener('mousedown', handleMovieInteractionStart);
+            movieCanvas.addEventListener('mousemove', handleMovieInteractionMove);
+            window.addEventListener('mouseup', handleMovieInteractionEnd);
+            movieCanvas.addEventListener('mouseleave', () => { movieCanvas.style.cursor = 'default'; });
+            movieCanvas.addEventListener('touchstart', handleMovieInteractionStart, { passive: false });
+            movieCanvas.addEventListener('touchmove', handleMovieInteractionMove, { passive: false });
+            window.addEventListener('touchend', handleMovieInteractionEnd);
+            window.addEventListener('keydown', handleKeyDown);
+
+            // === NEW: Event listeners for discreet volume control ===
+            videoVolumeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                videoVolumeControls.classList.toggle('open');
+            });
+            videoVolumeSlider.addEventListener('input', (e) => {
+                const currentScene = getCurrentScene();
+                if (currentScene && currentScene.backgroundType === 'video') {
+                    currentScene.backgroundElement.volume = e.target.value;
+                }
+            });
+            videoVolumeControls.addEventListener('click', e => e.stopPropagation()); // Prevent closing when clicking on the control itself
+            window.addEventListener('click', () => { // Click off to close
+                if (videoVolumeControls.classList.contains('open')) {
+                    videoVolumeControls.classList.remove('open');
+                }
+            });
+
+            canvasPlaceholder.addEventListener('click', () => initialBackgroundInput.click());
+            canvasPanel.addEventListener('dragover', (e) => { e.preventDefault(); if (scenes.length === 0) canvasPanel.classList.add('drag-over'); });
+            canvasPanel.addEventListener('dragleave', (e) => { e.preventDefault(); canvasPanel.classList.remove('drag-over'); });
+            canvasPanel.addEventListener('drop', (e) => {
+                e.preventDefault();
+                canvasPanel.classList.remove('drag-over');
+                if (scenes.length === 0) {
+                    const file = e.dataTransfer.files[0];
+                    if (file) handleBackgroundUpload(file, 'initial');
+                }
+            });
+        };
+
+        updateControlsState(); // Set initial state of controls on load
+        setupEventListeners();
+    })();
+</script>
+</body>
+</html>
