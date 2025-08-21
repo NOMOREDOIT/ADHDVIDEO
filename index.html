@@ -141,7 +141,7 @@
         pointer-events: auto;
     }
 
-    /* === NEW: Minimalist Volume Controls Styling === */
+    /* === NEW: ASK GPT HERE TOO I AM COOKED, FIGURE OUT THE ABSOLUTE POSITION ISSUE. Minimalist Volume Controls Styling === */
     #video-volume-controls {
         position: absolute;
         bottom: 10px;
@@ -301,7 +301,7 @@
         <fieldset>
             <legend>Actions</legend>
             <div class="action-buttons">
-                <button class="mg-btn" id="mg-record-pause-btn">Record</button>
+                <button class="mg-btn" id="mg-record-pause-btn" disabled>Record</button>
                 <button class="mg-btn hidden" id="mg-finish-btn">Finish</button>
             </div>
             <div class="action-buttons" style="margin-top: 0.5rem;"><button class="mg-btn hidden" id="mg-movie-download">Download</button></div>
@@ -317,7 +317,6 @@
                 Drag & drop thumbnails to reorder layers.
             </p>
             <div id="mg-asset-palette"></div>
-            <button class="mg-btn" id="add-asset-btn" style="margin-top: 0.5rem;" disabled>Add Asset from Library</button>
         </fieldset>
     </div>
     <div id="canvas-panel">
@@ -353,7 +352,6 @@
 <script>
     (function () {
         // === DOM Elements ===
-        const addAssetBtn = document.getElementById('add-asset-btn');
         const addSceneBtn = document.getElementById('add-scene-btn');
         const assetLibraryOverlay = document.getElementById('mg-asset-library-overlay');
         const assetPalette = document.getElementById('mg-asset-palette');
@@ -418,7 +416,7 @@
         function updateControlsState() {
             const hasScenes = scenes.length > 0;
             changeBackgroundLabel.classList.toggle('disabled', !hasScenes);
-            addAssetBtn.disabled = !hasScenes;
+            recordPauseBtn.disabled = !hasScenes;
             renderLayerPalette(); // Re-render palette to update its own state
         }
 
@@ -569,7 +567,7 @@
             const addAssetFromLibrary = (src) => {
                 const currentScene = getCurrentScene();
                 if(!currentScene) { toast('Please add a background to the scene first.'); return; }
-                if(currentScene.layers.length >= 4) { toast('Maximum 4 layers reached.'); return; }
+                if(currentScene.layers.length >= 8) { toast('Maximum 8 layers reached.'); return; }
                 addMovieLayer(src);
                 closeAssetLibrary();
             };
@@ -593,11 +591,13 @@
             assetPalette.innerHTML = '';
             const currentScene = getCurrentScene();
             const layers = currentScene ? currentScene.layers : [];
-            const MAX_LAYERS = 4;
+            const MAX_LAYERS = 8;
+            // Determine how many total slots to display. A minimum of 4. If 4 or more assets exist, show 8.
+            const slotsToShow = (currentScene && layers.length >= 4) ? 8 : 4;
 
             layerReorderNote.classList.toggle('hidden', layers.length === 0);
 
-            for (let i = 0; i < MAX_LAYERS; i++) {
+            for (let i = 0; i < slotsToShow; i++) {
                 const layer = layers[i];
                 if (layer) {
                     const thumb = document.createElement('div');
@@ -627,9 +627,14 @@
                     const emptySlot = document.createElement('div');
                     emptySlot.className = 'palette-slot empty';
                     emptySlot.innerHTML = '+';
-                    if (currentScene) {
+                     // Check if we can add more layers
+                    if (currentScene && layers.length < MAX_LAYERS) {
                         emptySlot.title = "Add a new asset to this slot";
                         emptySlot.onclick = openAssetLibrary;
+                    } else if (currentScene && layers.length >= MAX_LAYERS) {
+                        emptySlot.title = "Maximum number of layers reached.";
+                        emptySlot.style.cursor = 'not-allowed';
+                        emptySlot.style.opacity = '0.5';
                     } else {
                         emptySlot.title = "Add a scene background to enable layers.";
                         emptySlot.style.cursor = 'not-allowed';
@@ -642,8 +647,8 @@
 
         function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
-            if (!currentScene || currentScene.layers.length >= 4) {
-                toast('Maximum 4 layers reached.'); return;
+            if (!currentScene || currentScene.layers.length >= 8) {
+                toast('Maximum 8 layers reached.'); return;
             }
             const createLayer = (img) => {
                 const newLayer = { id: Date.now() + Math.random(), src, img, x: properties.x || movieCanvas.width / 2, y: properties.y || movieCanvas.height / 2, size: properties.size || movieCanvas.width * 0.25, rot: properties.rot || 0 };
@@ -675,8 +680,8 @@
 
         function duplicateMovieLayer(layerId) {
             const currentScene = getCurrentScene(); if (!currentScene) return;
-            if (currentScene.layers.length >= 4) {
-                toast('Maximum 4 layers reached. Cannot duplicate.'); return;
+            if (currentScene.layers.length >= 8) {
+                toast('Maximum 8 layers reached. Cannot duplicate.'); return;
             }
             const originalLayer = currentScene.layers.find(l => l.id === layerId);
             if (originalLayer) {
@@ -1081,7 +1086,6 @@
                 }
             });
             newSceneBackgroundInput.addEventListener('change', e => { handleBackgroundUpload(e.target.files[0], 'add'); setValNull(e); });
-            addAssetBtn.addEventListener('click', openAssetLibrary);
             document.getElementById('mg-asset-library-close').addEventListener('click', closeAssetLibrary);
             assetLibraryOverlay.addEventListener('click', (e) => { if (e.target === assetLibraryOverlay) closeAssetLibrary(); });
             assetPickerFileInput.addEventListener('change', e => {
@@ -1091,7 +1095,7 @@
                 reader.onload = () => {
                      const currentScene = getCurrentScene();
                      if (!currentScene) { toast('Please add a background to the scene first.'); return; }
-                     if(currentScene.layers.length >= 4) { toast('Maximum 4 layers reached.'); return; }
+                     if(currentScene.layers.length >= 8) { toast('Maximum 8 layers reached.'); return; }
                      addMovieLayer(reader.result);
                 };
                 reader.readAsDataURL(file); setValNull(e);
@@ -1114,7 +1118,7 @@
             window.addEventListener('touchend', handleMovieInteractionEnd);
             window.addEventListener('keydown', handleKeyDown);
 
-            // === NEW: Event listeners for discreet volume control ===
+            // === NEW: Event listeners for discreet volume control === IDK ASK GPT IM COOKED HERE
             videoVolumeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 videoVolumeControls.classList.toggle('open');
@@ -1125,7 +1129,7 @@
                     currentScene.backgroundElement.volume = e.target.value;
                 }
             });
-            videoVolumeControls.addEventListener('click', e => e.stopPropagation()); // Prevent closing when clicking on the control itself
+            videoVolumeControls.addEventListener('click', e => e.stopPropagation()); 
             window.addEventListener('click', () => { // Click off to close
                 if (videoVolumeControls.classList.contains('open')) {
                     videoVolumeControls.classList.remove('open');
@@ -1145,7 +1149,7 @@
             });
         };
 
-        updateControlsState(); // Set initial state of controls on load
+        updateControlsState(); 
         setupEventListeners();
     })();
 </script>
