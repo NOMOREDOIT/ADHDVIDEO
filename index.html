@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Meme Maker Studio</title>
     <link rel="icon" type="image/png" href="favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display.swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
     :root {
         --bg: #f2efe8; --ink: #2b2b2b; --mid: #c2c2c2; --light: #faf9f5;
@@ -735,22 +735,22 @@
             }
         }
         
-        // --- FINAL AI CUTOUT FUNCTION ---
+        // --- FINAL AI CUTOUT FUNCTION (REVISED) ---
         async function createAICutout(imageFile) {
             if (!imageFile) return;
-
             toast('Initializing AI Engine...', null);
-
             try {
-                // If the function hasn't been loaded and cached yet, load it.
                 if (!cachedRemoveBackground) {
-                    // Import the entire module object. This is the key.
+                    // Import the entire module object.
                     const module = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js");
-                    // The function is a property on the imported module object. Cache it.
-                    cachedRemoveBackground = module.removeBackground;
+                    // THE FIX: The function is the 'default' export of the module.
+                    cachedRemoveBackground = module.default;
                 }
                 
-                // Now we are certain that `cachedRemoveBackground` holds the actual function.
+                if (typeof cachedRemoveBackground !== 'function') {
+                     throw new Error("AI function failed to load. The module structure might have changed.");
+                }
+
                 const resultBlob = await cachedRemoveBackground(imageFile, {
                     progress: (key, current, total) => {
                         const [action] = key.split(':');
@@ -761,18 +761,15 @@
                         toast(`${message} ${progress}%`, null);
                     }
                 });
-
                 const cutoutDataURL = URL.createObjectURL(resultBlob);
                 addMovieLayer(cutoutDataURL);
                 closeAssetLibrary();
                 toast('✨ AI Cutout created!', 4000);
-
             } catch (error) {
                 console.error("AI background removal failed:", error);
                 toast('AI Cutout failed. See console for details.', 5000);
             }
         }
-
 
         function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
