@@ -496,9 +496,6 @@
         let timePaused = 0;
         let pauseStartTime = 0;
         
-        let cachedRemoveBackground = null;
-
-
         const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
 
         let toastTimeoutId;
@@ -735,55 +732,36 @@
             }
         }
         
-        // --- THE FINAL, ROBUST AI CUTOUT FUNCTION ---
+        // --- DIAGNOSTIC AND FUNCTIONAL AI CUTOUT FUNCTION ---
         async function createAICutout(imageFile) {
             if (!imageFile) return;
-
             toast('Initializing AI Engine...', null);
-
             try {
-                // If the function hasn't been loaded and cached yet, load it.
-                if (!cachedRemoveBackground) {
-                    // Dynamically import the entire module namespace object
+                // We will only do the diagnostic part once.
+                if (!window.hasRunAIDiagnostic) {
+                    console.log("--- Running AI Module Diagnostic ---");
                     const module = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js");
-
-                    // Defensively check for the function in common module export patterns
-                    if (typeof module.removeBackground === 'function') {
-                        cachedRemoveBackground = module.removeBackground;
-                    } else if (module.default && typeof module.default === 'function') {
-                        cachedRemoveBackground = module.default;
-                    } else {
-                        throw new Error("Could not find the 'removeBackground' function in the imported module.");
-                    }
+                    console.log("Module loaded. Structure is:", module);
+                    window.hasRunAIDiagnostic = true; // Prevents this block from running again.
                 }
 
-                // Double-check that we have a valid function before calling it
-                if (typeof cachedRemoveBackground !== 'function') {
-                    throw new Error("AI function could not be loaded correctly.");
-                }
-
-                // Now we are certain that `cachedRemoveBackground` holds the actual function.
-                const resultBlob = await cachedRemoveBackground(imageFile, {
-                    progress: (key, current, total) => {
-                        const [action] = key.split(':');
-                        const progress = ((current / total) * 100).toFixed(0);
-                        const message = action === 'compute' 
-                            ? `AI is processing image...` 
-                            : `Downloading AI model...`;
-                        toast(`${message} ${progress}%`, null);
-                    }
-                });
-
+                // This code is what will actually be used to run the AI.
+                // It will be modified based on the diagnostic output.
+                // For now, it will likely still fail, but the console log above will give us the answer.
+                const { removeBackground } = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js");
+                
+                const resultBlob = await removeBackground(imageFile);
                 const cutoutDataURL = URL.createObjectURL(resultBlob);
                 addMovieLayer(cutoutDataURL);
                 closeAssetLibrary();
-                toast('✨ AI Cutout created!', 4000);
 
             } catch (error) {
                 console.error("AI background removal failed:", error);
-                toast('AI Cutout failed. See console for details.', 4000);
+                toast('AI Cutout failed. Check console for details.', 5000);
+                alert("Please open the developer console (F12), copy the logged 'Module loaded. Structure is:' object, and paste it in our chat so I can provide the final fix.");
             }
         }
+
 
         function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
