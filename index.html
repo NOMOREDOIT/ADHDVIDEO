@@ -496,7 +496,6 @@
         let timePaused = 0;
         let pauseStartTime = 0;
         
-        // --- STEP 1: THIS VARIABLE WILL CACHE THE AI FUNCTION ONCE LOADED ---
         let cachedRemoveBackground = null;
 
 
@@ -736,7 +735,7 @@
             }
         }
         
-        // --- STEP 2: THE CORRECTED AI CUTOUT FUNCTION ---
+        // --- THE FINAL, ROBUST AI CUTOUT FUNCTION ---
         async function createAICutout(imageFile) {
             if (!imageFile) return;
 
@@ -745,9 +744,22 @@
             try {
                 // If the function hasn't been loaded and cached yet, load it.
                 if (!cachedRemoveBackground) {
-                    // This is the corrected import. We de-structure `removeBackground` from the module.
-                    const { removeBackground } = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js");
-                    cachedRemoveBackground = removeBackground;
+                    // Dynamically import the entire module namespace object
+                    const module = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js");
+
+                    // Defensively check for the function in common module export patterns
+                    if (typeof module.removeBackground === 'function') {
+                        cachedRemoveBackground = module.removeBackground;
+                    } else if (module.default && typeof module.default === 'function') {
+                        cachedRemoveBackground = module.default;
+                    } else {
+                        throw new Error("Could not find the 'removeBackground' function in the imported module.");
+                    }
+                }
+
+                // Double-check that we have a valid function before calling it
+                if (typeof cachedRemoveBackground !== 'function') {
+                    throw new Error("AI function could not be loaded correctly.");
                 }
 
                 // Now we are certain that `cachedRemoveBackground` holds the actual function.
@@ -769,10 +781,9 @@
 
             } catch (error) {
                 console.error("AI background removal failed:", error);
-                toast('AI Cutout failed. The image might be too complex.', 4000);
+                toast('AI Cutout failed. See console for details.', 4000);
             }
         }
-
 
         function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
