@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Meme Maker Studio</title>
     <link rel="icon" type="image/png" href="favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display.swap" rel="stylesheet">
+    <!-- Using the reliable Google MediaPipe library -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
 <style>
     :root {
         --bg: #f2efe8; --ink: #2b2b2b; --mid: #c2c2c2; --light: #faf9f5;
@@ -496,9 +498,6 @@
         let timePaused = 0;
         let pauseStartTime = 0;
         
-        let cachedRemoveBackground = null;
-
-
         const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
 
         let toastTimeoutId;
@@ -735,41 +734,49 @@
             }
         }
         
-        // --- FINAL AI CUTOUT FUNCTION (REVISED) ---
+        // --- Reverting to the reliable MediaPipe AI Cutout function ---
         async function createAICutout(imageFile) {
             if (!imageFile) return;
-            toast('Initializing AI Engine...', null);
-            try {
-                if (!cachedRemoveBackground) {
-                    // Import the entire module object.
-                    const module = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js");
-                    // THE FIX: The function is the 'default' export of the module.
-                    cachedRemoveBackground = module.default;
-                }
-                
-                if (typeof cachedRemoveBackground !== 'function') {
-                     throw new Error("AI function failed to load. The module structure might have changed.");
-                }
 
-                const resultBlob = await cachedRemoveBackground(imageFile, {
-                    progress: (key, current, total) => {
-                        const [action] = key.split(':');
-                        const progress = ((current / total) * 100).toFixed(0);
-                        const message = action === 'compute' 
-                            ? `AI is processing image...` 
-                            : `Downloading AI model...`;
-                        toast(`${message} ${progress}%`, null);
-                    }
-                });
-                const cutoutDataURL = URL.createObjectURL(resultBlob);
+            const image = new Image();
+            image.src = URL.createObjectURL(imageFile);
+            await new Promise((resolve, reject) => {
+                image.onload = resolve;
+                image.onerror = reject;
+            }).catch(e => {
+                toast('Could not load image for AI Cutout.');
+                return;
+            });
+
+            toast('Applying AI magic... please wait.', null);
+
+            const segmentation = new SelfieSegmentation({
+                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
+            });
+            segmentation.setOptions({ modelSelection: 1 });
+
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = image.naturalWidth;
+            tempCanvas.height = image.naturalHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            
+            segmentation.onResults((results) => {
+                tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+                tempCtx.drawImage(image, 0, 0, tempCanvas.width, tempCanvas.height);
+                tempCtx.globalCompositeOperation = 'destination-in';
+                tempCtx.drawImage(results.segmentationMask, 0, 0, tempCanvas.width, tempCanvas.height);
+
+                const cutoutDataURL = tempCanvas.toDataURL('image/png');
                 addMovieLayer(cutoutDataURL);
-                closeAssetLibrary();
-                toast('✨ AI Cutout created!', 4000);
-            } catch (error) {
-                console.error("AI background removal failed:", error);
-                toast('AI Cutout failed. See console for details.', 5000);
-            }
+                toast('✨ AI Cutout created!', 3000);
+
+                segmentation.close();
+                URL.revokeObjectURL(image.src);
+            });
+
+            await segmentation.send({ image });
         }
+
 
         function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
