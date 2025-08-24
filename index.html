@@ -1,3 +1,5 @@
+VIDEO FINAL GIT FORM BACKUP
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,9 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Meme Maker Studio</title>
     <link rel="icon" type="image/png" href="favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display.swap" rel="stylesheet">
-    <!-- Using the reliable Google MediaPipe library -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display-swap" rel="stylesheet">
 <style>
     :root {
         --bg: #f2efe8; --ink: #2b2b2b; --mid: #c2c2c2; --light: #faf9f5;
@@ -418,7 +418,6 @@
         <h4>Click an asset to add it to the canvas</h4>
         <div id="mg-asset-picker-grid"></div>
         <div id="mg-asset-picker-actions">
-            <label class="mg-btn" style="background-color: var(--action-color); color: var(--light);">✨ AI Cutout<input type="file" id="mg-ai-cutout-file" accept="image/*" style="display:none;"/></label>
             <label class="mg-btn">Upload Custom<input type="file" id="mg-asset-picker-file" accept="image/png" style="display:none;"/></label>
         </div>
     </div>
@@ -431,7 +430,6 @@
 </div>
 <div id="mg-toast"></div>
 <div id="mg-countdown-overlay" class="hidden"><span id="mg-countdown-span">3</span></div>
-
 <script>
     (function () {
         // === MOBILE VIEWPORT FIX ===
@@ -446,7 +444,6 @@
         const assetLibraryOverlay = document.getElementById('mg-asset-library-overlay');
         const assetPalette = document.getElementById('mg-asset-palette');
         const assetPickerFileInput = document.getElementById('mg-asset-picker-file');
-        const aiCutoutInput = document.getElementById('mg-ai-cutout-file');
         const assetPickerGrid = document.getElementById('mg-asset-picker-grid');
         const backgroundFileInput = document.getElementById('background-file-input');
         const changeBackgroundLabel = document.getElementById('change-background-label');
@@ -497,7 +494,7 @@
         let recordingStartTime = 0;
         let timePaused = 0;
         let pauseStartTime = 0;
-        
+
         const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
 
         let toastTimeoutId;
@@ -733,50 +730,6 @@
                 }
             }
         }
-        
-        // --- Reverting to the reliable MediaPipe AI Cutout function ---
-        async function createAICutout(imageFile) {
-            if (!imageFile) return;
-
-            const image = new Image();
-            image.src = URL.createObjectURL(imageFile);
-            await new Promise((resolve, reject) => {
-                image.onload = resolve;
-                image.onerror = reject;
-            }).catch(e => {
-                toast('Could not load image for AI Cutout.');
-                return;
-            });
-
-            toast('Applying AI magic... please wait.', null);
-
-            const segmentation = new SelfieSegmentation({
-                locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`
-            });
-            segmentation.setOptions({ modelSelection: 1 });
-
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = image.naturalWidth;
-            tempCanvas.height = image.naturalHeight;
-            const tempCtx = tempCanvas.getContext('2d');
-            
-            segmentation.onResults((results) => {
-                tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-                tempCtx.drawImage(image, 0, 0, tempCanvas.width, tempCanvas.height);
-                tempCtx.globalCompositeOperation = 'destination-in';
-                tempCtx.drawImage(results.segmentationMask, 0, 0, tempCanvas.width, tempCanvas.height);
-
-                const cutoutDataURL = tempCanvas.toDataURL('image/png');
-                addMovieLayer(cutoutDataURL);
-                toast('✨ AI Cutout created!', 3000);
-
-                segmentation.close();
-                URL.revokeObjectURL(image.src);
-            });
-
-            await segmentation.send({ image });
-        }
-
 
         function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
@@ -1225,7 +1178,6 @@
         }
 
         function updateCursor(e) {
-            if (isTouchDevice) return;
             const point = getMovieCanvasPoint(e);
             const currentScene = getCurrentScene(); if (!currentScene) return;
             let newCursor = 'default';
@@ -1247,60 +1199,28 @@
             }
             movieCanvas.style.cursor = newCursor;
         }
-
         function handleKeyDown(e) {
             const activeLayer = getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
             if (document.activeElement.tagName === 'INPUT') return;
-
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
-                if (activeLayer && !isRecording) { e.preventDefault(); duplicateMovieLayer(activeLayer.id); }
+                if(activeLayer && !isRecording) { e.preventDefault(); duplicateMovieLayer(activeLayer.id); }
             }
-
             if (!activeLayer) return;
 
             const move = e.shiftKey ? 10 : 1;
-            let needsRedraw = false;
-
-            switch (e.key.toLowerCase()) {
-                case 'delete':
-                case 'backspace':
-                    if (!isRecording) { e.preventDefault(); deleteMovieLayer(activeLayer.id); toast('Layer deleted'); }
+            switch (e.key) {
+                case 'Delete':
+                case 'Backspace':
+                    if(!isRecording) { e.preventDefault(); deleteMovieLayer(activeLayer.id); toast('Layer deleted'); }
                     break;
-                case 'arrowup': e.preventDefault(); activeLayer.y -= move; needsRedraw = true; break;
-                case 'arrowdown': e.preventDefault(); activeLayer.y += move; needsRedraw = true; break;
-                case 'arrowleft': e.preventDefault(); activeLayer.x -= move; needsRedraw = true; break;
-                case 'arrowright': e.preventDefault(); activeLayer.x += move; needsRedraw = true; break;
-                case 'a': { // Move layer down the stack
-                    e.preventDefault();
-                    const layers = getCurrentScene().layers;
-                    const index = layers.findIndex(l => l.id === activeLayer.id);
-                    if (index > 0) {
-                        [layers[index], layers[index - 1]] = [layers[index - 1], layers[index]];
-                        renderLayerPalette();
-                        needsRedraw = true;
-                    }
-                    break;
-                }
-                case 'd': { // Move layer up the stack
-                    e.preventDefault();
-                    const layers = getCurrentScene().layers;
-                    const index = layers.findIndex(l => l.id === activeLayer.id);
-                    if (index < layers.length - 1) {
-                        [layers[index], layers[index + 1]] = [layers[index + 1], layers[index]];
-                        renderLayerPalette();
-                        needsRedraw = true;
-                    }
-                    break;
-                }
+                case 'ArrowUp': e.preventDefault(); activeLayer.y -= move; break;
+                case 'ArrowDown': e.preventDefault(); activeLayer.y += move; break;
+                case 'ArrowLeft': e.preventDefault(); activeLayer.x -= move; break;
+                case 'ArrowRight': e.preventDefault(); activeLayer.x += move; break;
                 default: return;
             }
-
-            if (needsRedraw && !animationFrameId) {
-                drawMovieFrame();
-                drawControlsOverlay();
-            }
+            if(!animationFrameId) { drawMovieFrame(); drawControlsOverlay(); }
         }
-
 
         const setupEventListeners = () => {
             const setValNull = e => e.target.value = null;
@@ -1316,15 +1236,6 @@
             newSceneBackgroundInput.addEventListener('change', e => { handleBackgroundUpload(e.target.files[0], 'add'); setValNull(e); });
             document.getElementById('mg-asset-library-close').addEventListener('click', closeAssetLibrary);
             assetLibraryOverlay.addEventListener('click', (e) => { if (e.target === assetLibraryOverlay) closeAssetLibrary(); });
-
-            aiCutoutInput.addEventListener('change', e => {
-                const file = e.target.files[0];
-                if (!file) return;
-                 if (!getCurrentScene()) { toast('Please add a background to the scene first.'); return; }
-                createAICutout(file);
-                setValNull(e);
-            });
-
             assetPickerFileInput.addEventListener('change', e => {
                 const file = e.target.files[0]; if (!file) return;
                 if (!file.type.startsWith('image/')) { toast('Invalid file type, please use PNG.'); setValNull(e); return; }
@@ -1361,7 +1272,6 @@
             movieCanvas.addEventListener('mousedown', handleMovieInteractionStart);
             window.addEventListener('mousemove', handleMovieInteractionMove);
             window.addEventListener('mouseup', handleMovieInteractionEnd);
-            movieCanvas.addEventListener('mousemove', updateCursor);
             movieCanvas.addEventListener('mouseleave', () => { if (!movieInteraction.active) { movieCanvas.style.cursor = 'default'; }});
             movieCanvas.addEventListener('touchstart', handleMovieInteractionStart, { passive: false });
             window.addEventListener('touchmove', handleMovieInteractionMove, { passive: false });
