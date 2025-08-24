@@ -6,11 +6,7 @@
     <title>Movie Meme Maker Studio</title>
     <link rel="icon" type="image/png" href="favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-
-    <!-- STEP 1: THE SCRIPT TAG IN THE <HEAD> IS NOW REMOVED. -->
-    <!-- We will load the library dynamically with JavaScript instead. -->  
-
-<style> 
+<style>
     :root {
         --bg: #f2efe8; --ink: #2b2b2b; --mid: #c2c2c2; --light: #faf9f5;
         --shadow: #7a7a7a; --danger-color: #cc4444; --action-color: #4477cc;
@@ -499,9 +495,9 @@
         let recordingStartTime = 0;
         let timePaused = 0;
         let pauseStartTime = 0;
-
-        // --- STEP 2: VARIABLE TO HOLD THE AI LIBRARY ONCE LOADED ---
-        let removeBackgroundModule = null;
+        
+        // --- STEP 1: THIS VARIABLE WILL CACHE THE AI FUNCTION ONCE LOADED ---
+        let cachedRemoveBackground = null;
 
 
         const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
@@ -740,27 +736,25 @@
             }
         }
         
-        // --- STEP 3: THE FULLY REVISED AI CUTOUT FUNCTION ---
+        // --- STEP 2: THE CORRECTED AI CUTOUT FUNCTION ---
         async function createAICutout(imageFile) {
             if (!imageFile) return;
 
             toast('Initializing AI Engine...', null);
 
             try {
-                // If the AI library hasn't been loaded yet, load it now.
-                if (!removeBackgroundModule) {
-                    // Dynamically import the library from the CDN.
-                    const module = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js");
-                    // Store the function in our variable so we don't re-import it next time.
-                    removeBackgroundModule = module.removeBackground;
+                // If the function hasn't been loaded and cached yet, load it.
+                if (!cachedRemoveBackground) {
+                    // This is the corrected import. We de-structure `removeBackground` from the module.
+                    const { removeBackground } = await import("https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js");
+                    cachedRemoveBackground = removeBackground;
                 }
 
-                // Call the AI function, which now we know is loaded.
-                const resultBlob = await removeBackgroundModule(imageFile, {
+                // Now we are certain that `cachedRemoveBackground` holds the actual function.
+                const resultBlob = await cachedRemoveBackground(imageFile, {
                     progress: (key, current, total) => {
                         const [action] = key.split(':');
                         const progress = ((current / total) * 100).toFixed(0);
-                        // Provide a more descriptive message for the user.
                         const message = action === 'compute' 
                             ? `AI is processing image...` 
                             : `Downloading AI model...`;
