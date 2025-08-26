@@ -1,5 +1,3 @@
-VIDEO FINAL GIT FORM BACKUP
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,10 +5,11 @@ VIDEO FINAL GIT FORM BACKUP
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Meme Maker Studio</title>
     <link rel="icon" type="image/png" href="favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display-swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
     :root {
         --bg: #f2efe8; --ink: #2b2b2b; --mid: #c2c2c2; --light: #faf9f5;
+        --light-rgb: 250, 249, 245;
         --shadow: #7a7a7a; --danger-color: #cc4444; --action-color: #4477cc;
         --success-color: #55cc55;
     }
@@ -35,22 +34,148 @@ VIDEO FINAL GIT FORM BACKUP
         height: 28px; background: var(--mid); display: flex; align-items: center;
         justify-content: space-between; padding: 0 8px; border-bottom: 2px solid var(--ink);
         font-size: 20px; flex-shrink: 0; cursor: default;
+        position: relative;
+    }
+    .titlebar-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     .controls-fake { display: flex; gap: 4px; }
     .btn-square { width: 16px; height: 16px; background: var(--light); border: 2px solid var(--ink); }
     .controls-fake .btn-square:first-child { background-color: var(--success-color); }
     .controls-fake .btn-square:last-child { background-color: var(--danger-color); }
 
+    #shortcuts-btn, #visuals-btn {
+        font-family: inherit;
+        font-size: 16px;
+        background: var(--light);
+        border: 2px solid var(--ink);
+        padding: 0 8px;
+        cursor: pointer;
+    }
+    #shortcuts-dropdown {
+        display: none;
+        position: absolute;
+        top: 28px;
+        right: 8px;
+        background: var(--light);
+        border: 2px solid var(--ink);
+        box-shadow: 4px 4px 0px var(--ink);
+        padding: .5rem 1rem;
+        z-index: 100;
+        width: 250px;
+    }
+    #shortcuts-dropdown.visible {
+        display: block;
+    }
+    #shortcuts-dropdown h5 {
+        margin: 0 0 .5rem 0;
+        font-size: 1.2rem;
+        text-align: center;
+    }
+    #shortcuts-dropdown ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: 1rem;
+    }
+     #shortcuts-dropdown li {
+        display: flex;
+        justify-content: space-between;
+        padding: 2px 0;
+     }
+     #shortcuts-dropdown li kbd {
+        font-family: inherit;
+        border: 2px solid var(--ink);
+        padding: 0 4px;
+        background: var(--bg);
+     }
+
+    /* Style for the visuals dropdown panel */
+    #visuals-dropdown {
+        display: none;
+        position: absolute;
+        top: 28px;
+        right: 102px; /* Adjust as needed based on your other buttons */
+        background: rgba(var(--light-rgb), 0.3);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border: 2px solid var(--ink);
+        box-shadow: 4px 4px 0px var(--ink);
+        padding: .5rem 1rem;
+        z-index: 100;
+        width: 250px;
+        transition: background .2s, backdrop-filter .2s, box-shadow .2s, border-color .2s;
+    }
+
+    #visuals-dropdown.visible { display: block; }
+    #visuals-dropdown h5, #visuals-dropdown h6, #visuals-dropdown .slider-container {
+        transition: opacity .2s;
+    }
+    #visuals-dropdown h5 { margin: 0 0 .5rem 0; font-size: 1.2rem; text-align: center; }
+    #visuals-dropdown h6 { font-size: 1.1rem; font-weight: bold; text-align: left; margin-top: .5rem; margin-bottom: .5rem; border-bottom: 2px solid var(--mid); padding-bottom: 2px; }
+    #visuals-dropdown label { display: block; margin-top: .5rem; font-size: .9rem; }
+
+    /* === SCRUBBING BEHAVIOR === */
+    #visuals-dropdown.is-scrubbing {
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: none;
+        border-color: transparent;
+    }
+    #visuals-dropdown.is-scrubbing > h5,
+    #visuals-dropdown.is-scrubbing > div > h6,
+    #visuals-dropdown.is-scrubbing .slider-container {
+        opacity: 0;
+        pointer-events: none;
+    }
+    #visuals-dropdown.is-scrubbing .slider-container.is-active-slider {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    /* === END SCRUBBING === */
+
+    #visuals-dropdown input[type="range"] {
+        width: 100%;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 2px;
+        background: var(--ink);
+        outline: none;
+    }
+    #visuals-dropdown input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none;
+        width: 16px; height: 16px;
+        background: var(--ink);
+        border-radius: 50%; cursor: pointer;
+    }
+    #visuals-dropdown input[type="range"]::-moz-range-thumb {
+        width: 16px; height: 16px;
+        background: var(--ink);
+        border-radius: 50%; cursor: pointer; border: none;
+    }
+
+    #asset-visuals-controls.disabled { opacity: 0.5; pointer-events: none; }
+
+
     .mg-btn {
         font-family: inherit; font-size: 18px; background: var(--light); border: 2px solid var(--ink);
         padding: 8px 16px; margin: 4px; cursor: pointer; text-decoration: none;
         color: var(--ink); transition: .2s all; box-shadow: 2px 2px 0px var(--shadow); width: 100%;
+        white-space: nowrap;
     }
     .mg-btn:hover { transform: translate(2px, 2px); box-shadow: 0px 0px 0px var(--shadow); }
     .mg-btn:disabled, .mg-btn.disabled {
         opacity: 0.5; pointer-events: none; box-shadow: none; transform: none;
     }
     .mg-btn.active { background-color: var(--danger-color); color: var(--light); box-shadow: none; transform: translate(2px, 2px); }
+    .mg-btn.success { background-color: var(--success-color); }
+    .mg-btn.record { background-color: var(--danger-color); color: var(--light); }
+    .mg-btn.generate { background-color: var(--ink); color: var(--light); }
+
+
     .hidden { display: none !important; }
     #studio-container {
         display: grid;
@@ -76,9 +201,23 @@ VIDEO FINAL GIT FORM BACKUP
     }
     #controls-panel legend { font-size: 1.2rem; font-weight: normal; padding: 0 .25rem; }
     .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .scene-controls-container { display: flex; flex-direction: column; gap: 0.5rem; }
+    /* === UI REFINEMENT: Fix button margins inside fieldset === */
+    .scene-controls-container > .mg-btn {
+        margin-left: 0;
+        margin-right: 0;
+    }
+    
+    /* === FIX: Prevent scene control buttons from expanding their container === */
+    #scene-actions-container .mg-btn, #mg-commit-layer-btn {
+        white-space: normal;
+        text-align: center;
+    }
+
+
     #recording-status {
         display: flex; align-items: center; justify-content: center; gap: 8px;
-        font-size: 1.2rem; margin-top: 0.5rem; color: var(--danger-color);
+        font-size: 1.2rem; color: var(--danger-color);
     }
     #recording-indicator {
         width: 12px; height: 12px; background-color: var(--danger-color);
@@ -96,6 +235,18 @@ VIDEO FINAL GIT FORM BACKUP
         width: 60px; height: 60px; border: 2px solid var(--ink); background: var(--light);
         cursor: pointer; position: relative; box-shadow: 2px 2px 0px var(--shadow);
     }
+    .layer-thumb.locked {
+        opacity: 0.6;
+        cursor: default;
+        box-shadow: none;
+    }
+    .layer-thumb.locked .layer-controls {
+        display: none;
+    }
+    .layer-thumb.locked:hover .layer-controls {
+        display: flex;
+    }
+
     .layer-thumb { cursor: grab; }
     .palette-slot.empty {
         display: flex; align-items: center; justify-content: center;
@@ -107,14 +258,12 @@ VIDEO FINAL GIT FORM BACKUP
         width: 100%; height: 100%; object-fit: cover; pointer-events: none;
     }
     .layer-thumb.active { border: 2px solid var(--action-color); transform: scale(1.05); box-shadow: none; }
-    .layer-thumb.dragging { opacity: 0.4; cursor: grabbing; box-shadow: none; }
     .layer-controls { position: absolute; top: -5px; right: -5px; display: flex; gap: 2px; }
     .layer-btn {
         background-color: var(--danger-color); border: 1px solid var(--ink);
         color: #fff; font-size: .8rem; font-weight: bold; line-height: 1; padding: 1px 4px;
         cursor: pointer; width: 18px; height: 18px; text-align: center;
     }
-    .layer-btn.duplicate { background-color: var(--action-color); }
 
     #scene-tray {
         display: flex; gap: 0.5rem; flex-wrap: wrap; min-height: 65px;
@@ -281,7 +430,7 @@ VIDEO FINAL GIT FORM BACKUP
     #canvas-panel.drag-over {
          background-color: var(--shadow);
     }
-    #layer-reorder-note {
+    #layer-instructions {
         padding: 0 0 0.5rem 0;
         margin: 0;
         font-size: 1rem;
@@ -306,6 +455,35 @@ VIDEO FINAL GIT FORM BACKUP
         max-width: 80vw;
         max-height: 75vh;
         background: #000;
+    }
+    
+    #mg-generation-overlay { z-index: 4000; }
+    #mg-generation-overlay .window { max-width: 400px; height: auto; padding: 2rem; text-align: center; }
+    #mg-generation-overlay h3 { font-size: 2rem; margin: 0 0 1rem; }
+
+    #mg-confirmation-overlay { z-index: 5000; }
+    #mg-confirmation-dialog {
+        padding: 1.5rem;
+        text-align: center;
+        width: 90%;
+        max-width: 400px;
+        height: auto;
+    }
+    #mg-confirmation-dialog p {
+        font-size: 1.2rem;
+        margin: 0 0 1.5rem;
+    }
+    #mg-confirmation-dialog .action-buttons {
+        display: flex;
+        justify-content: center;
+    }
+    
+    #scene-actions-container {
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 0.5rem;
+    }
+    #scene-actions-container #mg-record-layer-btn {
+        font-size: 20px;
     }
 
 
@@ -338,7 +516,7 @@ VIDEO FINAL GIT FORM BACKUP
             padding: 12px 16px;
             font-size: 20px;
         }
-        legend, #layer-reorder-note, .placeholder-text, #recording-status {
+        legend, #layer-instructions, .placeholder-text, #recording-status {
             font-size: 1.1rem;
         }
         .titlebar {
@@ -364,34 +542,86 @@ VIDEO FINAL GIT FORM BACKUP
 <div class="window">
     <div class="titlebar">
       <span>Movie-Maker-Studio.exe</span>
-      <div class="controls-fake"><div class="btn-square"></div><div class="btn-square"></div></div>
+      <div class="titlebar-controls">
+        <button id="visuals-btn">Edit Visuals</button>
+        <div id="visuals-dropdown">
+            <h5>Visuals Editor</h5>
+            <div id="asset-visuals-controls">
+                <h6>Selected Asset</h6>
+                <div class="slider-container">
+                    <label for="asset-opacity">Opacity</label>
+                    <input type="range" id="asset-opacity" min="0" max="1" step="0.01" value="1">
+                </div>
+                <div class="slider-container">
+                    <label for="asset-brightness">Brightness</label>
+                    <input type="range" id="asset-brightness" min="0" max="2" step="0.01" value="1">
+                </div>
+                <div class="slider-container">
+                    <label for="asset-saturation">Saturation</label>
+                    <input type="range" id="asset-saturation" min="0" max="2" step="0.01" value="1">
+                </div>
+            </div>
+            <div id="background-visuals-controls">
+                <h6>Background</h6>
+                <div class="slider-container">
+                    <label for="bg-brightness">Brightness</label>
+                    <input type="range" id="bg-brightness" min="0" max="2" step="0.01" value="1">
+                </div>
+                <div class="slider-container">
+                    <label for="bg-saturation">Saturation</label>
+                    <input type="range" id="bg-saturation" min="0" max="2" step="0.01" value="1">
+                </div>
+            </div>
+        </div>
+        <button id="shortcuts-btn">Shortcuts</button>
+        <div class="controls-fake"><div class="btn-square"></div><div class="btn-square"></div></div>
+        <div id="shortcuts-dropdown">
+            <h5>Keyboard Shortcuts</h5>
+            <ul>
+                <li><span>Start/Stop Recording</span><kbd>R</kbd></li>
+                <li><span>Enlarge Asset</span><kbd>D</kbd></li>
+                <li><span>Shrink Asset</span><kbd>F</kbd></li>
+                <li><span>Flip Asset Horizontally</span><kbd>S</kbd></li>
+                <li><span>Delete Asset</span><kbd>Delete</kbd></li>
+            </ul>
+        </div>
+      </div>
     </div>
 
 <main id="studio-container">
     <div id="controls-panel">
         <fieldset><legend>Scenes</legend><div id="scene-tray"></div><button class="mg-btn" id="add-scene-btn" style="margin-top: 0.5rem;" title="Add a new scene with an image or video background">+ Add Scene</button></fieldset>
+        
         <fieldset>
-            <legend>Actions</legend>
-            <div class="action-buttons">
-                <button class="mg-btn" id="mg-record-pause-btn" disabled>Record</button>
-                <button class="mg-btn hidden" id="mg-finish-btn">Finish</button>
+            <legend>Layers</legend>
+            <p id="layer-instructions" class="placeholder-text">
+                Create a scene to begin.
+            </p>
+            <div id="mg-asset-palette"></div>
+        </fieldset>
+        
+        <fieldset>
+            <legend>Current Scene</legend>
+            <div class="scene-controls-container">
+                <div id="scene-actions-container" class="action-buttons">
+                    <button class="mg-btn record" id="mg-record-layer-btn" disabled>Record Layer</button>
+                    <button class="mg-btn" id="mg-preview-scene-btn" disabled>Preview Scene</button>
+                    <button class="mg-btn" id="mg-delete-scene-btn" disabled>Delete Scene</button>
+                </div>
+                <div id="stop-actions-container" class="action-buttons hidden">
+                    <button class="mg-btn active" id="mg-stop-layer-btn" style="grid-column: span 2;">Stop</button>
+                </div>
+                <div id="recording-status" class="hidden"><div id="recording-indicator"></div><span id="recording-timer">00:00</span></div>
+                <button class="mg-btn hidden" id="mg-commit-layer-btn">Commit Layer & Add Next</button>
             </div>
-            <div class="action-buttons" id="post-record-actions" style="margin-top: 0.5rem;">
+        </fieldset>
+         <fieldset>
+            <legend>Project</legend>
+            <button class="mg-btn generate" id="mg-generate-project-btn" disabled>Generate Project</button>
+            <div class="action-buttons" id="post-generation-actions" style="margin-top: 0.5rem;">
                  <button class="mg-btn hidden" id="mg-preview-btn">Preview</button>
                  <button class="mg-btn hidden" id="mg-movie-download">Download</button>
             </div>
-            <div id="recording-status" class="hidden"><div id="recording-indicator"></div><span id="recording-timer">00:00</span></div>
-        </fieldset>
-        <fieldset>
-            <legend>Project</legend>
-            <label class="mg-btn disabled" id="change-background-label" title="Upload a new background image or video for the current scene">Change Background<input type="file" id="background-file-input" accept="image/*,video/*" style="display:none;"></label>
-        </fieldset>
-        <fieldset>
-            <legend>Layers</legend>
-            <p id="layer-reorder-note" class="placeholder-text hidden">
-                Drag & drop thumbnails to reorder layers.
-            </p>
-            <div id="mg-asset-palette"></div>
         </fieldset>
     </div>
     <div id="canvas-panel">
@@ -428,6 +658,22 @@ VIDEO FINAL GIT FORM BACKUP
          <video id="mg-preview-video" controls autoplay></video>
     </div>
 </div>
+<div id="mg-generation-overlay" class="mg-overlay-base">
+    <div class="window">
+        <h3>Generating Project...</h3>
+        <p>Please wait while your scenes are combined into the final video.</p>
+    </div>
+</div>
+<div id="mg-confirmation-overlay" class="mg-overlay-base">
+    <div id="mg-confirmation-dialog" class="window">
+        <p id="mg-confirmation-text">Are you sure?</p>
+        <div class="action-buttons">
+            <button id="mg-confirm-yes-btn" class="mg-btn active">Yes</button>
+            <button id="mg-confirm-no-btn" class="mg-btn">No</button>
+        </div>
+    </div>
+</div>
+
 <div id="mg-toast"></div>
 <div id="mg-countdown-overlay" class="hidden"><span id="mg-countdown-span">3</span></div>
 <script>
@@ -444,22 +690,23 @@ VIDEO FINAL GIT FORM BACKUP
         const assetLibraryOverlay = document.getElementById('mg-asset-library-overlay');
         const assetPalette = document.getElementById('mg-asset-palette');
         const assetPickerFileInput = document.getElementById('mg-asset-picker-file');
-        const assetPickerGrid = document.getElementById('mg-asset-picker-grid');
-        const backgroundFileInput = document.getElementById('background-file-input');
-        const changeBackgroundLabel = document.getElementById('change-background-label');
         const canvasPanel = document.getElementById('canvas-panel');
+        const controlsPanel = document.getElementById('controls-panel');
         const canvasPlaceholder = document.getElementById('canvas-placeholder');
         const controlsOverlayCanvas = document.getElementById('mg-controls-overlay-canvas');
         const controlsCtx = controlsOverlayCanvas.getContext('2d');
         const countdownOverlay = document.getElementById('mg-countdown-overlay');
         const countdownSpan = document.getElementById('mg-countdown-span');
-        const finishBtn = document.getElementById('mg-finish-btn');
         const initialBackgroundInput = document.getElementById('initial-background-input');
-        const layerReorderNote = document.getElementById('layer-reorder-note');
+        const layerInstructions = document.getElementById('layer-instructions');
         const movieCanvas = document.getElementById('mg-movie-canvas');
         const movieCtx = movieCanvas.getContext('2d');
         const movieDownloadBtn = document.getElementById('mg-movie-download');
-        const recordPauseBtn = document.getElementById('mg-record-pause-btn');
+        const recordLayerBtn = document.getElementById('mg-record-layer-btn');
+        const stopLayerBtn = document.getElementById('mg-stop-layer-btn');
+        const sceneActionsContainer = document.getElementById('scene-actions-container');
+        const stopActionsContainer = document.getElementById('stop-actions-container');
+        const commitLayerBtn = document.getElementById('mg-commit-layer-btn');
         const recordingStatus = document.getElementById('recording-status');
         const recordingTimer = document.getElementById('recording-timer');
         const sceneTray = document.getElementById('scene-tray');
@@ -472,13 +719,34 @@ VIDEO FINAL GIT FORM BACKUP
         const recordingCanvas = document.createElement('canvas');
         const recordingCtx = recordingCanvas.getContext('2d');
         const previewBtn = document.getElementById('mg-preview-btn');
+        const previewSceneBtn = document.getElementById('mg-preview-scene-btn');
         const previewPopup = document.getElementById('mg-preview-popup');
         const previewVideo = document.getElementById('mg-preview-video');
+        const generateProjectBtn = document.getElementById('mg-generate-project-btn');
+        const generationOverlay = document.getElementById('mg-generation-overlay');
+        const postGenerationActions = document.getElementById('post-generation-actions');
+        const deleteSceneBtn = document.getElementById('mg-delete-scene-btn');
+        const confirmationOverlay = document.getElementById('mg-confirmation-overlay');
+        const confirmationText = document.getElementById('mg-confirmation-text');
+        const confirmYesBtn = document.getElementById('mg-confirm-yes-btn');
+        const confirmNoBtn = document.getElementById('mg-confirm-no-btn');
+        const shortcutsBtn = document.getElementById('shortcuts-btn');
+        const shortcutsDropdown = document.getElementById('shortcuts-dropdown');
+        const visualsBtn = document.getElementById('visuals-btn');
+        const visualsDropdown = document.getElementById('visuals-dropdown');
+        const assetVisualsControls = document.getElementById('asset-visuals-controls');
+        const assetOpacitySlider = document.getElementById('asset-opacity');
+        const assetBrightnessSlider = document.getElementById('asset-brightness');
+        const assetSaturationSlider = document.getElementById('asset-saturation');
+        const bgBrightnessSlider = document.getElementById('bg-brightness');
+        const bgSaturationSlider = document.getElementById('bg-saturation');
+        let finalProjectUrl = null;
 
 
         // === State Variables ===
         const isTouchDevice = 'ontouchstart' in window;
         const DAMPING_FACTOR = 0.5;
+        const RESIZE_SPEED = 1.546875; // Increased by 65% from 0.9375
         const assetCache = {};
         let scenes = [];
         let activeSceneId = null;
@@ -487,18 +755,19 @@ VIDEO FINAL GIT FORM BACKUP
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
-        let isPaused = false;
-        let recordingUrl = null;
+        let isCountdownActive = false;
+        let layerRecordingUrl = null;
         let animationFrameId = null;
         let recordingIntervalId = null;
         let recordingStartTime = 0;
-        let timePaused = 0;
-        let pauseStartTime = 0;
+        let resizeState = { isResizing: false, direction: 0, animationFrameId: null };
+        let isDraggingSlider = false;
 
         const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
+        const getActiveLayer = () => getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
 
         let toastTimeoutId;
-        const toast = (msg, duration = 2400) => {
+        const toast = (msg, duration = 4000) => {
             const t = document.getElementById('mg-toast');
             clearTimeout(toastTimeoutId);
             t.textContent = msg; t.style.opacity = 1; t.style.visibility = 'visible';
@@ -506,39 +775,91 @@ VIDEO FINAL GIT FORM BACKUP
                 toastTimeoutId = setTimeout(() => { t.style.opacity = 0; t.style.visibility = 'hidden'; }, duration);
             }
         };
+        
+        function resetToReadyState() {
+            const currentScene = getCurrentScene();
+            recordLayerBtn.disabled = !currentScene || currentScene.layers.length === 0;
+            recordLayerBtn.textContent = 'Record Layer';
+            recordLayerBtn.classList.add('record');
+            sceneActionsContainer.classList.remove('hidden');
+            stopActionsContainer.classList.add('hidden');
+            commitLayerBtn.classList.add('hidden');
+            commitLayerBtn.classList.remove('success');
+
+            if (layerRecordingUrl) {
+                URL.revokeObjectURL(layerRecordingUrl);
+                layerRecordingUrl = null;
+            }
+            recordedChunks = [];
+        }
+
+        function updateProjectControlsState() {
+            generateProjectBtn.disabled = scenes.length === 0;
+            if (finalProjectUrl) {
+                URL.revokeObjectURL(finalProjectUrl);
+                finalProjectUrl = null;
+            }
+            previewBtn.classList.add('hidden');
+            movieDownloadBtn.classList.add('hidden');
+            postGenerationActions.classList.add('hidden');
+        }
 
         function updateControlsState() {
             const hasScenes = scenes.length > 0;
-            changeBackgroundLabel.classList.toggle('disabled', !hasScenes);
-            recordPauseBtn.disabled = !hasScenes;
+            const currentScene = getCurrentScene();
+            const hasLayers = currentScene && currentScene.layers.length > 0;
+
+            addSceneBtn.disabled = isRecording;
+            deleteSceneBtn.disabled = !hasScenes || isRecording;
+            recordLayerBtn.disabled = !hasLayers || isRecording;
+            
+            const hasPreviewableContent = currentScene && (currentScene.backgroundType === 'video' || !!layerRecordingUrl);
+            previewSceneBtn.disabled = !hasPreviewableContent || isRecording;
+            
+            updateProjectControlsState();
             renderLayerPalette();
         }
 
-        function handleBackgroundUpload(file, mode) {
+        function handleBackgroundUpload(file, mode, isFromLayerCommit = false) {
             if (!file) return;
-            const fileURL = URL.createObjectURL(file);
+            const fileURL = (file instanceof Blob) ? URL.createObjectURL(file) : file;
+
             const handleNewScene = (element, type, thumb) => {
-                const scene = { id: Date.now(), backgroundElement: element, backgroundType: type, thumbnail: thumb, layers: [] };
-                if (mode === 'initial' || mode === 'add') {
-                    scenes.push(scene);
+                let sceneToUpdate;
+                if (isFromLayerCommit) {
+                    sceneToUpdate = getCurrentScene();
+                    if (sceneToUpdate) {
+                        sceneToUpdate.backgroundElement = element;
+                        sceneToUpdate.backgroundType = type;
+                        sceneToUpdate.thumbnail = thumb;
+                        sceneToUpdate.layers = [];
+                        sceneToUpdate.backgroundHistory.push(element);
+                        toast('Layer committed! Add another asset to continue layering.', 4000);
+                    }
+                } else {
+                    sceneToUpdate = { 
+                        id: Date.now(), 
+                        backgroundElement: element, backgroundType: type, thumbnail: thumb, 
+                        layers: [],
+                        originalBackgroundElement: element,
+                        originalBackgroundType: type,
+                        originalThumbnail: thumb,
+                        committedLayerSrcs: [],
+                        backgroundHistory: [element],
+                        bgBrightness: 1,
+                        bgSaturation: 1
+                    };
+                    scenes.push(sceneToUpdate);
                     if (mode === 'initial') {
                         canvasPlaceholder.classList.add('hidden');
-                        toast('Background set! Add assets to your scene.', 3000);
-                    }
-                    switchScene(scene.id);
-                } else if (mode === 'change') {
-                    const currentScene = getCurrentScene();
-                    if (currentScene) {
-                        currentScene.backgroundElement = element;
-                        currentScene.backgroundType = type;
-                        currentScene.thumbnail = thumb;
-                        switchScene(currentScene.id);
+                        toast('Background set! Add an asset to start.', 3000);
                     }
                 }
-                updateControlsState();
-                if (type === 'video') {
-                    toast('Video will play when recording starts.', 5000);
-                }
+                
+                requestAnimationFrame(() => {
+                    switchScene(sceneToUpdate.id);
+                    updateControlsState();
+                });
             };
 
             if (file.type.startsWith('image/')) {
@@ -548,21 +869,29 @@ VIDEO FINAL GIT FORM BACKUP
                 img.src = fileURL;
             } else if (file.type.startsWith('video/')) {
                 const video = document.createElement('video');
-                video.autoplay = false; video.loop = true; video.muted = false; video.playsinline = true;
-                video.volume = videoVolumeSlider.value;
-                const generateThumbnail = () => {
-                    video.removeEventListener('seeked', generateThumbnail);
-                    const thumbCanvas = document.createElement('canvas');
-                    thumbCanvas.width = video.videoWidth;
-                    thumbCanvas.height = video.videoHeight;
-                    thumbCanvas.getContext('2d').drawImage(video, 0, 0);
-                    handleNewScene(video, 'video', thumbCanvas.toDataURL('image/jpeg'));
-                    video.currentTime = 0;
+                video.loop = !isFromLayerCommit;
+                video.autoplay = false; video.muted = true; video.playsinline = true;
+                
+                const onSeeked = () => {
+                     video.removeEventListener('seeked', onSeeked, false);
+                     const thumbCanvas = document.createElement('canvas');
+                     thumbCanvas.width = video.videoWidth;
+                     thumbCanvas.height = video.videoHeight;
+                     thumbCanvas.getContext('2d').drawImage(video, 0, 0);
+                     handleNewScene(video, 'video', thumbCanvas.toDataURL('image/jpeg'));
+                     video.currentTime = 0;
+                     video.muted = false;
+                     video.volume = videoVolumeSlider.value;
+                }
+                const onLoaded = () => {
+                    video.removeEventListener('loadedmetadata', onLoaded, false);
+                    video.currentTime = 0.1; 
                 };
-                video.addEventListener('seeked', generateThumbnail);
+
+                video.addEventListener('loadedmetadata', onLoaded, false);
+                video.addEventListener('seeked', onSeeked, false);
                 video.onerror = () => toast('Could not load background video.');
                 video.src = fileURL;
-                video.currentTime = 1;
             } else {
                 toast('Unsupported file type. Please use an image or video.');
             }
@@ -576,16 +905,42 @@ VIDEO FINAL GIT FORM BACKUP
                 thumb.style.backgroundImage = `url(${scene.thumbnail})`;
                 thumb.classList.toggle('active', scene.id === activeSceneId);
                 thumb.innerHTML = `<span>${index + 1}</span>`;
-                if (scenes.length > 1) {
+                if (scenes.length > 0) {
                     const deleteBtn = document.createElement('div');
                     deleteBtn.className = 'scene-delete-btn'; deleteBtn.innerHTML = 'x';
                     deleteBtn.onclick = (e) => { e.stopPropagation(); deleteScene(scene.id); };
                     thumb.appendChild(deleteBtn);
                 }
-                thumb.onclick = () => { if (scene.id !== activeSceneId) switchScene(scene.id); };
+                thumb.onclick = () => { if (scene.id !== activeSceneId && !isRecording) switchScene(scene.id); };
                 sceneTray.appendChild(thumb);
             });
         }
+        
+        function resizeCanvas() {
+            const currentScene = getCurrentScene();
+            if (!currentScene) return;
+
+            const panelWidth = canvasPanel.clientWidth;
+            const panelHeight = canvasPanel.clientHeight;
+            if (panelWidth === 0 || panelHeight === 0) return;
+
+            const canvasAspectRatio = movieCanvas.width / movieCanvas.height;
+            let displayWidth, displayHeight;
+
+            if (panelWidth / panelHeight > canvasAspectRatio) {
+                displayHeight = panelHeight;
+                displayWidth = displayHeight * canvasAspectRatio;
+            } else {
+                displayWidth = panelWidth;
+                displayHeight = displayWidth / canvasAspectRatio;
+            }
+
+            [movieCanvas, controlsOverlayCanvas].forEach(c => {
+                c.style.width = `${displayWidth}px`;
+                c.style.height = `${displayHeight}px`;
+            });
+        }
+
 
         function switchScene(sceneId) {
             stopAnimationLoop();
@@ -596,28 +951,17 @@ VIDEO FINAL GIT FORM BACKUP
             const bg = currentScene.backgroundElement;
             const w = bg.naturalWidth || bg.videoWidth;
             const h = bg.naturalHeight || bg.videoHeight;
-            const aspectRatio = w / h;
+            
+            let aspectRatio = w / h;
+            if (!isFinite(aspectRatio) || aspectRatio === 0) {
+                aspectRatio = 16 / 9;
+            }
+
             const qualityWidth = 1280;
             movieCanvas.width = controlsOverlayCanvas.width = qualityWidth;
             movieCanvas.height = controlsOverlayCanvas.height = qualityWidth / aspectRatio;
 
-            const panelWidth = canvasPanel.clientWidth;
-            const panelHeight = canvasPanel.clientHeight;
-            const panelAspectRatio = panelWidth / panelHeight;
-            const canvasAspectRatio = movieCanvas.width / movieCanvas.height;
-            let displayWidth, displayHeight;
-
-            if (canvasAspectRatio > panelAspectRatio) {
-                displayWidth = panelWidth;
-                displayHeight = panelWidth / canvasAspectRatio;
-            } else {
-                displayHeight = panelHeight;
-                displayWidth = panelHeight * canvasAspectRatio;
-            }
-            [movieCanvas, controlsOverlayCanvas].forEach(c => {
-                c.style.width = `${displayWidth}px`;
-                c.style.height = `${displayHeight}px`;
-            });
+            resizeCanvas();
 
             if (currentScene.backgroundType === 'video') {
                 videoVolumeControls.classList.remove('hidden');
@@ -630,17 +974,21 @@ VIDEO FINAL GIT FORM BACKUP
             renderSceneTray();
             renderLayerPalette();
             drawControlsOverlay();
-
-            if (currentScene.backgroundType === 'video' || isRecording) {
-                startAnimationLoop();
-            } else {
-                drawMovieFrame();
-            }
+            resetToReadyState();
+            updateControlsState();
+            updateVisualsUI();
+            startAnimationLoop();
         }
 
         function deleteScene(sceneIdToDelete) {
-            if (scenes.length <= 1) { toast("Cannot delete the last scene.", 2000); return; }
+            if (scenes.length === 0) return;
             const sceneIndex = scenes.findIndex(s => s.id === sceneIdToDelete);
+            
+            if (scenes.length === 1) {
+                clearProject();
+                return;
+            }
+
             scenes.splice(sceneIndex, 1);
             if (activeSceneId === sceneIdToDelete) {
                 const newActiveIndex = Math.max(0, sceneIndex - 1);
@@ -652,11 +1000,11 @@ VIDEO FINAL GIT FORM BACKUP
         }
 
         function populateAssetLibraryGrid() {
-            assetPickerGrid.innerHTML = '';
+            document.getElementById('mg-asset-picker-grid').innerHTML = '';
             const addAssetFromLibrary = (src) => {
                 const currentScene = getCurrentScene();
                 if(!currentScene) { toast('Please add a background to the scene first.'); return; }
-                if(currentScene.layers.length >= 8) { toast('Maximum 8 layers reached.'); return; }
+                if(currentScene.layers.length >= 1) { toast('Only one asset can be animated at a time in this mode.'); return; }
                 addMovieLayer(src);
                 closeAssetLibrary();
             };
@@ -666,7 +1014,7 @@ VIDEO FINAL GIT FORM BACKUP
                 div.className = 'mg-template';
                 div.innerHTML = `<img src="${src}" alt="Asset ${i}">`;
                 div.addEventListener('click', () => addAssetFromLibrary(src));
-                assetPickerGrid.appendChild(div);
+                document.getElementById('mg-asset-picker-grid').appendChild(div);
             });
         }
 
@@ -675,75 +1023,149 @@ VIDEO FINAL GIT FORM BACKUP
             assetLibraryOverlay.classList.add('visible');
         }
         function closeAssetLibrary() { assetLibraryOverlay.classList.remove('visible'); }
-
-        function renderLayerPalette() {
-            assetPalette.innerHTML = '';
+        
+        function updateLayerInstructions() {
             const currentScene = getCurrentScene();
-            const layers = currentScene ? currentScene.layers : [];
-            const MAX_LAYERS = 8;
-            const slotsToShow = (currentScene && layers.length >= 4) ? 8 : 4;
+            layerInstructions.classList.remove('placeholder-text');
 
-            layerReorderNote.classList.toggle('hidden', layers.length === 0);
+            if (!currentScene) {
+                layerInstructions.textContent = "Create a scene to begin.";
+                layerInstructions.classList.add('placeholder-text');
+                return;
+            }
+            
+            const hasActiveLayer = currentScene.layers.length > 0;
+            const hasCommittedLayers = currentScene.committedLayerSrcs.length > 0;
 
-            for (let i = 0; i < slotsToShow; i++) {
-                const layer = layers[i];
-                if (layer) {
-                    const thumb = document.createElement('div');
-                    thumb.className = 'layer-thumb';
-                    thumb.classList.toggle('active', layer.id === activeMovieLayerId);
-                    thumb.dataset.layerId = layer.id;
-                    thumb.draggable = true;
-                    thumb.title = "Click to select, drag to reorder";
-                    thumb.innerHTML = `<img src="${layer.src}"><div class="layer-controls"><div class="layer-btn duplicate" title="Duplicate Layer">+</div><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
-
-                    thumb.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('layer-btn')) return;
-                        activeMovieLayerId = layer.id;
-                        renderLayerPalette();
-                        drawControlsOverlay();
-                    });
-
-                    thumb.querySelector('.delete').onclick = (e) => { e.stopPropagation(); deleteMovieLayer(layer.id); };
-                    thumb.querySelector('.duplicate').onclick = (e) => { e.stopPropagation(); duplicateMovieLayer(layer.id); };
-
-                    thumb.addEventListener('dragstart', handleDragStart);
-                    thumb.addEventListener('dragend', handleDragEnd);
-
-                    assetPalette.appendChild(thumb);
-                } else {
-                    const emptySlot = document.createElement('div');
-                    emptySlot.className = 'palette-slot empty';
-                    emptySlot.innerHTML = '+';
-                    if (currentScene && layers.length < MAX_LAYERS) {
-                        emptySlot.title = "Add a new asset to this slot";
-                        emptySlot.onclick = openAssetLibrary;
-                    } else if (currentScene && layers.length >= MAX_LAYERS) {
-                        emptySlot.title = "Maximum number of layers reached.";
-                        emptySlot.style.cursor = 'not-allowed';
-                        emptySlot.style.opacity = '0.5';
-                    } else {
-                        emptySlot.title = "Add a scene background to enable layers.";
-                        emptySlot.style.cursor = 'not-allowed';
-                        emptySlot.style.opacity = '0.5';
-                    }
-                    assetPalette.appendChild(emptySlot);
-                }
+            if (hasActiveLayer) {
+                layerInstructions.textContent = "Click 'Record Layer' to animate it, then 'Stop'.";
+            } else if (hasCommittedLayers) {
+                 layerInstructions.textContent = "Add another asset to continue layering on this scene.";
+            } else {
+                 layerInstructions.textContent = "Add one asset, click 'Record Layer' to animate it, then 'Stop'. Then use the 'Commit Layer' button to continue animating your scene.";
             }
         }
 
+        function renderLayerPalette() {
+            assetPalette.innerHTML = '';
+            updateLayerInstructions();
+
+            const currentScene = getCurrentScene();
+            if (!currentScene) return;
+
+            currentScene.committedLayerSrcs.forEach((src, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'layer-thumb locked';
+                thumb.title = "This layer is committed. Click X to revert.";
+                thumb.innerHTML = `<img src="${src}"><div class="layer-controls"><div class="layer-btn delete" title="Delete this committed layer and subsequent layers">x</div></div>`;
+                thumb.querySelector('.delete').onclick = (e) => { e.stopPropagation(); deleteCommittedLayer(index); };
+                assetPalette.appendChild(thumb);
+            });
+
+            const activeLayer = currentScene.layers[0];
+            if (activeLayer) {
+                 const thumb = document.createElement('div');
+                 thumb.className = 'layer-thumb';
+                 thumb.classList.toggle('active', activeLayer.id === activeMovieLayerId);
+                 thumb.dataset.layerId = activeLayer.id;
+                 thumb.title = "Click to select";
+                 thumb.innerHTML = `<img src="${activeLayer.src}"><div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
+                 thumb.addEventListener('click', (e) => {
+                     if (e.target.classList.contains('layer-btn')) return;
+                     activeMovieLayerId = activeLayer.id;
+                     renderLayerPalette();
+                     drawControlsOverlay();
+                 });
+                 thumb.querySelector('.delete').onclick = (e) => { e.stopPropagation(); deleteMovieLayer(activeLayer.id); };
+                 assetPalette.appendChild(thumb);
+            } else if(currentScene.committedLayerSrcs.length < 8) {
+                const emptySlot = document.createElement('div');
+                emptySlot.className = 'palette-slot empty';
+                emptySlot.innerHTML = '+';
+                emptySlot.title = "Add a new asset to animate";
+                emptySlot.onclick = openAssetLibrary;
+                assetPalette.appendChild(emptySlot);
+            }
+        }
+
+        function deleteCommittedLayer(indexToDelete) {
+            const scene = getCurrentScene();
+            if (!scene) return;
+
+            const backgroundToRestore = scene.backgroundHistory[indexToDelete];
+
+            scene.backgroundElement = backgroundToRestore;
+            scene.backgroundType = (backgroundToRestore.tagName === 'VIDEO') ? 'video' : 'image';
+            
+            scene.backgroundHistory.splice(indexToDelete + 1);
+            scene.committedLayerSrcs.splice(indexToDelete);
+
+            const thumbCanvas = document.createElement('canvas');
+            thumbCanvas.width = backgroundToRestore.naturalWidth || backgroundToRestore.videoWidth;
+            thumbCanvas.height = backgroundToRestore.naturalHeight || backgroundToRestore.videoHeight;
+            thumbCanvas.getContext('2d').drawImage(backgroundToRestore, 0, 0);
+            scene.thumbnail = thumbCanvas.toDataURL('image/jpeg');
+
+            switchScene(scene.id);
+            toast('Layer reverted.', 2000);
+        }
+
+        function updateVisualsUI() {
+            const currentScene = getCurrentScene();
+            const activeLayer = getActiveLayer();
+
+            if (!currentScene) {
+                assetVisualsControls.classList.add('disabled');
+                bgBrightnessSlider.value = 1;
+                bgSaturationSlider.value = 1;
+                assetOpacitySlider.value = 1;
+                assetBrightnessSlider.value = 1;
+                assetSaturationSlider.value = 1;
+                return;
+            };
+
+            if (activeLayer) {
+                assetVisualsControls.classList.remove('disabled');
+                assetOpacitySlider.value = activeLayer.opacity;
+                assetBrightnessSlider.value = activeLayer.brightness;
+                assetSaturationSlider.value = activeLayer.saturation;
+            } else {
+                assetVisualsControls.classList.add('disabled');
+                assetOpacitySlider.value = 1;
+                assetBrightnessSlider.value = 1;
+                assetSaturationSlider.value = 1;
+            }
+
+            bgBrightnessSlider.value = currentScene.bgBrightness;
+            bgSaturationSlider.value = currentScene.bgSaturation;
+        }
+
+
         function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
-            if (!currentScene || currentScene.layers.length >= 8) {
-                toast('Maximum 8 layers reached.'); return;
-            }
+            if (!currentScene) { toast('Add a background first.'); return; }
+            if (currentScene.layers.length >= 1) { toast('Only one asset can be animated at a time.'); return; }
+
             const createLayer = (img) => {
-                const newLayer = { id: Date.now() + Math.random(), src, img, x: properties.x || movieCanvas.width / 2, y: properties.y || movieCanvas.height / 2, size: properties.size || movieCanvas.width * 0.25, rot: properties.rot || 0 };
+                const newLayer = { 
+                    id: Date.now() + Math.random(), src, img, 
+                    x: properties.x || movieCanvas.width / 2, 
+                    y: properties.y || movieCanvas.height / 2, 
+                    size: properties.size || movieCanvas.width * 0.25, 
+                    rot: properties.rot || 0, 
+                    flipX: false,
+                    opacity: 1,
+                    brightness: 1,
+                    saturation: 1
+                };
                 currentScene.layers.push(newLayer);
                 activeMovieLayerId = newLayer.id;
                 renderLayerPalette();
+                updateControlsState();
+                updateVisualsUI();
                 drawMovieFrame();
                 drawControlsOverlay();
-                toast('Asset Added!', 3000);
+                toast('Asset Added! Ready to record.', 3000);
             };
             if (assetCache[src]) {
                 createLayer(assetCache[src]);
@@ -760,71 +1182,53 @@ VIDEO FINAL GIT FORM BACKUP
             currentScene.layers = currentScene.layers.filter(l => l.id !== layerId);
             if (activeMovieLayerId === layerId) activeMovieLayerId = null;
             renderLayerPalette();
+            updateControlsState();
+            updateVisualsUI();
             drawMovieFrame();
             drawControlsOverlay();
         }
-
-        function duplicateMovieLayer(layerId) {
-            const currentScene = getCurrentScene(); if (!currentScene) return;
-            if (currentScene.layers.length >= 8) {
-                toast('Maximum 8 layers reached. Cannot duplicate.'); return;
-            }
-            const originalLayer = currentScene.layers.find(l => l.id === layerId);
-            if (originalLayer) {
-                addMovieLayer(originalLayer.src, { x: originalLayer.x + 20, y: originalLayer.y + 20, size: originalLayer.size, rot: originalLayer.rot });
-            }
-        }
-
-        let draggedElement = null;
-        function handleDragStart(e) {
-            draggedElement = e.target;
-            e.dataTransfer.effectAllowed = 'move';
-            setTimeout(() => { if(draggedElement) draggedElement.classList.add('dragging'); }, 0);
-        }
-        function handleDragEnd(e) {
-            if(draggedElement) draggedElement.classList.remove('dragging');
-            draggedElement = null;
-        }
-        assetPalette.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            const afterElement = getDragAfterElement(assetPalette, e.clientX);
-            if (draggedElement) {
-                if (afterElement == null) { assetPalette.appendChild(draggedElement); }
-                else { assetPalette.insertBefore(draggedElement, afterElement); }
-            }
-        });
-        assetPalette.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const currentScene = getCurrentScene(); if (!currentScene || !draggedElement) return;
-            const newOrderIds = [...assetPalette.querySelectorAll('.layer-thumb')].map(thumb => parseFloat(thumb.dataset.layerId));
-            currentScene.layers.sort((a, b) => newOrderIds.indexOf(a.id) - newOrderIds.indexOf(b.id));
-            drawMovieFrame();
-        });
-        function getDragAfterElement(container, x) {
-            const draggableElements = [...container.querySelectorAll('.layer-thumb:not(.dragging)')];
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                const offset = x - box.left - box.width / 2;
-                if (offset < 0 && offset > closest.offset) { return { offset: offset, element: child }; }
-                else { return closest; }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-
+        
         function drawMovieFrame() {
             const currentScene = getCurrentScene();
             if (!currentScene || !currentScene.backgroundElement) {
                 movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height);
                 return;
             }
-            const { backgroundElement, layers: movieLayers } = currentScene;
+
+            if (movieInteraction.active && movieInteraction.type === 'drag' && !movieInteraction.primed) {
+                const l = currentScene.layers.find(layer => layer.id === movieInteraction.layerId);
+                if (l) {
+                    const dx = movieInteraction.targetX - l.x;
+                    const dy = movieInteraction.targetY - l.y;
+                    if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+                        l.x += dx * DAMPING_FACTOR;
+                        l.y += dy * DAMPING_FACTOR;
+                    } else {
+                        l.x = movieInteraction.targetX;
+                        l.y = movieInteraction.targetY;
+                    }
+                }
+            }
+
+            const { backgroundElement, layers: movieLayers, bgBrightness, bgSaturation } = currentScene;
 
             movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height);
+            movieCtx.save();
+            movieCtx.filter = `brightness(${bgBrightness}) saturate(${bgSaturation})`;
             movieCtx.drawImage(backgroundElement, 0, 0, movieCanvas.width, movieCanvas.height);
+            movieCtx.restore();
+
             movieLayers.forEach(l => {
                 if (l.img && l.img.complete) {
                     const dWidth = l.size; const dHeight = l.size * (l.img.naturalHeight / l.img.naturalWidth);
                     movieCtx.save();
-                    movieCtx.translate(l.x, l.y); movieCtx.rotate(l.rot * Math.PI / 180);
+                    movieCtx.globalAlpha = l.opacity;
+                    movieCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
+                    movieCtx.translate(l.x, l.y);
+                    movieCtx.rotate(l.rot * Math.PI / 180);
+                    if (l.flipX) {
+                        movieCtx.scale(-1, 1);
+                    }
                     movieCtx.drawImage(l.img, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
                     movieCtx.restore();
                 }
@@ -835,11 +1239,10 @@ VIDEO FINAL GIT FORM BACKUP
                 const bg = backgroundElement;
                 const bgWidth = bg.naturalWidth || bg.videoWidth;
                 const bgHeight = bg.naturalHeight || bg.videoHeight;
+                if(bgWidth === 0 || bgHeight === 0) return;
 
                 recordingCtx.clearRect(0, 0, recordingCanvas.width, recordingCanvas.height);
-                recordingCtx.fillStyle = '#000000';
-                recordingCtx.fillRect(0, 0, recordingCanvas.width, recordingCanvas.height);
-
+                
                 const bgRatio = bgWidth / bgHeight;
                 const recRatio = recordingCanvas.width / recordingCanvas.height;
                 let drawWidth, drawHeight, drawX, drawY;
@@ -855,15 +1258,18 @@ VIDEO FINAL GIT FORM BACKUP
                     drawY = (recordingCanvas.height - drawHeight) / 2;
                     drawX = 0;
                 }
+                
+                recordingCtx.save();
+                recordingCtx.filter = `brightness(${bgBrightness}) saturate(${bgSaturation})`;
                 recordingCtx.drawImage(bg, drawX, drawY, drawWidth, drawHeight);
+                recordingCtx.restore();
 
                 const previewCanvasWidth = movieCanvas.width;
                 const previewCanvasHeight = movieCanvas.height;
-
                 movieLayers.forEach(l => {
                     if (l.img && l.img.complete) {
                         const percentX = l.x / previewCanvasWidth;
-                        const percentY = l.y / previewCanvasHeight;
+                        const percentY = l.y / previewCanvasHeight; 
                         const percentSize = l.size / previewCanvasWidth;
 
                         const finalX = drawX + (percentX * drawWidth);
@@ -874,8 +1280,13 @@ VIDEO FINAL GIT FORM BACKUP
                         const dHeight = finalSize * (l.img.naturalHeight / l.img.naturalWidth);
 
                         recordingCtx.save();
+                        recordingCtx.globalAlpha = l.opacity;
+                        recordingCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
                         recordingCtx.translate(finalX, finalY);
                         recordingCtx.rotate(l.rot * Math.PI / 180);
+                        if (l.flipX) {
+                            recordingCtx.scale(-1, 1);
+                        }
                         recordingCtx.drawImage(l.img, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
                         recordingCtx.restore();
                     }
@@ -917,63 +1328,69 @@ VIDEO FINAL GIT FORM BACKUP
             drawControlsOverlay();
             animationFrameId = requestAnimationFrame(animationLoop);
         }
-        function startAnimationLoop() { if (animationFrameId) return; animationLoop(); }
+        function startAnimationLoop() { if (!animationFrameId) animationLoop(); }
         function stopAnimationLoop() { cancelAnimationFrame(animationFrameId); animationFrameId = null; }
 
         function updateTimer() {
-            const elapsed = Math.floor(((Date.now() - recordingStartTime) - timePaused) / 1000);
+            const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
             recordingTimer.textContent = `${String(Math.floor(elapsed/60)).padStart(2,'0')}:${String(elapsed%60).padStart(2,'0')}`;
         }
 
         function runCountdown(onComplete) {
+            isCountdownActive = true;
             let count = 3;
             countdownSpan.textContent = count;
             countdownOverlay.classList.remove('hidden');
             const intervalId = setInterval(() => {
                 count--;
                 if (count > 0) { countdownSpan.textContent = count; }
-                else { clearInterval(intervalId); countdownOverlay.classList.add('hidden'); onComplete(); }
+                else { 
+                    clearInterval(intervalId); 
+                    countdownOverlay.classList.add('hidden');
+                    isCountdownActive = false;
+                    if (movieInteraction.active && movieInteraction.primed) {
+                        movieInteraction.primed = false; 
+                    }
+                    onComplete(); 
+                }
             }, 1000);
         }
 
         function startMovieRecording() {
-            if (scenes.length === 0) return;
-            let minWidth = Infinity;
-            let minHeight = Infinity;
-            scenes.forEach(scene => {
-                const bg = scene.backgroundElement;
-                const w = bg.naturalWidth || bg.videoWidth;
-                const h = bg.naturalHeight || bg.videoHeight;
-                if (w > 0 && w < minWidth) minWidth = w;
-                if (h > 0 && h < minHeight) minHeight = h;
-            });
+            const currentScene = getCurrentScene();
+            if (!currentScene || currentScene.layers.length === 0) {
+                 toast('Please add an asset to the scene first.', 2000);
+                 return;
+            }
+            if (!activeMovieLayerId) {
+                toast('Please select the asset you want to animate.', 2500);
+                return;
+            }
+            
+            resetToReadyState(); 
 
-            recordingCanvas.width = minWidth;
-            recordingCanvas.height = minHeight;
+            const bg = currentScene.backgroundElement;
+            recordingCanvas.width = bg.naturalWidth || bg.videoWidth;
+            recordingCanvas.height = bg.naturalHeight || bg.videoHeight;
 
-            recordPauseBtn.textContent = 'Pause';
-            recordPauseBtn.classList.add('active');
-            recordPauseBtn.disabled = true;
-            finishBtn.classList.remove('hidden');
-            movieDownloadBtn.classList.add('hidden');
-            previewBtn.classList.add('hidden');
+            sceneActionsContainer.classList.add('hidden');
+            stopActionsContainer.classList.remove('hidden');
             recordingStatus.classList.remove('hidden');
+            updateControlsState();
+            startAnimationLoop();
+            
             runCountdown(() => {
                 isRecording = true;
-                isPaused = false;
-                recordedChunks = [];
-                timePaused = 0;
-                recordPauseBtn.disabled = false;
-                document.getElementById('recording-indicator').style.animationPlayState = 'running';
+                if (movieInteraction.active && movieInteraction.primed) {
+                    movieInteraction.primed = false;
+                }
                 recordingStartTime = Date.now();
                 recordingIntervalId = setInterval(updateTimer, 1000);
-                if (recordingUrl) URL.revokeObjectURL(recordingUrl);
-
+                
                 const canvasStream = recordingCanvas.captureStream(30);
-                const currentScene = getCurrentScene();
-
                 if (currentScene?.backgroundType === 'video') {
                     const videoElement = currentScene.backgroundElement;
+                    videoElement.currentTime = 0;
                     videoElement.volume = videoVolumeSlider.value;
                     let audioStream;
                     if (videoElement.captureStream) audioStream = videoElement.captureStream();
@@ -988,59 +1405,172 @@ VIDEO FINAL GIT FORM BACKUP
                 mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
                 mediaRecorder.onstop = () => {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    recordingUrl = URL.createObjectURL(blob);
-                    movieDownloadBtn.classList.remove('hidden');
-                    previewBtn.classList.remove('hidden');
+                    layerRecordingUrl = URL.createObjectURL(blob);
+                    commitLayerBtn.classList.remove('hidden');
+                    commitLayerBtn.classList.add('success');
+                    updateControlsState();
                 };
                 mediaRecorder.start();
 
                 if (currentScene && currentScene.backgroundType === 'video') {
                     currentScene.backgroundElement.play();
                 }
-                startAnimationLoop();
                 toast('Recording started!', 2000);
             });
         }
-        function pauseRecording() {
-            if (!isRecording || isPaused) return;
+        
+        function stopMovieRecording() {
+            movieInteraction.active = false;
             const currentScene = getCurrentScene();
-            if (currentScene?.backgroundType === 'video') currentScene.backgroundElement.pause();
-            mediaRecorder.pause(); isPaused = true; pauseStartTime = Date.now();
-            clearInterval(recordingIntervalId);
-            recordPauseBtn.textContent = 'Resume';
-            document.getElementById('recording-indicator').style.animationPlayState = 'paused';
-            toast('Recording paused.', null);
-            if (getCurrentScene()?.backgroundType === 'image') stopAnimationLoop();
-            drawControlsOverlay();
-        }
-        function resumeRecording() {
-            if (!isRecording || !isPaused) return;
-            recordPauseBtn.textContent = 'Pause'; recordPauseBtn.disabled = true;
-            document.getElementById('recording-indicator').style.animationPlayState = 'paused';
-            runCountdown(() => {
-                mediaRecorder.resume(); isPaused = false;
-                timePaused += (Date.now() - pauseStartTime);
-                recordingIntervalId = setInterval(updateTimer, 1000);
-                recordPauseBtn.disabled = false;
-                document.getElementById('recording-indicator').style.animationPlayState = 'running';
-                const currentScene = getCurrentScene();
-                if (currentScene?.backgroundType === 'video') currentScene.backgroundElement.play();
-                startAnimationLoop(); toast('Recording resumed.');
-            });
-        }
-        function finishMovieRecording() {
-            const currentScene = getCurrentScene();
+
+            stopActionsContainer.classList.add('hidden');
+            recordingTimer.textContent = 'Finalizing...';
+            toast('Finalizing recording, please wait...', null);
+
             if (currentScene?.backgroundType === 'video') {
                 currentScene.backgroundElement.pause();
                 currentScene.backgroundElement.currentTime = 0;
             }
-            if (mediaRecorder?.state !== 'inactive') mediaRecorder.stop();
-            isRecording = false; isPaused = false;
-            recordPauseBtn.textContent = 'Record'; recordPauseBtn.classList.remove('active');
-            finishBtn.classList.add('hidden'); recordingStatus.classList.add('hidden');
-            clearInterval(recordingIntervalId); recordingTimer.textContent = '00:00';
-            toast('Recording finished. Ready to download.');
-            if (getCurrentScene()?.backgroundType === 'image' && !isPaused) stopAnimationLoop();
+
+            if (mediaRecorder?.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+
+            isRecording = false;
+
+            sceneActionsContainer.classList.remove('hidden');
+            recordLayerBtn.textContent = 'Re-record Layer';
+            recordLayerBtn.classList.remove('record');
+            recordingStatus.classList.add('hidden');
+            clearInterval(recordingIntervalId);
+            recordingTimer.textContent = '00:00';
+
+            toast('Layer recorded successfully! Commit it to add another layer.', 4000);
+            updateControlsState();
+        }
+
+        function previewCurrentScene() {
+            if (isRecording) return;
+            const currentScene = getCurrentScene();
+            if (!currentScene) {
+                toast('No active scene to preview.', 2000);
+                return;
+            }
+
+            let previewUrl = null;
+            let videoElementToPlay = null;
+
+            if (layerRecordingUrl) {
+                previewUrl = layerRecordingUrl;
+            } else if (currentScene.backgroundType === 'video') {
+                videoElementToPlay = currentScene.backgroundElement;
+            }
+
+            if (previewUrl) {
+                previewVideo.src = previewUrl;
+                previewVideo.currentTime = 0; 
+                previewPopup.classList.add('visible');
+                previewVideo.play();
+            } else if (videoElementToPlay) {
+                videoElementToPlay.currentTime = 0; 
+                previewVideo.src = videoElementToPlay.src;
+                previewPopup.classList.add('visible');
+                previewVideo.play();
+            } else {
+                toast('No video content to preview for this scene.', 2000);
+            }
+        }
+        
+        async function generateFinalMovie() {
+            if(isRecording) {
+                toast('Please stop the current recording before generating.', 3000);
+                return;
+            }
+            generationOverlay.classList.add('visible');
+            const finalChunks = [];
+            const masterWidth = scenes[0].backgroundElement.naturalWidth || scenes[0].backgroundElement.videoWidth;
+            const masterHeight = scenes[0].backgroundElement.naturalHeight || scenes[0].backgroundElement.videoHeight;
+            
+            recordingCanvas.width = masterWidth;
+            recordingCanvas.height = masterHeight;
+
+            const finalStream = recordingCanvas.captureStream(30);
+            const hasAudio = scenes.some(s => s.backgroundType === 'video');
+            const mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+            const finalRecorder = new MediaRecorder(finalStream, { mimeType });
+            
+            finalRecorder.ondataavailable = e => { if (e.data.size > 0) finalChunks.push(e.data); };
+
+            const generationPromise = new Promise(resolve => {
+                finalRecorder.onstop = () => {
+                    const finalBlob = new Blob(finalChunks, { type: 'video/webm' });
+                    finalProjectUrl = URL.createObjectURL(finalBlob);
+                    generationOverlay.classList.remove('visible');
+                    toast('Project generation complete! You can now preview or download.', 4000);
+                    previewBtn.classList.remove('hidden');
+                    movieDownloadBtn.classList.remove('hidden');
+                    postGenerationActions.classList.remove('hidden');
+
+                    controlsPanel.scrollTo({
+                        top: controlsPanel.scrollHeight,
+                        behavior: 'smooth'
+                    });
+
+                    resolve();
+                };
+            });
+
+            finalRecorder.start();
+            
+            const renderSceneFrame = (scene) => {
+                recordingCtx.clearRect(0, 0, masterWidth, masterHeight);
+                recordingCtx.save();
+                recordingCtx.filter = `brightness(${scene.bgBrightness}) saturate(${scene.bgSaturation})`;
+                recordingCtx.drawImage(scene.backgroundElement, 0, 0, masterWidth, masterHeight);
+                recordingCtx.restore();
+            }
+
+            for (const scene of scenes) {
+                const bg = scene.backgroundElement;
+                if (scene.backgroundType === 'video') {
+                    await new Promise(sceneResolve => {
+                        bg.loop = false;
+                        bg.currentTime = 0;
+                        bg.muted = !hasAudio;
+                        
+                        let sceneAnimFrame;
+                        const videoAnimLoop = () => {
+                            if (bg.paused || bg.ended) {
+                                cancelAnimationFrame(sceneAnimFrame);
+                                return;
+                            }
+                            renderSceneFrame(scene);
+                            sceneAnimFrame = requestAnimationFrame(videoAnimLoop);
+                        };
+                        
+                        const onEnded = () => {
+                            bg.removeEventListener('ended', onEnded, false);
+                            bg.loop = true;
+                            sceneResolve();
+                        };
+                        bg.addEventListener('ended', onEnded, false);
+
+                        bg.play().then(videoAnimLoop).catch(e => {
+                            console.error("Playback error:", e);
+                            sceneResolve();
+                        });
+                    });
+                } else {
+                    await new Promise(sceneResolve => {
+                        const STATIC_DURATION_MS = 3000;
+                        renderSceneFrame(scene);
+                        setTimeout(sceneResolve, STATIC_DURATION_MS);
+                    });
+                }
+            }
+
+            finalRecorder.stop();
+            return generationPromise;
         }
 
 
@@ -1086,16 +1616,18 @@ VIDEO FINAL GIT FORM BACKUP
                 const handle = getMovieHandleAtPoint(point, activeLayer);
                 if (handle) {
                     movieInteraction = { active: true, type: handle === 'rotate' ? 'rotate' : 'resize', layerId: activeLayer.id, handle, startX: point.x, startY: point.y, initialState: JSON.parse(JSON.stringify(activeLayer)) };
-                    if (!animationFrameId) startAnimationLoop();
+                    startAnimationLoop();
                     return;
                 }
             }
-
+            
+            let layerChanged = false;
             for (let i = currentScene.layers.length - 1; i >= 0; i--) {
                 const l = currentScene.layers[i];
                 if (isPointInMovieLayer(point, l)) {
                     if (activeMovieLayerId !== l.id) {
                         activeMovieLayerId = l.id;
+                        layerChanged = true;
                         renderLayerPalette();
                         drawControlsOverlay();
                     }
@@ -1105,8 +1637,10 @@ VIDEO FINAL GIT FORM BACKUP
                         offsetY: point.y - l.y,
                         targetX: l.x,
                         targetY: l.y,
-                        smoothingLoopActive: false
+                        primed: isCountdownActive
                     };
+                    startAnimationLoop();
+                    if(layerChanged) updateVisualsUI();
                     return;
                 }
             }
@@ -1115,37 +1649,8 @@ VIDEO FINAL GIT FORM BACKUP
                  activeMovieLayerId = null;
                  renderLayerPalette();
                  drawControlsOverlay();
+                 updateVisualsUI();
             }
-        }
-
-        function smoothingLoop() {
-            if (!movieInteraction.active || movieInteraction.type !== 'drag') {
-                movieInteraction.smoothingLoopActive = false;
-                if (!animationFrameId) { drawMovieFrame(); drawControlsOverlay(); }
-                return;
-            }
-
-            const l = getCurrentScene()?.layers.find(layer => layer.id === movieInteraction.layerId);
-            if (!l) { movieInteraction.smoothingLoopActive = false; return; }
-
-            const dx = movieInteraction.targetX - l.x;
-            const dy = movieInteraction.targetY - l.y;
-
-            if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) {
-                l.x = movieInteraction.targetX;
-                l.y = movieInteraction.targetY;
-            } else {
-                l.x += dx * DAMPING_FACTOR;
-                l.y += dy * DAMPING_FACTOR;
-            }
-
-            if (!animationFrameId) { drawMovieFrame(); drawControlsOverlay(); }
-            requestAnimationFrame(smoothingLoop);
-        }
-        function startSmoothingLoop() {
-            if (movieInteraction.smoothingLoopActive) return;
-            movieInteraction.smoothingLoopActive = true;
-            smoothingLoop();
         }
 
         function handleMovieInteractionMove(e) {
@@ -1157,7 +1662,6 @@ VIDEO FINAL GIT FORM BACKUP
             if (movieInteraction.type === 'drag') {
                 movieInteraction.targetX = point.x - movieInteraction.offsetX;
                 movieInteraction.targetY = point.y - movieInteraction.offsetY;
-                if (!movieInteraction.smoothingLoopActive) startSmoothingLoop();
             } else if (movieInteraction.type === 'resize') {
                 const iState = movieInteraction.initialState;
                 const initialDist = Math.hypot(movieInteraction.startX - iState.x, movieInteraction.startY - iState.y);
@@ -1171,9 +1675,6 @@ VIDEO FINAL GIT FORM BACKUP
             }
         }
         function handleMovieInteractionEnd(e) {
-            if (movieInteraction.active && (movieInteraction.type === 'resize' || movieInteraction.type === 'rotate')) {
-                 if (getCurrentScene()?.backgroundType === 'image' && !isRecording) stopAnimationLoop();
-            }
             movieInteraction.active = false;
         }
 
@@ -1199,33 +1700,90 @@ VIDEO FINAL GIT FORM BACKUP
             }
             movieCanvas.style.cursor = newCursor;
         }
-        function handleKeyDown(e) {
-            const activeLayer = getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
-            if (document.activeElement.tagName === 'INPUT') return;
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
-                if(activeLayer && !isRecording) { e.preventDefault(); duplicateMovieLayer(activeLayer.id); }
-            }
-            if (!activeLayer) return;
 
-            const move = e.shiftKey ? 10 : 1;
-            switch (e.key) {
-                case 'Delete':
-                case 'Backspace':
-                    if(!isRecording) { e.preventDefault(); deleteMovieLayer(activeLayer.id); toast('Layer deleted'); }
-                    break;
-                case 'ArrowUp': e.preventDefault(); activeLayer.y -= move; break;
-                case 'ArrowDown': e.preventDefault(); activeLayer.y += move; break;
-                case 'ArrowLeft': e.preventDefault(); activeLayer.x -= move; break;
-                case 'ArrowRight': e.preventDefault(); activeLayer.x += move; break;
-                default: return;
+        function continuousResizeLoop() {
+            if (!resizeState.isResizing) return;
+            const activeLayer = getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
+            if (activeLayer) {
+                activeLayer.size = Math.max(20, activeLayer.size + RESIZE_SPEED * resizeState.direction);
             }
-            if(!animationFrameId) { drawMovieFrame(); drawControlsOverlay(); }
+            resizeState.animationFrameId = requestAnimationFrame(continuousResizeLoop);
         }
 
+        function handleKeyDown(e) {
+            const key = e.key.toLowerCase();
+            if (document.activeElement.tagName === 'INPUT') return;
+            
+            const activeLayer = getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
+            
+            if (key === 'r') {
+                e.preventDefault();
+                if (isRecording) {
+                    stopMovieRecording();
+                } else if (!recordLayerBtn.disabled) {
+                    startMovieRecording();
+                }
+                return;
+            }
+
+            if (!activeLayer) return;
+
+            if (key === 's') {
+                e.preventDefault();
+                activeLayer.flipX = !activeLayer.flipX;
+            } else if (key === 'd' || key === 'f') {
+                e.preventDefault();
+                if (resizeState.isResizing) return; // Prevent multiple loops
+                resizeState.isResizing = true;
+                resizeState.direction = (key === 'd') ? 1 : -1;
+                continuousResizeLoop();
+            } else if (!isRecording) {
+                switch (key) {
+                    case 'delete': case 'backspace':
+                        e.preventDefault(); deleteMovieLayer(activeLayer.id); toast('Layer deleted', 2000); break;
+                }
+            }
+        }
+
+        function handleKeyUp(e) {
+            const key = e.key.toLowerCase();
+            if (key === 'd' || key === 'f') {
+                e.preventDefault();
+                resizeState.isResizing = false;
+                cancelAnimationFrame(resizeState.animationFrameId);
+            }
+        }
+        
+        function clearProject() {
+            scenes = [];
+            activeSceneId = null;
+            activeMovieLayerId = null;
+            
+            movieCtx.clearRect(0,0,movieCanvas.width, movieCanvas.height);
+            controlsCtx.clearRect(0,0,controlsOverlayCanvas.width, controlsOverlayCanvas.height);
+            canvasPlaceholder.classList.remove('hidden');
+            sceneTray.innerHTML = '';
+            
+            updateControlsState();
+            updateVisualsUI();
+            toast("Project cleared.", 2000);
+        }
+
+        let confirmCallback = null;
+        function openConfirmationModal(text, onConfirm) {
+            confirmationText.textContent = text;
+            confirmCallback = onConfirm;
+            confirmationOverlay.classList.add('visible');
+        }
+        function closeConfirmationModal() {
+            confirmationOverlay.classList.remove('visible');
+            confirmCallback = null;
+        }
+        
         const setupEventListeners = () => {
             const setValNull = e => e.target.value = null;
             initialBackgroundInput.addEventListener('change', e => { handleBackgroundUpload(e.target.files[0], 'initial'); setValNull(e); });
-            backgroundFileInput.addEventListener('change', e => { handleBackgroundUpload(e.target.files[0], 'change'); setValNull(e); });
+            
             addSceneBtn.addEventListener('click', () => {
                 if (scenes.length === 0) {
                     initialBackgroundInput.click();
@@ -1233,7 +1791,9 @@ VIDEO FINAL GIT FORM BACKUP
                     newSceneBackgroundInput.click();
                 }
             });
+
             newSceneBackgroundInput.addEventListener('change', e => { handleBackgroundUpload(e.target.files[0], 'add'); setValNull(e); });
+            
             document.getElementById('mg-asset-library-close').addEventListener('click', closeAssetLibrary);
             assetLibraryOverlay.addEventListener('click', (e) => { if (e.target === assetLibraryOverlay) closeAssetLibrary(); });
             assetPickerFileInput.addEventListener('change', e => {
@@ -1241,25 +1801,37 @@ VIDEO FINAL GIT FORM BACKUP
                 if (!file.type.startsWith('image/')) { toast('Invalid file type, please use PNG.'); setValNull(e); return; }
                 const reader = new FileReader();
                 reader.onload = () => {
-                     const currentScene = getCurrentScene();
-                     if (!currentScene) { toast('Please add a background to the scene first.'); return; }
-                     if(currentScene.layers.length >= 8) { toast('Maximum 8 layers reached.'); return; }
-                     addMovieLayer(reader.result);
+                    addMovieLayer(reader.result)
+                    closeAssetLibrary();
                 };
                 reader.readAsDataURL(file); setValNull(e);
             });
-            recordPauseBtn.addEventListener('click', () => { if (!isRecording) startMovieRecording(); else if (isPaused) resumeRecording(); else pauseRecording(); });
-            finishBtn.addEventListener('click', finishMovieRecording);
+            recordLayerBtn.addEventListener('click', startMovieRecording);
+            stopLayerBtn.addEventListener('click', stopMovieRecording);
+            previewSceneBtn.addEventListener('click', previewCurrentScene);
+            commitLayerBtn.addEventListener('click', () => {
+                if (layerRecordingUrl) {
+                    const currentScene = getCurrentScene();
+                    if (currentScene && currentScene.layers[0]) {
+                        currentScene.committedLayerSrcs.push(currentScene.layers[0].src);
+                    }
+                    fetch(layerRecordingUrl).then(res => res.blob()).then(blob => {
+                        handleBackgroundUpload(blob, '', true);
+                    });
+                }
+            });
+            generateProjectBtn.addEventListener('click', generateFinalMovie);
             movieDownloadBtn.addEventListener('click', () => {
-                if (recordingUrl) {
-                    const link = document.createElement('a'); link.href = recordingUrl; link.download = 'movie-maker-masterpiece.webm';
+                if (finalProjectUrl) {
+                    const link = document.createElement('a'); link.href = finalProjectUrl; link.download = 'movie-maker-masterpiece.webm';
                     document.body.appendChild(link); link.click(); document.body.removeChild(link);
-                } else toast('No recording available.');
+                } else toast('No final project available.', 2000);
             });
 
             previewBtn.addEventListener('click', () => {
-                if(recordingUrl) {
-                    previewVideo.src = recordingUrl;
+                if(finalProjectUrl) {
+                    previewVideo.src = finalProjectUrl;
+                    previewVideo.currentTime = 0;
                     previewPopup.classList.add('visible');
                 }
             });
@@ -1268,6 +1840,17 @@ VIDEO FINAL GIT FORM BACKUP
                 previewPopup.classList.remove('visible');
             });
 
+            deleteSceneBtn.addEventListener('click', () => {
+                const text = "This will permanently delete the current scene. Are you sure?";
+                openConfirmationModal(text, () => {
+                    deleteScene(activeSceneId);
+                    closeConfirmationModal();
+                });
+            });
+            confirmYesBtn.addEventListener('click', () => { if(confirmCallback) confirmCallback(); });
+            confirmNoBtn.addEventListener('click', closeConfirmationModal);
+            confirmationOverlay.addEventListener('click', closeConfirmationModal);
+            document.getElementById('mg-confirmation-dialog').addEventListener('click', e => e.stopPropagation());
 
             movieCanvas.addEventListener('mousedown', handleMovieInteractionStart);
             window.addEventListener('mousemove', handleMovieInteractionMove);
@@ -1277,24 +1860,15 @@ VIDEO FINAL GIT FORM BACKUP
             window.addEventListener('touchmove', handleMovieInteractionMove, { passive: false });
             window.addEventListener('touchend', handleMovieInteractionEnd);
             window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keyup', handleKeyUp);
 
-            videoVolumeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                videoVolumeControls.classList.toggle('open');
-            });
+            videoVolumeBtn.addEventListener('click', (e) => { e.stopPropagation(); videoVolumeControls.classList.toggle('open'); });
             videoVolumeSlider.addEventListener('input', (e) => {
                 const currentScene = getCurrentScene();
-                if (currentScene && currentScene.backgroundType === 'video') {
-                    currentScene.backgroundElement.volume = e.target.value;
-                }
+                if (currentScene && currentScene.backgroundType === 'video') { currentScene.backgroundElement.volume = e.target.value; }
             });
             videoVolumeControls.addEventListener('click', e => e.stopPropagation());
-            window.addEventListener('click', () => {
-                if (videoVolumeControls.classList.contains('open')) {
-                    videoVolumeControls.classList.remove('open');
-                }
-            });
-
+            
             canvasPlaceholder.addEventListener('click', () => initialBackgroundInput.click());
             canvasPanel.addEventListener('dragover', (e) => { e.preventDefault(); if (scenes.length === 0) canvasPanel.classList.add('drag-over'); });
             canvasPanel.addEventListener('dragleave', (e) => { e.preventDefault(); canvasPanel.classList.remove('drag-over'); });
@@ -1306,10 +1880,99 @@ VIDEO FINAL GIT FORM BACKUP
                     if (file) handleBackgroundUpload(file, 'initial');
                 }
             });
+
+            shortcutsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                shortcutsDropdown.classList.toggle('visible');
+                visualsDropdown.classList.remove('visible');
+            });
+
+            visualsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                visualsDropdown.classList.toggle('visible');
+                shortcutsDropdown.classList.remove('visible');
+                if (visualsDropdown.classList.contains('visible')) {
+                    updateVisualsUI();
+                }
+            });
+
+            visualsDropdown.addEventListener('click', e => e.stopPropagation());
+
+            assetOpacitySlider.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer) activeLayer.opacity = parseFloat(e.target.value);
+            });
+            assetBrightnessSlider.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer) activeLayer.brightness = parseFloat(e.target.value);
+            });
+            assetSaturationSlider.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer) activeLayer.saturation = parseFloat(e.target.value);
+            });
+            bgBrightnessSlider.addEventListener('input', e => {
+                const scene = getCurrentScene();
+                if (scene) scene.bgBrightness = parseFloat(e.target.value);
+            });
+            bgSaturationSlider.addEventListener('input', e => {
+                const scene = getCurrentScene();
+                if (scene) scene.bgSaturation = parseFloat(e.target.value);
+            });
+
+            const allSliders = document.querySelectorAll('input[type="range"]');
+            allSliders.forEach(slider => {
+                const start = () => isDraggingSlider = true;
+                slider.addEventListener('mousedown', start);
+                slider.addEventListener('touchstart', start, { passive: true });
+            });
+
+            const allVisualsSliders = document.querySelectorAll('#visuals-dropdown input[type="range"]');
+            
+            const handleSliderScrubStart = (e) => {
+                const sliderContainer = e.target.closest('.slider-container');
+                if (sliderContainer) {
+                    visualsDropdown.classList.add('is-scrubbing');
+                    sliderContainer.classList.add('is-active-slider');
+                }
+            }
+
+            const handleSliderScrubEnd = () => {
+                visualsDropdown.classList.remove('is-scrubbing');
+                const activeSlider = document.querySelector('.is-active-slider');
+                if (activeSlider) {
+                    activeSlider.classList.remove('is-active-slider');
+                }
+            }
+            
+            allVisualsSliders.forEach(slider => {
+                slider.addEventListener('mousedown', handleSliderScrubStart);
+                slider.addEventListener('touchstart', handleSliderScrubStart, { passive: true });
+            });
+
+            const endDrag = () => {
+                setTimeout(() => { isDraggingSlider = false; }, 50);
+                handleSliderScrubEnd();
+            };
+
+            window.addEventListener('mouseup', endDrag);
+            window.addEventListener('touchend', endDrag);
+
+            window.addEventListener('click', (e) => {
+                if (isDraggingSlider) return;
+
+                if (videoVolumeControls.classList.contains('open')) videoVolumeControls.classList.remove('open');
+                if (shortcutsDropdown.classList.contains('visible')) shortcutsDropdown.classList.remove('visible');
+                if (visualsDropdown.classList.contains('visible')) visualsDropdown.classList.remove('visible');
+            });
+
+            const canvasResizeObserver = new ResizeObserver(resizeCanvas);
+            canvasResizeObserver.observe(canvasPanel);
         };
 
         updateControlsState();
+        updateVisualsUI();
         setupEventListeners();
+        startAnimationLoop();
     })();
 </script>
 </body>
