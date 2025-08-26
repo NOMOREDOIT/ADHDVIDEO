@@ -741,6 +741,7 @@
         const bgBrightnessSlider = document.getElementById('bg-brightness');
         const bgSaturationSlider = document.getElementById('bg-saturation');
         let finalProjectUrl = null;
+        let finalProjectFilename = null;
 
 
         // === State Variables ===
@@ -799,6 +800,7 @@
                 URL.revokeObjectURL(finalProjectUrl);
                 finalProjectUrl = null;
             }
+            finalProjectFilename = null;
             previewBtn.classList.add('hidden');
             movieDownloadBtn.classList.add('hidden');
             postGenerationActions.classList.add('hidden');
@@ -957,7 +959,7 @@
                 aspectRatio = 16 / 9;
             }
 
-            const qualityWidth = 1280;
+            const qualityWidth = 1920;
             movieCanvas.width = controlsOverlayCanvas.width = qualityWidth;
             movieCanvas.height = controlsOverlayCanvas.height = qualityWidth / aspectRatio;
 
@@ -1399,12 +1401,19 @@
                         canvasStream.addTrack(audioStream.getAudioTracks()[0]);
                     }
                 }
+                
+                const hasAudioTrack = canvasStream.getAudioTracks().length > 0;
+                let mimeType;
+                if (MediaRecorder.isTypeSupported('video/mp4')) {
+                    mimeType = 'video/mp4';
+                } else {
+                    mimeType = hasAudioTrack ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+                }
 
-                const mimeType = canvasStream.getAudioTracks().length > 0 ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
                 mediaRecorder = new MediaRecorder(canvasStream, { mimeType });
                 mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
                 mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const blob = new Blob(recordedChunks, { type: mimeType });
                     layerRecordingUrl = URL.createObjectURL(blob);
                     commitLayerBtn.classList.remove('hidden');
                     commitLayerBtn.classList.add('success');
@@ -1496,15 +1505,28 @@
 
             const finalStream = recordingCanvas.captureStream(30);
             const hasAudio = scenes.some(s => s.backgroundType === 'video');
-            const mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+
+            let mimeType;
+            if (MediaRecorder.isTypeSupported('video/mp4')) {
+                mimeType = 'video/mp4';
+                toast('Generating MP4 file...', null);
+            } else {
+                mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+                toast('MP4 not supported, generating WebM file...', null);
+            }
+
             const finalRecorder = new MediaRecorder(finalStream, { mimeType });
             
             finalRecorder.ondataavailable = e => { if (e.data.size > 0) finalChunks.push(e.data); };
 
             const generationPromise = new Promise(resolve => {
                 finalRecorder.onstop = () => {
-                    const finalBlob = new Blob(finalChunks, { type: 'video/webm' });
+                    const finalBlob = new Blob(finalChunks, { type: mimeType });
                     finalProjectUrl = URL.createObjectURL(finalBlob);
+                    
+                    const extension = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
+                    finalProjectFilename = `movie-maker-masterpiece.${extension}`;
+
                     generationOverlay.classList.remove('visible');
                     toast('Project generation complete! You can now preview or download.', 4000);
                     previewBtn.classList.remove('hidden');
@@ -1823,8 +1845,12 @@
             generateProjectBtn.addEventListener('click', generateFinalMovie);
             movieDownloadBtn.addEventListener('click', () => {
                 if (finalProjectUrl) {
-                    const link = document.createElement('a'); link.href = finalProjectUrl; link.download = 'movie-maker-masterpiece.webm';
-                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                    const link = document.createElement('a');
+                    link.href = finalProjectUrl;
+                    link.download = finalProjectFilename || 'movie-maker-masterpiece.mp4';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 } else toast('No final project available.', 2000);
             });
 
