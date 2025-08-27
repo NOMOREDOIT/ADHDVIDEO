@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Meme Maker Studio</title>
     <link rel="icon" type="image/png" href="favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -46,7 +45,7 @@
     .controls-fake .btn-square:first-child { background-color: var(--success-color); }
     .controls-fake .btn-square:last-child { background-color: var(--danger-color); }
 
-    #shortcuts-btn, #visuals-btn {
+    #shortcuts-btn, #visuals-btn, #audio-btn, #text-btn {
         font-family: inherit;
         font-size: 16px;
         background: var(--light);
@@ -92,12 +91,11 @@
         background: var(--bg);
      }
 
-    /* Style for the visuals dropdown panel */
-    #visuals-dropdown {
+    /* Style for dropdown panels */
+    #visuals-dropdown, #audio-dropdown, #text-dropdown {
         display: none;
         position: absolute;
         top: 28px;
-        right: 102px; /* Adjust as needed based on your other buttons */
         background: rgba(var(--light-rgb), 0.3);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
@@ -108,14 +106,21 @@
         width: 250px;
         transition: background .2s, backdrop-filter .2s, box-shadow .2s, border-color .2s;
     }
+    /* Adjusted positions for new button */
+    #visuals-dropdown { right: 320px; }
+    #text-dropdown { right: 216px; }
+    #audio-dropdown { right: 102px; }
 
-    #visuals-dropdown.visible { display: block; }
-    #visuals-dropdown h5, #visuals-dropdown h6, #visuals-dropdown .slider-container {
+
+    #visuals-dropdown.visible, #audio-dropdown.visible, #text-dropdown.visible { display: block; }
+    #visuals-dropdown h5, #visuals-dropdown h6, #visuals-dropdown .slider-container,
+    #audio-dropdown h5, #audio-dropdown p, #audio-dropdown .action-buttons,
+    #text-dropdown h5, #text-dropdown h6, #text-dropdown .slider-container {
         transition: opacity .2s;
     }
-    #visuals-dropdown h5 { margin: 0 0 .5rem 0; font-size: 1.2rem; text-align: center; }
-    #visuals-dropdown h6 { font-size: 1.1rem; font-weight: bold; text-align: left; margin-top: .5rem; margin-bottom: .5rem; border-bottom: 2px solid var(--mid); padding-bottom: 2px; }
-    #visuals-dropdown label { display: block; margin-top: .5rem; font-size: .9rem; }
+    #visuals-dropdown h5, #audio-dropdown h5, #text-dropdown h5 { margin: 0 0 .5rem 0; font-size: 1.2rem; text-align: center; }
+    #visuals-dropdown h6, #text-dropdown h6 { font-size: 1.1rem; font-weight: bold; text-align: left; margin-top: .5rem; margin-bottom: .5rem; border-bottom: 2px solid var(--mid); padding-bottom: 2px; }
+    #visuals-dropdown label, #text-dropdown label { display: block; margin-top: .5rem; font-size: .9rem; }
 
     /* === SCRUBBING BEHAVIOR === */
     #visuals-dropdown.is-scrubbing {
@@ -137,7 +142,8 @@
     }
     /* === END SCRUBBING === */
 
-    #visuals-dropdown input[type="range"] {
+    #visuals-dropdown input[type="range"],
+    #text-dropdown input[type="range"] {
         width: 100%;
         -webkit-appearance: none;
         appearance: none;
@@ -145,19 +151,30 @@
         background: var(--ink);
         outline: none;
     }
-    #visuals-dropdown input[type="range"]::-webkit-slider-thumb {
+    #visuals-dropdown input[type="range"]::-webkit-slider-thumb,
+    #text-dropdown input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none; appearance: none;
         width: 16px; height: 16px;
         background: var(--ink);
         border-radius: 50%; cursor: pointer;
     }
-    #visuals-dropdown input[type="range"]::-moz-range-thumb {
+    #visuals-dropdown input[type="range"]::-moz-range-thumb,
+    #text-dropdown input[type="range"]::-moz-range-thumb {
         width: 16px; height: 16px;
         background: var(--ink);
         border-radius: 50%; cursor: pointer; border: none;
     }
 
-    #asset-visuals-controls.disabled { opacity: 0.5; pointer-events: none; }
+    #asset-visuals-controls.disabled, #text-visuals-controls.disabled, #audio-controls.disabled { opacity: 0.5; pointer-events: none; }
+    #audio-file-name {
+        font-size: 0.9rem;
+        text-align: center;
+        word-break: break-all;
+        padding: 0.5rem;
+        background: var(--bg);
+        border: 2px inset var(--mid);
+        min-height: 40px;
+    }
 
 
     .mg-btn {
@@ -254,7 +271,7 @@
         transition: all .2s;
     }
     .palette-slot.empty:hover { background-color: #e0e0e0; color: var(--ink); }
-    .layer-thumb img {
+    .layer-thumb img, .layer-thumb video {
         width: 100%; height: 100%; object-fit: cover; pointer-events: none;
     }
     .layer-thumb.active { border: 2px solid var(--action-color); transform: scale(1.05); box-shadow: none; }
@@ -485,57 +502,6 @@
     #scene-actions-container #mg-record-layer-btn {
         font-size: 20px;
     }
-
-
-    @media (max-width: 768px) {
-        body {
-            padding: 0;
-            height: calc(var(--vh, 1vh) * 100);
-            overflow: hidden;
-        }
-        .window {
-            height: 100%;
-            max-height: 100%;
-            box-shadow: none;
-            border: none;
-        }
-        #studio-container {
-            grid-template-columns: 1fr;
-            grid-template-rows: minmax(200px, 45%) 1fr;
-            padding: 0.5rem;
-            gap: 0.5rem;
-            height: 100%;
-        }
-        #controls-panel {
-            min-height: 0;
-        }
-        #canvas-panel {
-            min-height: 0;
-        }
-        .mg-btn {
-            padding: 12px 16px;
-            font-size: 20px;
-        }
-        legend, #layer-instructions, .placeholder-text, #recording-status {
-            font-size: 1.1rem;
-        }
-        .titlebar {
-            font-size: 18px;
-        }
-        .scene-thumb {
-            width: 90px;
-            height: 62px;
-            font-size: 1.8rem;
-        }
-        .palette-slot, .layer-thumb {
-            width: 70px;
-            height: 70px;
-        }
-        #mg-asset-picker-grid-wrapper {
-            width: 95vw;
-            max-height: 90vh;
-        }
-    }
 </style>
 </head>
 <body>
@@ -546,7 +512,7 @@
         <button id="visuals-btn">Edit Visuals</button>
         <div id="visuals-dropdown">
             <h5>Visuals Editor</h5>
-            <div id="asset-visuals-controls">
+            <div id="asset-visuals-controls" class="disabled">
                 <h6>Selected Asset</h6>
                 <div class="slider-container">
                     <label for="asset-opacity">Opacity</label>
@@ -570,6 +536,60 @@
                 <div class="slider-container">
                     <label for="bg-saturation">Saturation</label>
                     <input type="range" id="bg-saturation" min="0" max="2" step="0.01" value="1">
+                </div>
+            </div>
+        </div>
+        <button id="text-btn">+ Add Text Layer</button> <!-- Text content will be dynamic -->
+        <div id="text-dropdown">
+            <h5>Text Editor</h5>
+            <div id="text-visuals-controls" class="disabled">
+                <div class="slider-container">
+                    <label for="text-content">Text Content</label>
+                    <input type="text" id="text-content" value="New Text" style="width: 100%; font-family: inherit; font-size: 1rem; padding: 4px; border: 2px solid var(--ink); background: var(--bg);">
+                </div>
+                <div class="slider-container">
+                    <label for="text-font">Font</label>
+                    <select id="text-font" style="width: 100%; font-family: inherit; font-size: 1rem; padding: 4px; border: 2px solid var(--ink); background: var(--bg);">
+                        <option value="'VT323', monospace">VT323</option>
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="Verdana, sans-serif">Verdana</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="Times New Roman, serif">Times New Roman</option>
+                        <option value="Courier New, monospace">Courier New</option>
+                        <option value="Impact, fantasy">Impact</option>
+                        <option value="Comic Sans MS, cursive">Comic Sans MS</option>
+                    </select>
+                </div>
+                <div class="slider-container">
+                    <label for="text-size">Size</label>
+                    <input type="range" id="text-size" min="20" max="200" step="1" value="60">
+                </div>
+                <div class="slider-container">
+                    <label for="text-color">Color</label>
+                    <input type="color" id="text-color" value="#FFFFFF" style="width: 100%; border: none; padding: 0;">
+                </div>
+                <div class="slider-container">
+                    <label for="text-opacity">Opacity</label>
+                    <input type="range" id="text-opacity" min="0" max="1" step="0.01" value="1">
+                </div>
+                <div class="slider-container">
+                    <label for="text-brightness">Brightness</label>
+                    <input type="range" id="text-brightness" min="0" max="2" step="0.01" value="1">
+                </div>
+                <div class="slider-container">
+                    <label for="text-saturation">Saturation</label>
+                    <input type="range" id="text-saturation" min="0" max="2" step="0.01" value="1">
+                </div>
+            </div>
+        </div>
+        <button id="audio-btn">Scene Audio</button>
+        <div id="audio-dropdown">
+            <h5>Scene Audio</h5>
+            <div id="audio-controls">
+                <p id="audio-file-name">No audio added.</p>
+                <div class="action-buttons">
+                    <label class="mg-btn">Upload<input type="file" id="scene-audio-input" accept="audio/*" style="display:none;"></label>
+                    <button class="mg-btn" id="remove-audio-btn">Remove</button>
                 </div>
             </div>
         </div>
@@ -598,6 +618,7 @@
                 Create a scene to begin.
             </p>
             <div id="mg-asset-palette"></div>
+            <!-- The Add Text Layer button was here, now integrated into #text-btn -->
         </fieldset>
         
         <fieldset>
@@ -648,7 +669,8 @@
         <h4>Click an asset to add it to the canvas</h4>
         <div id="mg-asset-picker-grid"></div>
         <div id="mg-asset-picker-actions">
-            <label class="mg-btn">Upload Custom<input type="file" id="mg-asset-picker-file" accept="image/png" style="display:none;"/></label>
+            <label class="mg-btn">Upload Custom<input type="file" id="mg-asset-picker-file" accept="image/png,video/mp4,video/quicktime,video/*" style="display:none;"/>
+
         </div>
     </div>
 </div>
@@ -677,14 +699,7 @@
 <div id="mg-toast"></div>
 <div id="mg-countdown-overlay" class="hidden"><span id="mg-countdown-span">3</span></div>
 <script>
-    (function () {
-        // === MOBILE VIEWPORT FIX ===
-        const setViewportHeight = () => {
-            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-        };
-        window.addEventListener('resize', setViewportHeight);
-        setViewportHeight(); // Initial call
-
+     (function () {
         // === DOM Elements ===
         const addSceneBtn = document.getElementById('add-scene-btn');
         const assetLibraryOverlay = document.getElementById('mg-asset-library-overlay');
@@ -740,18 +755,35 @@
         const assetSaturationSlider = document.getElementById('asset-saturation');
         const bgBrightnessSlider = document.getElementById('bg-brightness');
         const bgSaturationSlider = document.getElementById('bg-saturation');
+        const audioBtn = document.getElementById('audio-btn');
+        const audioDropdown = document.getElementById('audio-dropdown');
+        const audioControls = document.getElementById('audio-controls');
+        const sceneAudioInput = document.getElementById('scene-audio-input');
+        const removeAudioBtn = document.getElementById('remove-audio-btn');
+        const audioFileName = document.getElementById('audio-file-name');
         let finalProjectUrl = null;
-        let finalProjectFilename = null;
+
+        // New Text Elements
+        const textBtn = document.getElementById('text-btn'); // This is now the main button for text actions
+        const textDropdown = document.getElementById('text-dropdown');
+        const textVisualsControls = document.getElementById('text-visuals-controls');
+        const textContentInput = document.getElementById('text-content');
+        const textFontSelect = document.getElementById('text-font');
+        const textSizeSlider = document.getElementById('text-size');
+        const textColorInput = document.getElementById('text-color');
+        const textOpacitySlider = document.getElementById('text-opacity');
+        const textBrightnessSlider = document.getElementById('text-brightness');
+        const textSaturationSlider = document.getElementById('text-saturation');
 
 
         // === State Variables ===
-        const isTouchDevice = 'ontouchstart' in window;
         const DAMPING_FACTOR = 0.5;
-        const RESIZE_SPEED = 1.546875; // Increased by 65% from 0.9375
+        const RESIZE_SPEED = 1.546875;
         const assetCache = {};
         let scenes = [];
         let activeSceneId = null;
-        let activeMovieLayerId = null;
+        let lastRecordingDurationMs = 0;   // duration of the most recent take
+        let activeMovieLayerId = null; // Still one active layer for controls/interaction
         let movieInteraction = { active: false };
         let mediaRecorder = null;
         let recordedChunks = [];
@@ -763,6 +795,8 @@
         let recordingStartTime = 0;
         let resizeState = { isResizing: false, direction: 0, animationFrameId: null };
         let isDraggingSlider = false;
+        let masterWidth = 1280; // Default master dimensions for recording
+        let masterHeight = 720; // Will be updated based on background aspect ratio
 
         const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
         const getActiveLayer = () => getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
@@ -776,6 +810,34 @@
                 toastTimeoutId = setTimeout(() => { t.style.opacity = 0; t.style.visibility = 'hidden'; }, duration);
             }
         };
+
+        // --- Duration helpers ---
+        function getMediaDurationMs(el, type) {
+          if (type === 'video' && el && !Number.isNaN(el.duration) && el.duration > 0) {
+            return Math.floor(el.duration * 1000);
+          }
+          // default still-image duration
+          return 3000;
+        }
+
+        // Ensures a scene's duration never shrinks.
+        // Pass any candidate duration (ms); it will only increase the stored duration.
+        function ensureSceneDurationMs(scene, candidateMs) {
+          const cand = Math.max(0, candidateMs || 0);
+          const prev = Math.max(0, scene.durationMs || 0);
+          scene.durationMs = Math.max(prev, cand);
+        }
+
+        // Pads (keeps recording) until `targetMs` since `recordingStartTime`.
+        // Calls the provided `finalize` callback when padding is complete.
+        function padRecordingUntil(targetMs, finalize) {
+          const remaining = targetMs - (Date.now() - recordingStartTime);
+          if (remaining <= 0) { finalize(); return; }
+
+          // Keep the animation loop running; we want to keep drawing the last frame.
+          // We just wait for the remaining time, then finalize.
+          setTimeout(finalize, remaining);
+        }
         
         function resetToReadyState() {
             const currentScene = getCurrentScene();
@@ -800,7 +862,6 @@
                 URL.revokeObjectURL(finalProjectUrl);
                 finalProjectUrl = null;
             }
-            finalProjectFilename = null;
             previewBtn.classList.add('hidden');
             movieDownloadBtn.classList.add('hidden');
             postGenerationActions.classList.add('hidden');
@@ -809,13 +870,27 @@
         function updateControlsState() {
             const hasScenes = scenes.length > 0;
             const currentScene = getCurrentScene();
-            const hasLayers = currentScene && currentScene.layers.length > 0;
+            
+            const hasImageOrVideoLayer = currentScene?.layers.some(l => l.type === 'image' || l.type === 'video');
+            const hasTextLayer = currentScene?.layers.some(l => l.type === 'text');
+            const hasAnyLayers = currentScene && currentScene.layers.length > 0;
 
             addSceneBtn.disabled = isRecording;
             deleteSceneBtn.disabled = !hasScenes || isRecording;
-            recordLayerBtn.disabled = !hasLayers || isRecording;
+            recordLayerBtn.disabled = !hasAnyLayers || isRecording;
             
-            const hasPreviewableContent = currentScene && (currentScene.backgroundType === 'video' || !!layerRecordingUrl);
+            // Update #text-btn state
+            textBtn.disabled = !hasScenes || isRecording;
+            if (hasTextLayer) {
+                textBtn.textContent = "Edit Text";
+            } else {
+                textBtn.textContent = "+ Add Text Layer";
+            }
+            
+            // Disable 'Add Asset' (palette slot) if an image/video layer exists
+            
+            // hasPreviewableContent logic from the fix
+            const hasPreviewableContent = currentScene && (currentScene.backgroundType === 'video' || !!layerRecordingUrl || (currentScene.durationMs && currentScene.durationMs > 0));
             previewSceneBtn.disabled = !hasPreviewableContent || isRecording;
             
             updateProjectControlsState();
@@ -826,67 +901,91 @@
             if (!file) return;
             const fileURL = (file instanceof Blob) ? URL.createObjectURL(file) : file;
 
-            const handleNewScene = (element, type, thumb) => {
-                let sceneToUpdate;
-                if (isFromLayerCommit) {
-                    sceneToUpdate = getCurrentScene();
-                    if (sceneToUpdate) {
-                        sceneToUpdate.backgroundElement = element;
-                        sceneToUpdate.backgroundType = type;
-                        sceneToUpdate.thumbnail = thumb;
-                        sceneToUpdate.layers = [];
-                        sceneToUpdate.backgroundHistory.push(element);
-                        toast('Layer committed! Add another asset to continue layering.', 4000);
-                    }
-                } else {
-                    sceneToUpdate = { 
-                        id: Date.now(), 
-                        backgroundElement: element, backgroundType: type, thumbnail: thumb, 
-                        layers: [],
-                        originalBackgroundElement: element,
-                        originalBackgroundType: type,
-                        originalThumbnail: thumb,
-                        committedLayerSrcs: [],
-                        backgroundHistory: [element],
-                        bgBrightness: 1,
-                        bgSaturation: 1
-                    };
-                    scenes.push(sceneToUpdate);
-                    if (mode === 'initial') {
-                        canvasPlaceholder.classList.add('hidden');
-                        toast('Background set! Add an asset to start.', 3000);
-                    }
+            // Replace the handleNewScene’s inner handleNewScene with this version (only this block):
+            const handleNewScene = (element, type, thumb, durMs) => {
+              let sceneToUpdate;
+              if (isFromLayerCommit) {
+                sceneToUpdate = getCurrentScene();
+                if (sceneToUpdate) {
+                  // Clear active layers as they are now "baked" into the new background
+                  sceneToUpdate.layers = [];
+                  activeMovieLayerId = null;
+
+                  sceneToUpdate.backgroundElement = element;
+                  sceneToUpdate.backgroundType = type;
+                  sceneToUpdate.thumbnail = thumb;
+                  sceneToUpdate.backgroundHistory.push(element);
+
+                  // IMPORTANT: never shrink duration - Use the helper everywhere you currently assign scene.durationMs
+                  const newDur = durMs ?? getMediaDurationMs(element, type);
+                  ensureSceneDurationMs(sceneToUpdate, newDur);
+
+                  toast('Layer committed! Add another asset to continue layering.', 4000);
                 }
-                
-                requestAnimationFrame(() => {
-                    switchScene(sceneToUpdate.id);
-                    updateControlsState();
-                });
+              } else {
+                const initialDur = durMs ?? getMediaDurationMs(element, type);
+                sceneToUpdate = {
+                  id: Date.now(),
+                  backgroundElement: element,
+                  backgroundType: type,
+                  thumbnail: thumb,
+                  layers: [],
+                  originalBackgroundElement: element,
+                  originalBackgroundType: type,
+                  originalThumbnail: thumb,
+                  committedLayerSrcs: [],
+                  backgroundHistory: [element],
+                  bgBrightness: 1,
+                  bgSaturation: 1,
+                  audioElement: null,
+                  audioName: null,
+                  // NEW: persistent scene duration (never shrinks)
+                  durationMs: 0, // temp; set via helper just below
+                };
+                scenes.push(sceneToUpdate);
+                // Immediately after pushing the scene to scenes (right after the object literal):
+                ensureSceneDurationMs(sceneToUpdate, initialDur);
+
+                if (mode === 'initial') {
+                  canvasPlaceholder.classList.add('hidden');
+                  toast('Background set! Add an asset to start.', 3000);
+                }
+              }
+
+              requestAnimationFrame(() => {
+                switchScene(sceneToUpdate.id);
+                updateControlsState();
+              });
             };
 
             if (file.type.startsWith('image/')) {
                 const img = new Image();
-                img.onload = () => handleNewScene(img, 'image', img.src);
+                // In the image branch of handleBackgroundUpload, pass a duration:
+                img.onload = () => handleNewScene(img, 'image', img.src, 3000);
                 img.onerror = () => toast('Could not load background image.');
                 img.src = fileURL;
             } else if (file.type.startsWith('video/')) {
                 const video = document.createElement('video');
                 video.loop = !isFromLayerCommit;
                 video.autoplay = false; video.muted = true; video.playsinline = true;
-                
+
+                // In the video branch of handleBackgroundUpload, compute and pass the duration:
+                let durMs = 0;
+
                 const onSeeked = () => {
-                     video.removeEventListener('seeked', onSeeked, false);
-                     const thumbCanvas = document.createElement('canvas');
-                     thumbCanvas.width = video.videoWidth;
-                     thumbCanvas.height = video.videoHeight;
-                     thumbCanvas.getContext('2d').drawImage(video, 0, 0);
-                     handleNewScene(video, 'video', thumbCanvas.toDataURL('image/jpeg'));
-                     video.currentTime = 0;
-                     video.muted = false;
-                     video.volume = videoVolumeSlider.value;
-                }
+                    video.removeEventListener('seeked', onSeeked, false);
+                    const thumbCanvas = document.createElement('canvas');
+                    thumbCanvas.width = video.videoWidth;
+                    thumbCanvas.height = video.videoHeight;
+                    thumbCanvas.getContext('2d').drawImage(video, 0, 0);
+                    handleNewScene(video, 'video', thumbCanvas.toDataURL('image/jpeg'), durMs);
+                    video.currentTime = 0;
+                    video.muted = false;
+                    video.volume = videoVolumeSlider.value;
+                };
                 const onLoaded = () => {
                     video.removeEventListener('loadedmetadata', onLoaded, false);
+                    durMs = getMediaDurationMs(video, 'video');
                     video.currentTime = 0.1; 
                 };
 
@@ -948,7 +1047,7 @@
             stopAnimationLoop();
             activeSceneId = sceneId;
             const currentScene = getCurrentScene(); if (!currentScene) return;
-            activeMovieLayerId = null;
+            activeMovieLayerId = null; // Reset active layer on scene switch
 
             const bg = currentScene.backgroundElement;
             const w = bg.naturalWidth || bg.videoWidth;
@@ -959,9 +1058,14 @@
                 aspectRatio = 16 / 9;
             }
 
-            const qualityWidth = 1920;
+            const qualityWidth = 1280;
             movieCanvas.width = controlsOverlayCanvas.width = qualityWidth;
             movieCanvas.height = controlsOverlayCanvas.height = qualityWidth / aspectRatio;
+            
+            // Set master dimensions for recording based on the current scene's background
+            masterWidth = movieCanvas.width;
+            masterHeight = movieCanvas.height;
+
 
             resizeCanvas();
 
@@ -978,7 +1082,8 @@
             drawControlsOverlay();
             resetToReadyState();
             updateControlsState();
-            updateVisualsUI();
+            updateEditPanelsUI(); // Update all panel UIs
+            updateAudioUI();
             startAnimationLoop();
         }
 
@@ -1005,9 +1110,11 @@
             document.getElementById('mg-asset-picker-grid').innerHTML = '';
             const addAssetFromLibrary = (src) => {
                 const currentScene = getCurrentScene();
-                if(!currentScene) { toast('Please add a background to the scene first.'); return; }
-                if(currentScene.layers.length >= 1) { toast('Only one asset can be animated at a time in this mode.'); return; }
-                addMovieLayer(src);
+                if(!currentScene) { toast('Please add a background to the scene first.', 2000); return; }
+                const hasImageOrVideoLayer = currentScene.layers.some(l => l.type === 'image' || l.type === 'video');
+                if(hasImageOrVideoLayer) { toast('Only one image or video asset can be animated at a time. Delete the existing one first.', 4000); return; }
+
+                addMovieLayer(src, { type: 'image' });
                 closeAssetLibrary();
             };
             Array.from({length: 107}, (_, i) => i + 1).forEach(i => {
@@ -1036,15 +1143,16 @@
                 return;
             }
             
-            const hasActiveLayer = currentScene.layers.length > 0;
+            const hasImageOrVideoLayer = currentScene.layers.some(l => l.type === 'image' || l.type === 'video');
+            const hasTextLayer = currentScene.layers.some(l => l.type === 'text');
             const hasCommittedLayers = currentScene.committedLayerSrcs.length > 0;
 
-            if (hasActiveLayer) {
-                layerInstructions.textContent = "Click 'Record Layer' to animate it, then 'Stop'.";
+            if (hasImageOrVideoLayer || hasTextLayer) {
+                layerInstructions.textContent = "Click 'Record Layer' to animate the active asset(s), then 'Stop'.";
             } else if (hasCommittedLayers) {
-                 layerInstructions.textContent = "Add another asset to continue layering on this scene.";
+                 layerInstructions.textContent = "Add another asset (image, video, or text) to continue layering on this scene.";
             } else {
-                 layerInstructions.textContent = "Add one asset, click 'Record Layer' to animate it, then 'Stop'. Then use the 'Commit Layer' button to continue animating your scene.";
+                 layerInstructions.textContent = "Add an asset (image, video, or text), click 'Record Layer' to animate it, then 'Stop'. Then use the 'Commit Layer' button to continue animating your scene.";
             }
         }
 
@@ -1053,38 +1161,67 @@
             updateLayerInstructions();
 
             const currentScene = getCurrentScene();
-            if (!currentScene) return;
+            if (!currentScene) {
+                // The textBtn is now handled in updateControlsState()
+                return;
+            };
+
+            const hasImageOrVideoLayer = currentScene.layers.some(l => l.type === 'image' || l.type === 'video');
+            // The textBtn is now handled in updateControlsState()
+
 
             currentScene.committedLayerSrcs.forEach((src, index) => {
                 const thumb = document.createElement('div');
                 thumb.className = 'layer-thumb locked';
                 thumb.title = "This layer is committed. Click X to revert.";
+                // Committed layers are always image snapshots, so we can use <img>
                 thumb.innerHTML = `<img src="${src}"><div class="layer-controls"><div class="layer-btn delete" title="Delete this committed layer and subsequent layers">x</div></div>`;
                 thumb.querySelector('.delete').onclick = (e) => { e.stopPropagation(); deleteCommittedLayer(index); };
                 assetPalette.appendChild(thumb);
             });
 
-            const activeLayer = currentScene.layers[0];
-            if (activeLayer) {
+            // Display active layers (image/video and text)
+            currentScene.layers.forEach(activeLayer => {
                  const thumb = document.createElement('div');
                  thumb.className = 'layer-thumb';
                  thumb.classList.toggle('active', activeLayer.id === activeMovieLayerId);
                  thumb.dataset.layerId = activeLayer.id;
                  thumb.title = "Click to select";
-                 thumb.innerHTML = `<img src="${activeLayer.src}"><div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
+                 
+                 let thumbContent;
+                 if (activeLayer.type === 'video') {
+                     thumbContent = `<video src="${activeLayer.src}" muted loop autoplay playsinline></video>`;
+                 } else if (activeLayer.type === 'image') {
+                     thumbContent = `<img src="${activeLayer.src}">`;
+                 } else if (activeLayer.type === 'text') {
+                     // For text thumbnail, render text directly with CSS for quick preview
+                     thumbContent = `<span style="font-family: ${activeLayer.font}; font-size: 1.2rem; color: ${activeLayer.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 2px;">${activeLayer.text}</span>`;
+                     thumb.style.backgroundColor = 'var(--ink)'; // Make text visible against light palette
+                     thumb.style.display = 'flex';
+                     thumb.style.alignItems = 'center';
+                     thumb.style.justifyContent = 'center';
+                 }
+                 thumb.innerHTML = `${thumbContent}<div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
+
                  thumb.addEventListener('click', (e) => {
                      if (e.target.classList.contains('layer-btn')) return;
-                     activeMovieLayerId = activeLayer.id;
-                     renderLayerPalette();
-                     drawControlsOverlay();
+                     if (activeMovieLayerId !== activeLayer.id) {
+                        activeMovieLayerId = activeLayer.id;
+                        renderLayerPalette(); // Rerender to show new active state
+                        drawControlsOverlay(); // Redraw controls for new active layer
+                        updateEditPanelsUI(); // Update UI panels for new active layer
+                     }
                  });
                  thumb.querySelector('.delete').onclick = (e) => { e.stopPropagation(); deleteMovieLayer(activeLayer.id); };
                  assetPalette.appendChild(thumb);
-            } else if(currentScene.committedLayerSrcs.length < 8) {
+            });
+
+            // Add empty slot for new image/video asset
+            if(!hasImageOrVideoLayer && currentScene.committedLayerSrcs.length < 8) { // Max 8 committed layers shown
                 const emptySlot = document.createElement('div');
                 emptySlot.className = 'palette-slot empty';
                 emptySlot.innerHTML = '+';
-                emptySlot.title = "Add a new asset to animate";
+                emptySlot.title = "Add a new image or video asset";
                 emptySlot.onclick = openAssetLibrary;
                 assetPalette.appendChild(emptySlot);
             }
@@ -1094,6 +1231,11 @@
             const scene = getCurrentScene();
             if (!scene) return;
 
+            // Revoke the URL if it's an object URL (from a recorded layer commit)
+            if (scene.committedLayerSrcs[indexToDelete].startsWith('blob:')) {
+                 URL.revokeObjectURL(scene.committedLayerSrcs[indexToDelete]);
+            }
+            
             const backgroundToRestore = scene.backgroundHistory[indexToDelete];
 
             scene.backgroundElement = backgroundToRestore;
@@ -1102,31 +1244,47 @@
             scene.backgroundHistory.splice(indexToDelete + 1);
             scene.committedLayerSrcs.splice(indexToDelete);
 
-            const thumbCanvas = document.createElement('canvas');
-            thumbCanvas.width = backgroundToRestore.naturalWidth || backgroundToRestore.videoWidth;
-            thumbCanvas.height = backgroundToRestore.naturalHeight || backgroundToRestore.videoHeight;
-            thumbCanvas.getContext('2d').drawImage(backgroundToRestore, 0, 0);
-            scene.thumbnail = thumbCanvas.toDataURL('image/jpeg');
+            // When reverting a committed layer (deleteCommittedLayer)
+            ensureSceneDurationMs(scene, getMediaDurationMs(scene.backgroundElement, scene.backgroundType));
 
-            switchScene(scene.id);
-            toast('Layer reverted.', 2000);
+
+            let newThumbnail;
+            if (backgroundToRestore.tagName === 'VIDEO') {
+                const tempVideo = backgroundToRestore.cloneNode(true); // Clone to avoid interfering with current playback
+                tempVideo.muted = true;
+                tempVideo.autoplay = false;
+                tempVideo.playsinline = true;
+                const captureThumbnail = () => {
+                    const thumbCanvas = document.createElement('canvas');
+                    thumbCanvas.width = tempVideo.videoWidth;
+                    thumbCanvas.height = tempVideo.videoHeight;
+                    thumbCanvas.getContext('2d').drawImage(tempVideo, 0, 0);
+                    newThumbnail = thumbCanvas.toDataURL('image/jpeg');
+                    tempVideo.removeEventListener('seeked', captureThumbnail);
+                    tempVideo.pause();
+                    scene.thumbnail = newThumbnail; // Update scene thumbnail
+                    switchScene(scene.id);
+                    toast('Layer reverted.', 2000);
+                };
+                tempVideo.addEventListener('seeked', captureThumbnail);
+                tempVideo.currentTime = 0.1; // Seek to capture frame
+                tempVideo.load(); // Ensure metadata is loaded if not already
+            } else { // Image or canvas-generated image (e.g. text snapshot as part of history)
+                if (backgroundToRestore.tagName === 'IMG') {
+                    newThumbnail = backgroundToRestore.src;
+                } else { // Handle data URLs directly
+                    newThumbnail = backgroundToRestore.src || backgroundToRestore.toDataURL?.('image/png') || '';
+                }
+                scene.thumbnail = newThumbnail;
+                switchScene(scene.id);
+                toast('Layer reverted.', 2000);
+            }
         }
 
-        function updateVisualsUI() {
-            const currentScene = getCurrentScene();
+        function updateAssetVisualsUI() {
             const activeLayer = getActiveLayer();
 
-            if (!currentScene) {
-                assetVisualsControls.classList.add('disabled');
-                bgBrightnessSlider.value = 1;
-                bgSaturationSlider.value = 1;
-                assetOpacitySlider.value = 1;
-                assetBrightnessSlider.value = 1;
-                assetSaturationSlider.value = 1;
-                return;
-            };
-
-            if (activeLayer) {
+            if (activeLayer && (activeLayer.type === 'image' || activeLayer.type === 'video')) {
                 assetVisualsControls.classList.remove('disabled');
                 assetOpacitySlider.value = activeLayer.opacity;
                 assetBrightnessSlider.value = activeLayer.brightness;
@@ -1137,55 +1295,217 @@
                 assetBrightnessSlider.value = 1;
                 assetSaturationSlider.value = 1;
             }
-
-            bgBrightnessSlider.value = currentScene.bgBrightness;
-            bgSaturationSlider.value = currentScene.bgSaturation;
         }
 
+        function updateTextVisualsUI() {
+            const activeLayer = getActiveLayer();
+
+            if (activeLayer && activeLayer.type === 'text') {
+                textVisualsControls.classList.remove('disabled');
+                textContentInput.value = activeLayer.text;
+                textFontSelect.value = activeLayer.font;
+                textSizeSlider.value = activeLayer.fontSize;
+                textColorInput.value = activeLayer.color;
+                textOpacitySlider.value = activeLayer.opacity;
+                textBrightnessSlider.value = activeLayer.brightness;
+                textSaturationSlider.value = activeLayer.saturation;
+            } else {
+                textVisualsControls.classList.add('disabled');
+                // Reset text sliders visually when no text layer is active
+                textContentInput.value = "New Text";
+                textFontSelect.value = "Arial, sans-serif";
+                textSizeSlider.value = 60;
+                textColorInput.value = "#FFFFFF";
+                textOpacitySlider.value = 1;
+                textBrightnessSlider.value = 1;
+                textSaturationSlider.value = 1;
+            }
+        }
+
+        function updateBackgroundVisualsUI() {
+            const currentScene = getCurrentScene();
+            bgBrightnessSlider.value = currentScene ? currentScene.bgBrightness : 1;
+            bgSaturationSlider.value = currentScene ? currentScene.bgSaturation : 1;
+        }
+
+        // Orchestrates updating all visual-related UIs
+        function updateEditPanelsUI() {
+            updateAssetVisualsUI();
+            updateTextVisualsUI();
+            updateBackgroundVisualsUI();
+        }
+
+        function updateAudioUI() {
+            const currentScene = getCurrentScene();
+            if (!currentScene) {
+                audioControls.classList.add('disabled');
+                audioFileName.textContent = "No active scene.";
+                removeAudioBtn.disabled = true;
+            } else {
+                audioControls.classList.remove('disabled');
+                if (currentScene.audioName) {
+                    audioFileName.textContent = currentScene.audioName;
+                    removeAudioBtn.disabled = false;
+                } else {
+                    audioFileName.textContent = "No audio added.";
+                    removeAudioBtn.disabled = true;
+                }
+            }
+        }
 
         function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
-            if (!currentScene) { toast('Add a background first.'); return; }
-            if (currentScene.layers.length >= 1) { toast('Only one asset can be animated at a time.'); return; }
+            if (!currentScene) { toast('Add a background first.', 2000); return; }
 
-            const createLayer = (img) => {
-                const newLayer = { 
-                    id: Date.now() + Math.random(), src, img, 
-                    x: properties.x || movieCanvas.width / 2, 
-                    y: properties.y || movieCanvas.height / 2, 
-                    size: properties.size || movieCanvas.width * 0.25, 
-                    rot: properties.rot || 0, 
+            const assetType = properties.type || 'image';
+
+            const hasImageOrVideoLayer = currentScene.layers.some(l => l.type === 'image' || l.type === 'video');
+            if (hasImageOrVideoLayer) { toast('Only one image or video asset can be animated at a time. Delete the existing one first.', 4000); return; }
+
+
+            const createLayer = (element) => {
+                const scene = getCurrentScene();
+                if (!scene) return;
+
+                // --- Video setup for seamless native loop (no manual seeking) ---
+                if (assetType === 'video') {
+                    // Ensure consistent settings even if element came from cache
+                    element.preload = 'auto';
+                    element.muted = true;
+                    element.playsinline = true;
+                    element.loop = true;
+
+                    // Prime slightly off zero to avoid iOS/WebKit stalls/black at exact 0.0
+                    const prime = () => {
+                        try { element.currentTime = 0.001; } catch {}
+                        element.play().catch(() => {});
+                    };
+
+                    if (element.readyState >= 2) {
+                        prime();
+                    } else {
+                        element.addEventListener('loadeddata', prime, { once: true });
+                    }
+                }
+                // --- end video setup ---
+
+                const newLayer = {
+                    id: Date.now() + Math.random(),
+                    src,
+                    asset: element, // For image/video
+                    type: assetType,
+                    x: properties.x || movieCanvas.width / 2,
+                    y: properties.y || movieCanvas.height / 2,
+                    size: properties.size || movieCanvas.width * 0.25, // For image/video width
+                    rot: properties.rot || 0,
                     flipX: false,
                     opacity: 1,
                     brightness: 1,
-                    saturation: 1
+                    saturation: 1,
                 };
-                currentScene.layers.push(newLayer);
+
+                scene.layers.push(newLayer);
                 activeMovieLayerId = newLayer.id;
+
                 renderLayerPalette();
                 updateControlsState();
-                updateVisualsUI();
+                updateEditPanelsUI();
                 drawMovieFrame();
                 drawControlsOverlay();
                 toast('Asset Added! Ready to record.', 3000);
             };
+
+            // If we already cached this asset, reuse it (and re-prime if video)
             if (assetCache[src]) {
-                createLayer(assetCache[src]);
-            } else {
+                const cached = assetCache[src];
+                if (assetType === 'video') {
+                    // Reapply loop/prime in case this element was paused or at end
+                    cached.preload = 'auto';
+                    cached.muted = true;
+                    cached.playsinline = true;
+                    cached.loop = true;
+                    try { cached.currentTime = 0.001; } catch {}
+                    cached.play().catch(() => {});
+                }
+                createLayer(cached);
+                return;
+            }
+
+            if (assetType === 'image') {
                 const image = new Image();
                 image.onload = () => { assetCache[src] = image; createLayer(image); };
                 image.onerror = () => toast(`Could not load asset: ${src}`);
                 image.src = src;
+            } else if (assetType === 'video') {
+                const video = document.createElement('video');
+                // Do NOT set src first; set attributes first for consistency
+                video.preload = 'auto';
+                video.muted = true;
+                video.playsinline = true;
+                video.loop = true;
+
+                const onLoaded = () => {
+                    assetCache[src] = video;
+                    createLayer(video);
+                };
+                video.addEventListener('loadeddata', onLoaded, { once: true });
+                video.onerror = () => toast(`Could not load video asset: ${src}`);
+                video.src = src;
             }
+        }
+
+        // Function to add text layers
+                // Function to add text layers
+        function addTextLayer() {
+            const currentScene = getCurrentScene();
+            if (!currentScene) { toast('Add a background first.', 2000); return; }
+            
+            const hasTextLayer = currentScene.layers.some(l => l.type === 'text');
+            if (hasTextLayer) { toast('Only one text layer can be animated at a time. Delete the existing one first.', 4000); return; }
+
+            const newTextLayer = {
+                id: Date.now() + Math.random(),
+                type: 'text',
+                text: 'New Text',
+                font: "Arial, sans-serif", // Default font
+                fontSize: 100,             // (or whatever size you want)
+                color: '#FFFFFF', // Default color
+                x: movieCanvas.width / 2,
+                y: movieCanvas.height / 2,
+                rot: 0,
+                flipX: false,
+                opacity: 1,
+                brightness: 1,
+                saturation: 1,
+                width: 0, // Will be dynamically calculated during draw
+                height: 0, // Will be dynamically calculated during draw
+            };
+            currentScene.layers.push(newTextLayer);
+            activeMovieLayerId = newTextLayer.id;
+
+            renderLayerPalette();
+            updateControlsState();
+            updateEditPanelsUI();
+            drawMovieFrame();
+            drawControlsOverlay();
+            toast('Text layer added! Ready to record.', 3000);
+
+            // NEW: Automatically open the text dropdown and focus the input
+            textDropdown.classList.add('visible');
+            textContentInput.focus();
         }
 
         function deleteMovieLayer(layerId) {
             const currentScene = getCurrentScene(); if (!currentScene) return;
+            const layer = currentScene.layers.find(l => l.id === layerId);
+            if (layer && layer.type === 'video') {
+                layer.asset.pause();
+            }
             currentScene.layers = currentScene.layers.filter(l => l.id !== layerId);
             if (activeMovieLayerId === layerId) activeMovieLayerId = null;
             renderLayerPalette();
             updateControlsState();
-            updateVisualsUI();
+            updateEditPanelsUI(); // Update UI for changes
             drawMovieFrame();
             drawControlsOverlay();
         }
@@ -1197,18 +1517,17 @@
                 return;
             }
 
-            if (movieInteraction.active && movieInteraction.type === 'drag' && !movieInteraction.primed) {
-                const l = currentScene.layers.find(layer => layer.id === movieInteraction.layerId);
-                if (l) {
-                    const dx = movieInteraction.targetX - l.x;
-                    const dy = movieInteraction.targetY - l.y;
-                    if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
-                        l.x += dx * DAMPING_FACTOR;
-                        l.y += dy * DAMPING_FACTOR;
-                    } else {
-                        l.x = movieInteraction.targetX;
-                        l.y = movieInteraction.targetY;
-                    }
+            // Damping for active layer drag interaction
+            const activeLayerForInteraction = getActiveLayer();
+            if (movieInteraction.active && movieInteraction.type === 'drag' && !movieInteraction.primed && activeLayerForInteraction) {
+                const dx = movieInteraction.targetX - activeLayerForInteraction.x;
+                const dy = movieInteraction.targetY - activeLayerForInteraction.y;
+                if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+                    activeLayerForInteraction.x += dx * DAMPING_FACTOR;
+                    activeLayerForInteraction.y += dy * DAMPING_FACTOR;
+                } else {
+                    activeLayerForInteraction.x = movieInteraction.targetX;
+                    activeLayerForInteraction.y = movieInteraction.targetY;
                 }
             }
 
@@ -1221,77 +1540,99 @@
             movieCtx.restore();
 
             movieLayers.forEach(l => {
-                if (l.img && l.img.complete) {
-                    const dWidth = l.size; const dHeight = l.size * (l.img.naturalHeight / l.img.naturalWidth);
-                    movieCtx.save();
-                    movieCtx.globalAlpha = l.opacity;
-                    movieCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
-                    movieCtx.translate(l.x, l.y);
-                    movieCtx.rotate(l.rot * Math.PI / 180);
-                    if (l.flipX) {
-                        movieCtx.scale(-1, 1);
-                    }
-                    movieCtx.drawImage(l.img, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
-                    movieCtx.restore();
+                movieCtx.save();
+                movieCtx.globalAlpha = l.opacity;
+                movieCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
+                movieCtx.translate(l.x, l.y);
+                movieCtx.rotate(l.rot * Math.PI / 180);
+                if (l.flipX) {
+                    movieCtx.scale(-1, 1);
                 }
+
+                if (l.type === 'image' || l.type === 'video') {
+                    const isReady = (l.type === 'image' && l.asset.complete) || (l.type === 'video' && l.asset.readyState > 1);
+                    if (l.asset && isReady) {
+                        const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+                        const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+                        if (assetWidth === 0) { movieCtx.restore(); return; }
+
+                        const dWidth = l.size;
+                        const dHeight = l.size * (assetHeight / assetWidth);
+                        movieCtx.drawImage(l.asset, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
+                    }
+                } else if (l.type === 'text') {
+                    movieCtx.font = `${l.fontSize}px ${l.font}`;
+                    movieCtx.fillStyle = l.color;
+                    movieCtx.textAlign = 'center';
+                    movieCtx.textBaseline = 'middle';
+
+                    // Measure text for accurate width/height for interaction bounding box
+                    const textMetrics = movieCtx.measureText(l.text);
+                    l.width = textMetrics.width;
+                    l.height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4; // Add a small padding
+                    
+                    movieCtx.fillText(l.text, 0, 0);
+                }
+                movieCtx.restore();
             });
 
 
             if (isRecording) {
                 const bg = backgroundElement;
-                const bgWidth = bg.naturalWidth || bg.videoWidth;
-                const bgHeight = bg.naturalHeight || bg.videoHeight;
-                if(bgWidth === 0 || bgHeight === 0) return;
+                if(masterWidth === 0 || masterHeight === 0) return; // Ensure master dimensions are set
+
+                recordingCanvas.width = masterWidth;
+                recordingCanvas.height = masterHeight;
 
                 recordingCtx.clearRect(0, 0, recordingCanvas.width, recordingCanvas.height);
                 
-                const bgRatio = bgWidth / bgHeight;
-                const recRatio = recordingCanvas.width / recordingCanvas.height;
-                let drawWidth, drawHeight, drawX, drawY;
-
-                if (bgRatio > recRatio) {
-                    drawHeight = recordingCanvas.height;
-                    drawWidth = drawHeight * bgRatio;
-                    drawX = (recordingCanvas.width - drawWidth) / 2;
-                    drawY = 0;
-                } else {
-                    drawWidth = recordingCanvas.width;
-                    drawHeight = drawWidth / bgRatio;
-                    drawY = (recordingCanvas.height - drawHeight) / 2;
-                    drawX = 0;
-                }
-                
                 recordingCtx.save();
                 recordingCtx.filter = `brightness(${bgBrightness}) saturate(${bgSaturation})`;
-                recordingCtx.drawImage(bg, drawX, drawY, drawWidth, drawHeight);
+                recordingCtx.drawImage(bg, 0, 0, recordingCanvas.width, recordingCanvas.height); // Draw background at master size
                 recordingCtx.restore();
 
-                const previewCanvasWidth = movieCanvas.width;
+                const previewCanvasWidth = movieCanvas.width; // Original movie canvas dimensions (for scaling layers)
                 const previewCanvasHeight = movieCanvas.height;
                 movieLayers.forEach(l => {
-                    if (l.img && l.img.complete) {
-                        const percentX = l.x / previewCanvasWidth;
-                        const percentY = l.y / previewCanvasHeight; 
-                        const percentSize = l.size / previewCanvasWidth;
+                    recordingCtx.save();
+                    recordingCtx.globalAlpha = l.opacity;
+                    recordingCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
+                    
+                    // Scale layer position and size from current canvas to recording canvas
+                    const scaleX = recordingCanvas.width / previewCanvasWidth;
+                    const scaleY = recordingCanvas.height / previewCanvasHeight;
 
-                        const finalX = drawX + (percentX * drawWidth);
-                        const finalY = drawY + (percentY * drawHeight);
-                        const finalSize = percentSize * drawWidth;
+                    const finalX = l.x * scaleX;
+                    const finalY = l.y * scaleY;
 
-                        const dWidth = finalSize;
-                        const dHeight = finalSize * (l.img.naturalHeight / l.img.naturalWidth);
-
-                        recordingCtx.save();
-                        recordingCtx.globalAlpha = l.opacity;
-                        recordingCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
-                        recordingCtx.translate(finalX, finalY);
-                        recordingCtx.rotate(l.rot * Math.PI / 180);
-                        if (l.flipX) {
-                            recordingCtx.scale(-1, 1);
-                        }
-                        recordingCtx.drawImage(l.img, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
-                        recordingCtx.restore();
+                    recordingCtx.translate(finalX, finalY);
+                    recordingCtx.rotate(l.rot * Math.PI / 180);
+                    if (l.flipX) {
+                        recordingCtx.scale(-1, 1);
                     }
+
+                    if (l.type === 'image' || l.type === 'video') {
+                        const isReady = (l.type === 'image' && l.asset.complete) || (l.type === 'video' && l.asset.readyState > 1);
+                        if (l.asset && isReady) {
+                            const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+                            const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+                            if (assetWidth === 0) { recordingCtx.restore(); return; }
+
+                            const scaledSize = l.size * scaleX; // l.size is width
+                            const dWidth = scaledSize;
+                            const dHeight = scaledSize * (assetHeight / assetWidth);
+                            recordingCtx.drawImage(l.asset, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
+                        }
+                    } else if (l.type === 'text') {
+                        // Scale font size for recording canvas
+                        const finalFontSize = l.fontSize * scaleY; // Scale font size based on Y-scale
+                        recordingCtx.font = `${finalFontSize}px ${l.font}`;
+                        recordingCtx.fillStyle = l.color;
+                        recordingCtx.textAlign = 'center';
+                        recordingCtx.textBaseline = 'middle';
+                        recordingCtx.fillText(l.text, 0, 0);
+                    }
+                    recordingCtx.restore();
                 });
             }
         }
@@ -1299,14 +1640,32 @@
 
         function drawControlsOverlay() {
             controlsCtx.clearRect(0, 0, controlsOverlayCanvas.width, controlsOverlayCanvas.height);
-            const currentScene = getCurrentScene();
-            if (!currentScene) return;
-
-            const activeLayer = currentScene.layers.find(l => l.id === activeMovieLayerId);
+            const activeLayer = getActiveLayer();
             if (activeLayer) {
-                const HANDLE_SIZE = isTouchDevice ? 32 : 16;
-                const dWidth = activeLayer.size; const dHeight = activeLayer.size * (activeLayer.img.naturalHeight / activeLayer.img.naturalWidth);
-                const ho = HANDLE_SIZE / 2; const ROTATION_HANDLE_OFFSET = isTouchDevice ? 40 : 30;
+                let dWidth, dHeight;
+
+                if (activeLayer.type === 'image' || activeLayer.type === 'video') {
+                    const assetWidth = activeLayer.type === 'image' ? activeLayer.asset.naturalWidth : activeLayer.asset.videoWidth;
+                    const assetHeight = activeLayer.type === 'image' ? activeLayer.asset.naturalHeight : activeLayer.asset.videoHeight;
+                    if (assetWidth === 0) return;
+                    dWidth = activeLayer.size; // `size` represents width for image/video
+                    dHeight = activeLayer.size * (assetHeight / assetWidth);
+                } else if (activeLayer.type === 'text') {
+                    // These should have been calculated during the last drawMovieFrame
+                    if (!activeLayer.width || !activeLayer.height || activeLayer.width === 0) {
+                        controlsCtx.font = `${activeLayer.fontSize}px ${activeLayer.font}`;
+                        const textMetrics = controlsCtx.measureText(activeLayer.text);
+                        activeLayer.width = textMetrics.width;
+                        activeLayer.height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
+                    }
+                    dWidth = activeLayer.width;
+                    dHeight = activeLayer.height;
+                } else {
+                    return; // Unknown layer type
+                }
+                
+                const HANDLE_SIZE = 16;
+                const ho = HANDLE_SIZE / 2; const ROTATION_HANDLE_OFFSET = 30;
                 controlsCtx.save();
                 controlsCtx.translate(activeLayer.x, activeLayer.y);
                 controlsCtx.rotate(activeLayer.rot * Math.PI / 180);
@@ -1317,10 +1676,17 @@
                 controlsCtx.fillRect(dWidth/2-ho, -dHeight/2-ho, HANDLE_SIZE, HANDLE_SIZE);
                 controlsCtx.fillRect(-dWidth/2-ho, dHeight/2-ho, HANDLE_SIZE, HANDLE_SIZE);
                 controlsCtx.fillRect(dWidth/2-ho, dHeight/2-ho, HANDLE_SIZE, HANDLE_SIZE);
+                
+                // Rotation handle math clean, correct version - FIX
+                const rotHandleY = -dHeight / 2 - ROTATION_HANDLE_OFFSET;
+                // rotate (0, rotHandleY) by l.rot around layer center and translate to world:
+                const rotatedRotHandleX = (0 * Math.cos(activeLayer.rot * Math.PI / 180) - rotHandleY * Math.sin(activeLayer.rot * Math.PI / 180));
+                const rotatedRotHandleY = (0 * Math.sin(activeLayer.rot * Math.PI / 180) + rotHandleY * Math.cos(activeLayer.rot * Math.PI / 180));
+
                 controlsCtx.beginPath(); controlsCtx.moveTo(0, -dHeight / 2);
                 controlsCtx.lineTo(0, -dHeight / 2 - ROTATION_HANDLE_OFFSET);
                 controlsCtx.stroke(); controlsCtx.beginPath();
-                controlsCtx.arc(0, -dHeight / 2 - ROTATION_HANDLE_OFFSET, HANDLE_SIZE / 2, 0, 2 * Math.PI);
+                controlsCtx.arc(rotatedRotHandleX, rotatedRotHandleY, HANDLE_SIZE / 2, 0, 2 * Math.PI); // Use rotated coords
                 controlsCtx.fill(); controlsCtx.restore();
             }
         }
@@ -1364,16 +1730,12 @@
                  toast('Please add an asset to the scene first.', 2000);
                  return;
             }
-            if (!activeMovieLayerId) {
-                toast('Please select the asset you want to animate.', 2500);
-                return;
-            }
             
             resetToReadyState(); 
 
-            const bg = currentScene.backgroundElement;
-            recordingCanvas.width = bg.naturalWidth || bg.videoWidth;
-            recordingCanvas.height = bg.naturalHeight || bg.videoHeight;
+            // masterWidth and masterHeight are already set in switchScene based on background
+            recordingCanvas.width = masterWidth;
+            recordingCanvas.height = masterHeight;
 
             sceneActionsContainer.classList.add('hidden');
             stopActionsContainer.classList.remove('hidden');
@@ -1390,30 +1752,38 @@
                 recordingIntervalId = setInterval(updateTimer, 1000);
                 
                 const canvasStream = recordingCanvas.captureStream(30);
-                if (currentScene?.backgroundType === 'video') {
-                    const videoElement = currentScene.backgroundElement;
-                    videoElement.currentTime = 0;
-                    videoElement.volume = videoVolumeSlider.value;
+                
+                const audioSourceElement = currentScene.audioElement || (currentScene.backgroundType === 'video' ? currentScene.backgroundElement : null);
+                if (audioSourceElement) {
+                    audioSourceElement.currentTime = 0;
+                    if (audioSourceElement.tagName === 'VIDEO') {
+                        audioSourceElement.volume = videoVolumeSlider.value;
+                    }
                     let audioStream;
-                    if (videoElement.captureStream) audioStream = videoElement.captureStream();
-                    else if (videoElement.mozCaptureStream) audioStream = videoElement.mozCaptureStream();
+                    if (audioSourceElement.captureStream) audioStream = audioSourceElement.captureStream();
+                    else if (audioSourceElement.mozCaptureStream) audioStream = audioSourceElement.mozCaptureStream();
+                    
                     if (audioStream && audioStream.getAudioTracks().length > 0) {
                         canvasStream.addTrack(audioStream.getAudioTracks()[0]);
                     }
                 }
                 
-                const hasAudioTrack = canvasStream.getAudioTracks().length > 0;
-                let mimeType;
-                if (MediaRecorder.isTypeSupported('video/mp4')) {
-                    mimeType = 'video/mp4';
-                } else {
-                    mimeType = hasAudioTrack ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+                const hasAudio = canvasStream.getAudioTracks().length > 0;
+                const videoBitsPerSecond = 2500000;
+                let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+                let blobFileType = 'video/webm';
+                
+                const mp4MimeType = hasAudio ? 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' : 'video/mp4; codecs="avc1.42E01E"';
+                if(MediaRecorder.isTypeSupported(mp4MimeType)){
+                    mimeType = mp4MimeType;
+                    blobFileType = 'video/mp4';
                 }
 
-                mediaRecorder = new MediaRecorder(canvasStream, { mimeType });
+                mediaRecorder = new MediaRecorder(canvasStream, { mimeType, videoBitsPerSecond });
+
                 mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
                 mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: mimeType });
+                    const blob = new Blob(recordedChunks, { type: blobFileType });
                     layerRecordingUrl = URL.createObjectURL(blob);
                     commitLayerBtn.classList.remove('hidden');
                     commitLayerBtn.classList.add('success');
@@ -1424,38 +1794,74 @@
                 if (currentScene && currentScene.backgroundType === 'video') {
                     currentScene.backgroundElement.play();
                 }
+                if (currentScene.audioElement) {
+                    currentScene.audioElement.play();
+                }
                 toast('Recording started!', 2000);
             });
         }
         
+        // Replace your entire stopMovieRecording() with this padded version
         function stopMovieRecording() {
-            movieInteraction.active = false;
+            // Do NOT immediately pause/stop anything; we may need to pad.
             const currentScene = getCurrentScene();
+            if (!currentScene) return;
 
+            // UI changes right away
             stopActionsContainer.classList.add('hidden');
             recordingTimer.textContent = 'Finalizing...';
-            toast('Finalizing recording, please wait...', null);
+            toast('Finalizing recording...', null);
 
-            if (currentScene?.backgroundType === 'video') {
-                currentScene.backgroundElement.pause();
-                currentScene.backgroundElement.currentTime = 0;
+            // Compute durations
+            const elapsedMs = Date.now() - recordingStartTime;
+            // Target = longest of existing scene duration or this new take
+            const targetMs = Math.max(currentScene.durationMs || 0, Math.max(500, elapsedMs));
+
+            // Keep isRecording = true until we actually finish & stop the MediaRecorder
+            // so the drawing path continues writing frames into recordingCanvas.
+            const finalizeStop = () => {
+                // Now it's safe to pause media elements (they continued during padding)
+                if (currentScene.backgroundType === 'video') {
+                    currentScene.backgroundElement.pause();
+                    currentScene.backgroundElement.currentTime = 0;
+                }
+                if (currentScene.audioElement) {
+                    currentScene.audioElement.pause();
+                    currentScene.audioElement.currentTime = 0;
+                    currentScene.audioElement.loop = false;
+                }
+
+                if (mediaRecorder?.state !== 'inactive') {
+                    mediaRecorder.stop();
+                }
+
+                lastRecordingDurationMs = targetMs; // store padded length
+                isRecording = false;
+
+                sceneActionsContainer.classList.remove('hidden');
+                recordLayerBtn.textContent = 'Re-record Layer';
+                recordLayerBtn.classList.remove('record');
+                recordingStatus.classList.add('hidden');
+
+                clearInterval(recordingIntervalId);
+                recordingTimer.textContent = '00:00';
+
+                toast('Layer recorded successfully! Commit it to add another layer.', 4000);
+                updateControlsState();
+            };
+
+            // If user’s take is already >= target, finalize immediately.
+            // Otherwise, keep recording a freeze frame until target.
+            if (elapsedMs >= targetMs) {
+                finalizeStop();
+            } else {
+                // DO NOT pause background/audio yet; let them continue so we keep producing frames.
+                // If you prefer a literal "freeze frame" with no video motion, uncomment next lines:
+                // if (currentScene.backgroundType === 'video') currentScene.backgroundElement.pause();
+                // if (currentScene.audioElement) currentScene.audioElement.pause();
+
+                padRecordingUntil(targetMs, finalizeStop);
             }
-
-            if (mediaRecorder?.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
-
-            isRecording = false;
-
-            sceneActionsContainer.classList.remove('hidden');
-            recordLayerBtn.textContent = 'Re-record Layer';
-            recordLayerBtn.classList.remove('record');
-            recordingStatus.classList.add('hidden');
-            clearInterval(recordingIntervalId);
-            recordingTimer.textContent = '00:00';
-
-            toast('Layer recorded successfully! Commit it to add another layer.', 4000);
-            updateControlsState();
         }
 
         function previewCurrentScene() {
@@ -1466,67 +1872,126 @@
                 return;
             }
 
+            // Normalize: if we somehow have a brand-new video bg that reports longer,
+            // lock it in without ever shrinking.
+            const intrinsicMs =
+              currentScene.backgroundType === 'video'
+                ? getMediaDurationMs(currentScene.backgroundElement, 'video')
+                : currentScene.durationMs || 0;
+            ensureSceneDurationMs(currentScene, intrinsicMs);
+
+            // Target preview length:
+            // - Prefer the longest committed duration (durationMs)
+            // - If user just recorded but hasn't committed yet, fall back to lastRecordingDurationMs
+            // - Always enforce a small floor so the preview actually shows
+            const targetMs = Math.max(
+                currentScene.durationMs || 0,
+                layerRecordingUrl ? lastRecordingDurationMs : 0,
+                1000
+            );
+
             let previewUrl = null;
             let videoElementToPlay = null;
 
             if (layerRecordingUrl) {
+                // If there's a fresh take not yet committed, preview that
                 previewUrl = layerRecordingUrl;
             } else if (currentScene.backgroundType === 'video') {
+                // Otherwise, use the current background
                 videoElementToPlay = currentScene.backgroundElement;
             }
 
+            // We loop the source but stop the preview after targetMs to match "longest take wins"
             if (previewUrl) {
                 previewVideo.src = previewUrl;
-                previewVideo.currentTime = 0; 
+                previewVideo.currentTime = 0;
+                previewVideo.loop = true; // Important: loop shorter sources to fill targetMs
                 previewPopup.classList.add('visible');
-                previewVideo.play();
+
+                previewVideo.play().then(() => {
+                    setTimeout(() => {
+                        previewVideo.pause();
+                        previewPopup.classList.remove('visible'); // optional
+                    }, targetMs);
+                }).catch(() => {});
             } else if (videoElementToPlay) {
-                videoElementToPlay.currentTime = 0; 
+                // Use the element's source; loop to fill targetMs
                 previewVideo.src = videoElementToPlay.src;
+                previewVideo.currentTime = 0;
+                previewVideo.loop = true; // Make preview loop (so shorter background clips don’t “feel” truncated)
                 previewPopup.classList.add('visible');
-                previewVideo.play();
+
+                previewVideo.play().then(() => {
+                    setTimeout(() => {
+                        previewVideo.pause();
+                        previewPopup.classList.remove('visible'); // optional
+                    }, targetMs);
+                }).catch(() => {});
             } else {
-                toast('No video content to preview for this scene.', 2000);
+                // Static image background: open the popup briefly to match targetMs
+                previewVideo.removeAttribute('src');
+                previewPopup.classList.add('visible');
+                setTimeout(() => {
+                    previewPopup.classList.remove('visible');
+                }, targetMs);
             }
         }
         
         async function generateFinalMovie() {
+            // Guard generateFinalMovie() if scenes.length === 0
+            if (scenes.length === 0) {
+                toast('Please create at least one scene to generate a project.', 3000);
+                return;
+            }
+
             if(isRecording) {
                 toast('Please stop the current recording before generating.', 3000);
                 return;
             }
             generationOverlay.classList.add('visible');
             const finalChunks = [];
-            const masterWidth = scenes[0].backgroundElement.naturalWidth || scenes[0].backgroundElement.videoWidth;
-            const masterHeight = scenes[0].backgroundElement.naturalHeight || scenes[0].backgroundElement.videoHeight;
+            
+            // Re-fetch masterWidth/Height from the first scene's background or default
+            masterWidth = scenes[0].backgroundElement.naturalWidth || scenes[0].backgroundElement.videoWidth || 1280;
+            masterHeight = scenes[0].backgroundElement.naturalHeight || scenes[0].backgroundElement.videoHeight || 720;
             
             recordingCanvas.width = masterWidth;
             recordingCanvas.height = masterHeight;
 
+            // 1. Create a central AudioContext and a destination for our final audio stream.
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const destinationNode = audioContext.createMediaStreamDestination();
+            
             const finalStream = recordingCanvas.captureStream(30);
-            const hasAudio = scenes.some(s => s.backgroundType === 'video');
-
-            let mimeType;
-            if (MediaRecorder.isTypeSupported('video/mp4')) {
-                mimeType = 'video/mp4';
-                toast('Generating MP4 file...', null);
-            } else {
-                mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
-                toast('MP4 not supported, generating WebM file...', null);
+            const hasAudio = scenes.some(s => s.backgroundType === 'video' || s.audioElement);
+            
+            // 2. If there's any audio, add the track from our Web Audio destination to the final stream.
+            if (hasAudio) {
+                finalStream.addTrack(destinationNode.stream.getAudioTracks()[0]);
             }
-
-            const finalRecorder = new MediaRecorder(finalStream, { mimeType });
+            
+            const videoBitsPerSecond = 8000000;
+            let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+            let finalFileType = 'video/webm';
+            
+            const mp4MimeType = hasAudio ? 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' : 'video/mp4; codecs="avc1.42E01E"';
+            if (MediaRecorder.isTypeSupported(mp4MimeType)) {
+                mimeType = mp4MimeType;
+                finalFileType = 'video/mp4';
+                toast('Exporting to high-quality MP4.', 2000);
+            } else {
+                toast('MP4 not supported, falling back to WebM.', 3000);
+            }
+            
+            const finalRecorder = new MediaRecorder(finalStream, { mimeType, videoBitsPerSecond });
             
             finalRecorder.ondataavailable = e => { if (e.data.size > 0) finalChunks.push(e.data); };
 
             const generationPromise = new Promise(resolve => {
                 finalRecorder.onstop = () => {
-                    const finalBlob = new Blob(finalChunks, { type: mimeType });
+                    const finalBlob = new Blob(finalChunks, { type: finalFileType });
                     finalProjectUrl = URL.createObjectURL(finalBlob);
-                    
-                    const extension = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
-                    finalProjectFilename = `movie-maker-masterpiece.${extension}`;
-
+                    movieDownloadBtn.dataset.filetype = finalFileType;
                     generationOverlay.classList.remove('visible');
                     toast('Project generation complete! You can now preview or download.', 4000);
                     previewBtn.classList.remove('hidden');
@@ -1537,6 +2002,9 @@
                         top: controlsPanel.scrollHeight,
                         behavior: 'smooth'
                     });
+                    
+                    // 6. Close the audio context to free up resources.
+                    audioContext.close();
 
                     resolve();
                 };
@@ -1544,7 +2012,8 @@
 
             finalRecorder.start();
             
-            const renderSceneFrame = (scene) => {
+            const renderSceneFrameForGeneration = (scene) => {
+                // IMPORTANT: This function draws to `recordingCtx` which has `masterWidth/Height`
                 recordingCtx.clearRect(0, 0, masterWidth, masterHeight);
                 recordingCtx.save();
                 recordingCtx.filter = `brightness(${scene.bgBrightness}) saturate(${scene.bgSaturation})`;
@@ -1553,41 +2022,179 @@
             }
 
             for (const scene of scenes) {
-                const bg = scene.backgroundElement;
-                if (scene.backgroundType === 'video') {
-                    await new Promise(sceneResolve => {
-                        bg.loop = false;
-                        bg.currentTime = 0;
-                        bg.muted = !hasAudio;
-                        
-                        let sceneAnimFrame;
-                        const videoAnimLoop = () => {
-                            if (bg.paused || bg.ended) {
-                                cancelAnimationFrame(sceneAnimFrame);
-                                return;
-                            }
-                            renderSceneFrame(scene);
-                            sceneAnimFrame = requestAnimationFrame(videoAnimLoop);
-                        };
-                        
-                        const onEnded = () => {
-                            bg.removeEventListener('ended', onEnded, false);
-                            bg.loop = true;
-                            sceneResolve();
-                        };
-                        bg.addEventListener('ended', onEnded, false);
+                // In generateFinalMovie(), enforce the same normalization per scene before you compute sceneDur:
+                // Normalize scene duration against intrinsic media/audio so we never shrink.
+                const mediaMs = (scene.backgroundType === 'video')
+                  ? getMediaDurationMs(scene.backgroundElement, 'video')
+                  : getMediaDurationMs(scene.backgroundElement, 'image');
+                const audioMs = scene.audioElement ? Math.floor((scene.audioElement.duration || 0) * 1000) : 0;
+                ensureSceneDurationMs(scene, Math.max(mediaMs, audioMs));
 
-                        bg.play().then(videoAnimLoop).catch(e => {
-                            console.error("Playback error:", e);
-                            sceneResolve();
-                        });
+                // A) For video background scenes: replace the whole video branch with the time-driven loop below
+                if (scene.backgroundType === 'video') {
+                  await new Promise(sceneResolve => {
+                    const bg = scene.backgroundElement;
+                    const sceneDur = Math.max(scene.durationMs || 0, 1000);
+                    const startTs = performance.now();
+
+                    // Audio wiring (existing code)
+                    let audioSourceNode = null;
+                    let videoAudioSourceNode = null;
+                    const hasMp3 = !!scene.audioElement;
+
+                    // ensure loop for long scenes
+                    bg.loop = true;
+                    bg.muted = hasMp3; // if separate mp3, mute bg video audio
+
+                    // (Re)connect audio to central destination
+                    if (hasMp3) {
+                      audioSourceNode = audioContext.createMediaElementSource(scene.audioElement);
+                      audioSourceNode.connect(destinationNode);
+                      scene.audioElement.loop = true;
+                      scene.audioElement.currentTime = 0;
+                      scene.audioElement.play();
+                    } else { // no separate mp3 for this scene - FIX: Don’t gate video audio on hasAudio
+                      videoAudioSourceNode = audioContext.createMediaElementSource(bg);
+                      videoAudioSourceNode.connect(destinationNode);
+                    }
+
+                    let sceneAnimFrame;
+                    const videoAnimLoop = () => {
+                      const now = performance.now();
+                      if ((now - startTs) >= sceneDur) {
+                        cancelAnimationFrame(sceneAnimFrame);
+                        bg.pause(); bg.currentTime = 0;
+                        if (hasMp3) { scene.audioElement.pause(); scene.audioElement.currentTime = 0; scene.audioElement.loop = false; }
+                        if (audioSourceNode) audioSourceNode.disconnect();
+                        if (videoAudioSourceNode) videoAudioSourceNode.disconnect();
+                        // restore loop default
+                        bg.loop = true;
+                        return sceneResolve();
+                      }
+
+                      if (bg.paused) {
+                        bg.play().catch(() => {});
+                      }
+
+                      renderSceneFrameForGeneration(scene);
+                      // draw active layers on top
+                      scene.layers.forEach(l => {
+                        recordingCtx.save();
+                        recordingCtx.globalAlpha = l.opacity;
+                        recordingCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
+
+                        const scaleX = recordingCanvas.width / movieCanvas.width;
+                        const scaleY = recordingCanvas.height / movieCanvas.height;
+                        const finalX = l.x * scaleX;
+                        const finalY = l.y * scaleY;
+
+                        recordingCtx.translate(finalX, finalY);
+                        recordingCtx.rotate(l.rot * Math.PI / 180);
+                        if (l.flipX) recordingCtx.scale(-1, 1);
+
+                        if (l.type === 'image' || l.type === 'video') {
+                          const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+                          const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+                          if (assetWidth > 0) {
+                            const scaledSize = l.size * scaleX;
+                            const dWidth = scaledSize;
+                            const dHeight = scaledSize * (assetHeight / assetWidth);
+                            recordingCtx.drawImage(l.asset, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
+                          }
+                        } else if (l.type === 'text') {
+                          const scaledFontSize = l.fontSize * scaleY;
+                          recordingCtx.font = `${scaledFontSize}px ${l.font}`;
+                          recordingCtx.fillStyle = l.color;
+                          recordingCtx.textAlign = 'center';
+                          recordingCtx.textBaseline = 'middle';
+                          recordingCtx.fillText(l.text, 0, 0);
+                        }
+                        recordingCtx.restore();
+                      });
+
+                      sceneAnimFrame = requestAnimationFrame(videoAnimLoop);
+                    };
+
+                    bg.currentTime = 0;
+                    bg.play().then(() => {
+                      videoAnimLoop();
+                    }).catch(() => {
+                      // even if play fails (autoplay policies), keep drawing first frame
+                      videoAnimLoop(); // Still call the loop to draw static frame if video doesn't play
                     });
-                } else {
-                    await new Promise(sceneResolve => {
-                        const STATIC_DURATION_MS = 3000;
-                        renderSceneFrame(scene);
-                        setTimeout(sceneResolve, STATIC_DURATION_MS);
-                    });
+                  });
+                }
+                // B) For image background scenes: render for scene.durationMs (not a fixed 3s)
+                else { // Image background
+                  await new Promise(sceneResolve => {
+                    const sceneDur = Math.max(scene.durationMs || 3000, 1000);
+                    const startTs = performance.now();
+
+                    // If an MP3 is attached, loop it during the whole sceneDur
+                    let audioSourceNode = null;
+                    if (scene.audioElement) {
+                      audioSourceNode = audioContext.createMediaElementSource(scene.audioElement);
+                      audioSourceNode.connect(destinationNode);
+                      scene.audioElement.loop = true;
+                      scene.audioElement.currentTime = 0;
+                      scene.audioElement.play();
+                    }
+
+                    const drawFrame = () => {
+                      const now = performance.now();
+                      if ((now - startTs) >= sceneDur) {
+                        if (scene.audioElement) {
+                          scene.audioElement.pause();
+                          scene.audioElement.currentTime = 0;
+                          scene.audioElement.loop = false;
+                        }
+                        if (audioSourceNode) audioSourceNode.disconnect();
+                        return sceneResolve();
+                      }
+
+                      renderSceneFrameForGeneration(scene);
+
+                      // draw layers
+                      scene.layers.forEach(l => {
+                        recordingCtx.save();
+                        recordingCtx.globalAlpha = l.opacity;
+                        recordingCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
+
+                        const scaleX = recordingCanvas.width / movieCanvas.width;
+                        const scaleY = recordingCanvas.height / movieCanvas.height;
+                        const finalX = l.x * scaleX;
+                        const finalY = l.y * scaleY;
+
+                        recordingCtx.translate(finalX, finalY);
+                        recordingCtx.rotate(l.rot * Math.PI / 180);
+                        if (l.flipX) recordingCtx.scale(-1, 1);
+
+                        if (l.type === 'image' || l.type === 'video') {
+                          const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+                          const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+                          if (assetWidth > 0) {
+                            const scaledSize = l.size * scaleX;
+                            const dWidth = scaledSize;
+                            const dHeight = scaledSize * (assetHeight / assetWidth);
+                            recordingCtx.drawImage(l.asset, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
+                          }
+                        } else if (l.type === 'text') {
+                          const scaledFontSize = l.fontSize * scaleY;
+                          recordingCtx.font = `${scaledFontSize}px ${l.font}`;
+                          recordingCtx.fillStyle = l.color;
+                          recordingCtx.textAlign = 'center';
+                          recordingCtx.textBaseline = 'middle';
+                          recordingCtx.fillText(l.text, 0, 0);
+                        }
+                        recordingCtx.restore();
+                      });
+
+                      requestAnimationFrame(drawFrame);
+                    };
+
+                    // initial draw & loop
+                    drawFrame();
+                  });
                 }
             }
 
@@ -1599,30 +2206,92 @@
         // --- Interaction Logic ---
         function getMovieCanvasPoint(e) {
             const rect = movieCanvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const clientX = e.clientX;
+            const clientY = e.clientY;
             return { x: (clientX - rect.left) / rect.width * movieCanvas.width, y: (clientY - rect.top) / rect.height * movieCanvas.height };
         }
+
         function getMovieHandleAtPoint(point, layer) {
-            const l = layer; const dWidth = l.size; const dHeight = l.size * (l.img.naturalHeight / l.img.naturalWidth);
-            const radius = isTouchDevice ? 40 : 20;
-            const angle = l.rot * Math.PI / 180; const cos = Math.cos(angle); const sin = Math.sin(angle);
-            const ROTATION_HANDLE_OFFSET = isTouchDevice ? 40 : 30;
+            const l = layer;
+            let dWidth, dHeight;
+
+            if (l.type === 'image' || l.type === 'video') {
+                const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+                const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+                if (assetWidth === 0) return null;
+                dWidth = l.size;
+                dHeight = l.size * (assetHeight / assetWidth);
+            } else if (l.type === 'text') {
+                // These should have been calculated during the last drawControlsOverlay/drawMovieFrame
+                if (!l.width || !l.height || l.width === 0) { // If not, do a quick measure on controlsCtx
+                    controlsCtx.font = `${l.fontSize}px ${l.font}`;
+                    const textMetrics = controlsCtx.measureText(l.text);
+                    l.width = textMetrics.width;
+                    l.height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
+                }
+                dWidth = l.width;
+                dHeight = l.height;
+            } else {
+                return null;
+            }
+
+            const radius = 20;
+            const angle = l.rot * Math.PI / 180;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const ROTATION_HANDLE_OFFSET = 30;
+            
+            // Rotation handle math clean, correct version - FIX
             const rotHandleY = -dHeight / 2 - ROTATION_HANDLE_OFFSET;
-            const rotHandleWorldX = l.x - (rotHandleY * sin); const rotHandleWorldY = l.y + (rotHandleY * cos);
-            if (Math.hypot(point.x - rotHandleWorldX, point.y - rotHandleWorldY) < radius) return 'rotate';
-            const handles = { tl: { x: -dWidth / 2, y: -dHeight / 2 }, tr: { x:  dWidth / 2, y: -dHeight / 2 }, bl: { x: -dWidth / 2, y:  dHeight / 2 }, br: { x:  dWidth / 2, y:  dHeight / 2 } };
+            // rotate (0, rotHandleY) by l.rot around layer center and translate to world:
+            const rotatedRotHandleX = l.x + (0 * cos - rotHandleY * sin); // Corrected to be relative to l.x
+            const rotatedRotHandleY = l.y + (0 * sin + rotHandleY * cos); // Corrected to be relative to l.y
+
+            if (Math.hypot(point.x - rotatedRotHandleX, point.y - rotatedRotHandleY) < radius) return 'rotate';
+
+            const handles = {
+                tl: { x: -dWidth / 2, y: -dHeight / 2 },
+                tr: { x: dWidth / 2, y: -dHeight / 2 },
+                bl: { x: -dWidth / 2, y: dHeight / 2 },
+                br: { x: dWidth / 2, y: dHeight / 2 }
+            };
             for (const name in handles) {
                 const h = handles[name];
-                const handleWorldX = l.x + h.x * cos - h.y * sin; const handleWorldY = l.y + h.x * sin + h.y * cos;
+                const handleWorldX = l.x + h.x * cos - h.y * sin;
+                const handleWorldY = l.y + h.x * sin + h.y * cos;
                 if (Math.hypot(point.x - handleWorldX, point.y - handleWorldY) < radius) return name;
             }
             return null;
         }
+
         function isPointInMovieLayer(point, layer) {
-            const l = layer; const dWidth = l.size; const dHeight = l.size * (l.img.naturalHeight / l.img.naturalWidth);
-            const dx = point.x - l.x; const dy = point.y - l.y; const angle = -l.rot * Math.PI / 180;
-            const localX = dx * Math.cos(angle) - dy * Math.sin(angle); const localY = dx * Math.sin(angle) + dy * Math.cos(angle);
+            const l = layer;
+            let dWidth, dHeight;
+
+            if (l.type === 'image' || l.type === 'video') {
+                const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+                const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+                if (assetWidth === 0) return false;
+                dWidth = l.size;
+                dHeight = l.size * (assetHeight / assetWidth);
+            } else if (l.type === 'text') {
+                if (!l.width || !l.height || l.width === 0) { // Quick measure if not available
+                    controlsCtx.font = `${l.fontSize}px ${l.font}`;
+                    const textMetrics = controlsCtx.measureText(l.text);
+                    l.width = textMetrics.width;
+                    l.height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
+                }
+                dWidth = l.width;
+                dHeight = l.height;
+            } else {
+                return false;
+            }
+
+            const dx = point.x - l.x;
+            const dy = point.y - l.y;
+            const angle = -l.rot * Math.PI / 180;
+            const localX = dx * Math.cos(angle) - dy * Math.sin(angle);
+            const localY = dx * Math.sin(angle) + dy * Math.cos(angle);
             return (Math.abs(localX) < dWidth / 2 && Math.abs(localY) < dHeight / 2);
         }
 
@@ -1632,46 +2301,48 @@
             const currentScene = getCurrentScene();
             if (!currentScene) return;
 
-            const activeLayer = currentScene.layers.find(l => l.id === activeMovieLayerId);
-
-            if (activeLayer) {
-                const handle = getMovieHandleAtPoint(point, activeLayer);
-                if (handle) {
-                    movieInteraction = { active: true, type: handle === 'rotate' ? 'rotate' : 'resize', layerId: activeLayer.id, handle, startX: point.x, startY: point.y, initialState: JSON.parse(JSON.stringify(activeLayer)) };
-                    startAnimationLoop();
-                    return;
+            // Find the top-most layer that was clicked
+            let clickedLayer = null;
+            for (let i = currentScene.layers.length - 1; i >= 0; i--) {
+                const l = currentScene.layers[i];
+                if (isPointInMovieLayer(point, l) || getMovieHandleAtPoint(point, l)) {
+                    clickedLayer = l;
+                    break;
                 }
             }
             
-            let layerChanged = false;
-            for (let i = currentScene.layers.length - 1; i >= 0; i--) {
-                const l = currentScene.layers[i];
-                if (isPointInMovieLayer(point, l)) {
-                    if (activeMovieLayerId !== l.id) {
-                        activeMovieLayerId = l.id;
-                        layerChanged = true;
-                        renderLayerPalette();
-                        drawControlsOverlay();
-                    }
+            if (clickedLayer) {
+                // If a new layer is clicked, make it active
+                if (activeMovieLayerId !== clickedLayer.id) {
+                    activeMovieLayerId = clickedLayer.id;
+                    renderLayerPalette();
+                    drawControlsOverlay();
+                    updateEditPanelsUI();
+                }
+
+                const handle = getMovieHandleAtPoint(point, clickedLayer);
+                if (handle) {
+                    movieInteraction = { active: true, type: handle === 'rotate' ? 'rotate' : 'resize', layerId: clickedLayer.id, handle, startX: point.x, startY: point.y, initialState: JSON.parse(JSON.stringify(clickedLayer)) };
+                } else { // Drag
                     movieInteraction = {
-                        active: true, type: 'drag', layerId: l.id,
-                        offsetX: point.x - l.x,
-                        offsetY: point.y - l.y,
-                        targetX: l.x,
-                        targetY: l.y,
+                        active: true, type: 'drag', layerId: clickedLayer.id,
+                        offsetX: point.x - clickedLayer.x,
+                        offsetY: point.y - clickedLayer.y,
+                        targetX: clickedLayer.x,
+                        targetY: clickedLayer.y,
                         primed: isCountdownActive
                     };
-                    startAnimationLoop();
-                    if(layerChanged) updateVisualsUI();
-                    return;
                 }
+                startAnimationLoop(); // Ensure animation loop is running for smooth interaction
+                return;
             }
 
+            // If no layer was clicked, deactivate any active layer
             if (activeMovieLayerId) {
                  activeMovieLayerId = null;
                  renderLayerPalette();
                  drawControlsOverlay();
-                 updateVisualsUI();
+                 updateEditPanelsUI();
             }
         }
 
@@ -1679,7 +2350,8 @@
             if (!movieInteraction.active) { updateCursor(e); return; }
             e.preventDefault();
             const point = getMovieCanvasPoint(e);
-            const l = getCurrentScene()?.layers.find(layer => layer.id === movieInteraction.layerId); if (!l) return;
+            const l = getActiveLayer(); // Now always refers to the active layer from state
+            if (!l) return;
 
             if (movieInteraction.type === 'drag') {
                 movieInteraction.targetX = point.x - movieInteraction.offsetX;
@@ -1688,7 +2360,15 @@
                 const iState = movieInteraction.initialState;
                 const initialDist = Math.hypot(movieInteraction.startX - iState.x, movieInteraction.startY - iState.y);
                 const currentDist = Math.hypot(point.x - iState.x, point.y - iState.y);
-                if (initialDist > 1) { l.size = Math.max(20, iState.size * (currentDist / initialDist)); }
+                
+                if (initialDist > 1) {
+                    const scaleFactor = currentDist / initialDist;
+                    if (l.type === 'text') {
+                        l.fontSize = Math.max(10, iState.fontSize * scaleFactor);
+                    } else { // image or video
+                        l.size = Math.max(20, iState.size * scaleFactor);
+                    }
+                }
             } else if (movieInteraction.type === 'rotate') {
                 const iState = movieInteraction.initialState;
                 const initialAngle = Math.atan2(movieInteraction.startY - iState.y, movieInteraction.startX - iState.x) * 180 / Math.PI;
@@ -1704,7 +2384,9 @@
             const point = getMovieCanvasPoint(e);
             const currentScene = getCurrentScene(); if (!currentScene) return;
             let newCursor = 'default';
-            const activeLayer = currentScene.layers.find(l => l.id === activeMovieLayerId);
+            
+            // Check active layer first for handles
+            const activeLayer = getActiveLayer();
             if (activeLayer) {
                 const handle = getMovieHandleAtPoint(point, activeLayer);
                 if (handle) {
@@ -1713,10 +2395,14 @@
                     newCursor = 'move';
                 }
             }
+
+            // If no active layer or no handle/body was hit on active layer, check other layers for pointer
             if (newCursor === 'default') {
                  for (let i = currentScene.layers.length - 1; i >= 0; i--) {
-                     if (isPointInMovieLayer(point, currentScene.layers[i])) {
-                         newCursor = 'pointer'; break;
+                     const l = currentScene.layers[i];
+                     if (isPointInMovieLayer(point, l)) {
+                         newCursor = 'pointer'; // Indicate it's clickable to activate/drag
+                         break;
                      }
                  }
             }
@@ -1725,18 +2411,30 @@
 
         function continuousResizeLoop() {
             if (!resizeState.isResizing) return;
-            const activeLayer = getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
+            const activeLayer = getActiveLayer();
             if (activeLayer) {
-                activeLayer.size = Math.max(20, activeLayer.size + RESIZE_SPEED * resizeState.direction);
+                if (activeLayer.type === 'text') {
+                    activeLayer.fontSize = Math.max(10, activeLayer.fontSize + RESIZE_SPEED * resizeState.direction);
+                } else { // image or video
+                    activeLayer.size = Math.max(20, activeLayer.size + RESIZE_SPEED * resizeState.direction);
+                }
             }
             resizeState.animationFrameId = requestAnimationFrame(continuousResizeLoop);
         }
 
         function handleKeyDown(e) {
             const key = e.key.toLowerCase();
-            if (document.activeElement.tagName === 'INPUT') return;
+            // Allow typing in text content input without triggering other shortcuts
+            if (document.activeElement === textContentInput) {
+                if (key === 'escape') {
+                    textContentInput.blur(); // Unfocus the input
+                    e.preventDefault(); // Prevent other potential escape actions
+                }
+                return; 
+            }
+            if (document.activeElement.tagName === 'INPUT') return; // For any other input element
             
-            const activeLayer = getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
+            const activeLayer = getActiveLayer();
             
             if (key === 'r') {
                 e.preventDefault();
@@ -1777,9 +2475,19 @@
         }
         
         function clearProject() {
+            scenes.forEach(scene => {
+                if (scene.audioElement) {
+                    URL.revokeObjectURL(scene.audioElement.src);
+                }
+                // Revoke URLs for committed layers if they are object URLs
+                scene.committedLayerSrcs.forEach(src => {
+                    if (src.startsWith('blob:')) URL.revokeObjectURL(src);
+                });
+            });
             scenes = [];
             activeSceneId = null;
             activeMovieLayerId = null;
+            lastRecordingDurationMs = 0; // Reset this too
             
             movieCtx.clearRect(0,0,movieCanvas.width, movieCanvas.height);
             controlsCtx.clearRect(0,0,controlsOverlayCanvas.width, controlsOverlayCanvas.height);
@@ -1787,7 +2495,8 @@
             sceneTray.innerHTML = '';
             
             updateControlsState();
-            updateVisualsUI();
+            updateEditPanelsUI(); // Update all panel UIs
+            updateAudioUI();
             toast("Project cleared.", 2000);
         }
 
@@ -1818,39 +2527,170 @@
             
             document.getElementById('mg-asset-library-close').addEventListener('click', closeAssetLibrary);
             assetLibraryOverlay.addEventListener('click', (e) => { if (e.target === assetLibraryOverlay) closeAssetLibrary(); });
-            assetPickerFileInput.addEventListener('change', e => {
-                const file = e.target.files[0]; if (!file) return;
-                if (!file.type.startsWith('image/')) { toast('Invalid file type, please use PNG.'); setValNull(e); return; }
-                const reader = new FileReader();
-                reader.onload = () => {
-                    addMovieLayer(reader.result)
-                    closeAssetLibrary();
-                };
-                reader.readAsDataURL(file); setValNull(e);
+            assetPickerFileInput.addEventListener('change', async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
+
+                if (!isImage && !isVideo) {
+                    toast('Unsupported file. Use PNG, MP4, or MOV.', 3000);
+                    setValNull(e);
+                    return;
+                }
+
+                // Check for existing image/video layer
+                const currentScene = getCurrentScene();
+                if (currentScene?.layers.some(l => l.type === 'image' || l.type === 'video')) {
+                    toast('An image or video asset already exists. Delete it before adding a new one.', 4000);
+                    setValNull(e);
+                    return;
+                }
+
+                async function canPlayVideoFile(f) {
+                    return await new Promise((resolve) => {
+                        const vid = document.createElement('video');
+                        vid.muted = true;
+                        vid.preload = 'metadata';
+                        const url = URL.createObjectURL(f);
+                        const cleanup = () => URL.revokeObjectURL(url);
+                        vid.src = url;
+                        vid.addEventListener('loadeddata', () => { cleanup(); resolve(true); }, { once: true });
+                        vid.addEventListener('error',      () => { cleanup(); resolve(false); }, { once: true });
+                    });
+                }
+
+                if (isVideo) {
+                    const playable = await canPlayVideoFile(file);
+                    if (!playable) {
+                        toast('This video codec isn’t supported by your browser. Convert to MP4 (H.264/AAC) or WebM (VP9/Opus).', 6000);
+                        setValNull(e);
+                        return;
+                    }
+                }
+
+                const fileURL = URL.createObjectURL(file);
+                addMovieLayer(fileURL, { type: isImage ? 'image' : 'video' });
+                closeAssetLibrary();
+                setValNull(e);
             });
+
+            // Re-wired textBtn to handle both adding and editing
+            textBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const currentScene = getCurrentScene();
+                const hasTextLayer = currentScene?.layers.some(l => l.type === 'text');
+
+                if (!currentScene) {
+                    toast('Please add a background to the scene first.', 2000);
+                    return;
+                }
+                if (isRecording) {
+                    toast('Cannot add/edit text while recording.', 2000);
+                    return;
+                }
+
+                if (hasTextLayer) {
+                    // If text layer exists, toggle dropdown for editing
+                    textDropdown.classList.toggle('visible');
+                    // Ensure active layer is set to text for controls to work
+                    const textLayer = currentScene.layers.find(l => l.type === 'text');
+                    if (textLayer && activeMovieLayerId !== textLayer.id) {
+                        activeMovieLayerId = textLayer.id;
+                        renderLayerPalette();
+                        drawControlsOverlay();
+                        updateEditPanelsUI();
+                    }
+                } else {
+                    // If no text layer, add one directly
+                    addTextLayer();
+                }
+                
+                // Close other dropdowns
+                shortcutsDropdown.classList.remove('visible');
+                visualsDropdown.classList.remove('visible');
+                audioDropdown.classList.remove('visible');
+            });
+
+
             recordLayerBtn.addEventListener('click', startMovieRecording);
             stopLayerBtn.addEventListener('click', stopMovieRecording);
             previewSceneBtn.addEventListener('click', previewCurrentScene);
             commitLayerBtn.addEventListener('click', () => {
-                if (layerRecordingUrl) {
-                    const currentScene = getCurrentScene();
-                    if (currentScene && currentScene.layers[0]) {
-                        currentScene.committedLayerSrcs.push(currentScene.layers[0].src);
+                const currentScene = getCurrentScene();
+                if (!currentScene || !layerRecordingUrl) return; // Must have a recording to commit
+
+                // In the Commit handler for commitLayerBtn:
+                ensureSceneDurationMs(currentScene, Math.max(500, lastRecordingDurationMs));
+
+
+                // Iterate through ALL active layers to capture their individual representations for committedLayerSrcs
+                currentScene.layers.forEach(recordedLayer => {
+                    let layerRepresentationSrc = '';
+                    if (recordedLayer.type === 'image' || recordedLayer.type === 'video') {
+                        layerRepresentationSrc = recordedLayer.src;
+                    } else if (recordedLayer.type === 'text') {
+                        // Render the text layer statically to a canvas to get an image data URL
+                        const tempCanvas = document.createElement('canvas');
+                        tempCanvas.width = movieCanvas.width; // Use current canvas dimensions for snapshot
+                        tempCanvas.height = movieCanvas.height;
+                        const tempCtx = tempCanvas.getContext('2d');
+
+                        // Draw just the text layer as it appeared
+                        tempCtx.font = `${recordedLayer.fontSize}px ${recordedLayer.font}`;
+                        tempCtx.fillStyle = recordedLayer.color;
+                        tempCtx.textAlign = 'center';
+                        tempCtx.textBaseline = 'middle';
+                        
+                        tempCtx.save();
+                        tempCtx.globalAlpha = recordedLayer.opacity;
+                        tempCtx.filter = `brightness(${recordedLayer.brightness}) saturate(${recordedLayer.saturation})`;
+                        tempCtx.translate(recordedLayer.x, recordedLayer.y);
+                        tempCtx.rotate(recordedLayer.rot * Math.PI / 180);
+                        if (recordedLayer.flipX) { tempCtx.scale(-1, 1); }
+                        tempCtx.fillText(recordedLayer.text, 0, 0);
+                        tempCtx.restore();
+
+                        layerRepresentationSrc = tempCanvas.toDataURL('image/png');
                     }
-                    fetch(layerRecordingUrl).then(res => res.blob()).then(blob => {
-                        handleBackgroundUpload(blob, '', true);
+                    if (layerRepresentationSrc) {
+                        currentScene.committedLayerSrcs.push(layerRepresentationSrc);
+                    }
+                });
+
+                // The recorded video (containing all layers) becomes the new background
+                fetch(layerRecordingUrl)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        handleBackgroundUpload(blob, '', true); // This will also clear active layers
+                        lastRecordingDurationMs = 0; // Reset lastRecordingDurationMs on commit
+
+                        // Post-commit safeguard: if the new video metadata is still warming up,
+                        // re-assert the longest duration once its metadata is ready.
+                        const scene = getCurrentScene();
+                        if (scene && scene.backgroundType === 'video') {
+                          const bg = scene.backgroundElement;
+                          const finalizeDur = () => {
+                            ensureSceneDurationMs(scene, getMediaDurationMs(bg, 'video'));
+                          };
+                          if (bg.readyState >= 1) finalizeDur();
+                          else bg.addEventListener('loadedmetadata', finalizeDur, { once: true });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching recorded blob for commit:', error);
+                        toast('Failed to commit layer.', 4000);
+                        resetToReadyState(); // Try to reset gracefully
                     });
-                }
             });
             generateProjectBtn.addEventListener('click', generateFinalMovie);
             movieDownloadBtn.addEventListener('click', () => {
                 if (finalProjectUrl) {
-                    const link = document.createElement('a');
-                    link.href = finalProjectUrl;
-                    link.download = finalProjectFilename || 'movie-maker-masterpiece.mp4';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+                    const link = document.createElement('a'); link.href = finalProjectUrl; 
+                    const fileExtension = movieDownloadBtn.dataset.filetype === 'video/mp4' ? '.mp4' : '.webm';
+                    link.download = `movie-maker-masterpiece${fileExtension}`;
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
                 } else toast('No final project available.', 2000);
             });
 
@@ -1882,9 +2722,6 @@
             window.addEventListener('mousemove', handleMovieInteractionMove);
             window.addEventListener('mouseup', handleMovieInteractionEnd);
             movieCanvas.addEventListener('mouseleave', () => { if (!movieInteraction.active) { movieCanvas.style.cursor = 'default'; }});
-            movieCanvas.addEventListener('touchstart', handleMovieInteractionStart, { passive: false });
-            window.addEventListener('touchmove', handleMovieInteractionMove, { passive: false });
-            window.addEventListener('touchend', handleMovieInteractionEnd);
             window.addEventListener('keydown', handleKeyDown);
             window.addEventListener('keyup', handleKeyUp);
 
@@ -1911,31 +2748,137 @@
                 e.stopPropagation();
                 shortcutsDropdown.classList.toggle('visible');
                 visualsDropdown.classList.remove('visible');
+                textDropdown.classList.remove('visible'); // Close text dropdown
+                audioDropdown.classList.remove('visible');
             });
 
             visualsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 visualsDropdown.classList.toggle('visible');
                 shortcutsDropdown.classList.remove('visible');
+                textDropdown.classList.remove('visible'); // Close text dropdown
+                audioDropdown.classList.remove('visible');
                 if (visualsDropdown.classList.contains('visible')) {
-                    updateVisualsUI();
+                    updateEditPanelsUI(); // Update asset visuals and background visuals
+                }
+            });
+
+            audioBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                audioDropdown.classList.toggle('visible');
+                shortcutsDropdown.classList.remove('visible');
+                visualsDropdown.classList.remove('visible');
+                textDropdown.classList.remove('visible'); // Close text dropdown
+                if (audioDropdown.classList.contains('visible')) {
+                    updateAudioUI();
                 }
             });
 
             visualsDropdown.addEventListener('click', e => e.stopPropagation());
+            textDropdown.addEventListener('click', e => e.stopPropagation()); // Prevent closing when interacting with text controls
+            audioDropdown.addEventListener('click', e => e.stopPropagation());
 
+            sceneAudioInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                const currentScene = getCurrentScene();
+                if (!file || !currentScene) return;
+
+                if (currentScene.audioElement) {
+                    URL.revokeObjectURL(currentScene.audioElement.src);
+                }
+                const audioURL = URL.createObjectURL(file);
+                currentScene.audioElement = new Audio(audioURL);
+                currentScene.audioName = file.name;
+
+                // When adding scene audio, bump duration if the audio is longer
+                currentScene.audioElement.addEventListener('loadedmetadata', () => {
+                  const aDur = Math.floor((currentScene.audioElement.duration || 0) * 1000);
+                  if (aDur > 0) ensureSceneDurationMs(currentScene, aDur);
+                });
+
+                toast('Audio added! It will play during recording.', 4000);
+                updateAudioUI();
+                setValNull(e);
+            });
+
+            removeAudioBtn.addEventListener('click', () => {
+                const currentScene = getCurrentScene();
+                if (currentScene && currentScene.audioElement) {
+                    URL.revokeObjectURL(currentScene.audioElement.src);
+                    currentScene.audioElement = null;
+                    currentScene.audioName = null;
+                    toast('Audio removed from scene.', 2000);
+                    updateAudioUI();
+                }
+            });
+
+            // Universal Asset Visuals (opacity, brightness, saturation)
             assetOpacitySlider.addEventListener('input', e => {
                 const activeLayer = getActiveLayer();
-                if (activeLayer) activeLayer.opacity = parseFloat(e.target.value);
+                if (activeLayer && (activeLayer.type === 'image' || activeLayer.type === 'video')) activeLayer.opacity = parseFloat(e.target.value);
             });
             assetBrightnessSlider.addEventListener('input', e => {
                 const activeLayer = getActiveLayer();
-                if (activeLayer) activeLayer.brightness = parseFloat(e.target.value);
+                if (activeLayer && (activeLayer.type === 'image' || activeLayer.type === 'video')) activeLayer.brightness = parseFloat(e.target.value);
             });
             assetSaturationSlider.addEventListener('input', e => {
                 const activeLayer = getActiveLayer();
-                if (activeLayer) activeLayer.saturation = parseFloat(e.target.value);
+                if (activeLayer && (activeLayer.type === 'image' || activeLayer.type === 'video')) activeLayer.saturation = parseFloat(e.target.value);
             });
+
+            // Text Visuals Controls
+            textContentInput.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.text = e.target.value;
+                    drawMovieFrame(); // Redraw immediately to show text change
+                    drawControlsOverlay(); // Redraw controls for updated text bounds
+                    renderLayerPalette(); // Update text thumbnail in palette
+                }
+            });
+            textFontSelect.addEventListener('change', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.font = e.target.value;
+                    drawMovieFrame();
+                    drawControlsOverlay();
+                    renderLayerPalette(); // Update text thumbnail in palette
+                }
+            });
+            textSizeSlider.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.fontSize = parseFloat(e.target.value);
+                    drawMovieFrame();
+                    drawControlsOverlay();
+                }
+            });
+            textColorInput.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.color = e.target.value;
+                    drawMovieFrame();
+                }
+            });
+            textOpacitySlider.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.opacity = parseFloat(e.target.value);
+                }
+            });
+            textBrightnessSlider.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.brightness = parseFloat(e.target.value);
+                }
+            });
+            textSaturationSlider.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.saturation = parseFloat(e.target.value);
+                }
+            });
+
             bgBrightnessSlider.addEventListener('input', e => {
                 const scene = getCurrentScene();
                 if (scene) scene.bgBrightness = parseFloat(e.target.value);
@@ -1947,12 +2890,10 @@
 
             const allSliders = document.querySelectorAll('input[type="range"]');
             allSliders.forEach(slider => {
-                const start = () => isDraggingSlider = true;
-                slider.addEventListener('mousedown', start);
-                slider.addEventListener('touchstart', start, { passive: true });
+                slider.addEventListener('mousedown', () => isDraggingSlider = true);
             });
 
-            const allVisualsSliders = document.querySelectorAll('#visuals-dropdown input[type="range"]');
+            const visualsSliders = document.querySelectorAll('#visuals-dropdown input[type="range"]');
             
             const handleSliderScrubStart = (e) => {
                 const sliderContainer = e.target.closest('.slider-container');
@@ -1970,9 +2911,8 @@
                 }
             }
             
-            allVisualsSliders.forEach(slider => {
+            visualsSliders.forEach(slider => {
                 slider.addEventListener('mousedown', handleSliderScrubStart);
-                slider.addEventListener('touchstart', handleSliderScrubStart, { passive: true });
             });
 
             const endDrag = () => {
@@ -1981,14 +2921,16 @@
             };
 
             window.addEventListener('mouseup', endDrag);
-            window.addEventListener('touchend', endDrag);
 
+            // Universal click listener to close dropdowns
             window.addEventListener('click', (e) => {
                 if (isDraggingSlider) return;
 
                 if (videoVolumeControls.classList.contains('open')) videoVolumeControls.classList.remove('open');
                 if (shortcutsDropdown.classList.contains('visible')) shortcutsDropdown.classList.remove('visible');
                 if (visualsDropdown.classList.contains('visible')) visualsDropdown.classList.remove('visible');
+                if (textDropdown.classList.contains('visible')) textDropdown.classList.remove('visible');
+                if (audioDropdown.classList.contains('visible')) audioDropdown.classList.remove('visible');
             });
 
             const canvasResizeObserver = new ResizeObserver(resizeCanvas);
@@ -1996,7 +2938,8 @@
         };
 
         updateControlsState();
-        updateVisualsUI();
+        updateEditPanelsUI(); // Call the unified update function
+        updateAudioUI();
         setupEventListeners();
         startAnimationLoop();
     })();
