@@ -941,6 +941,7 @@
                   audioName: null,
                   // NEW: persistent scene duration (never shrinks)
                   durationMs: 0, // temp; set via helper just below
+                  audioDurationMs: 0, // Added to store audio duration without affecting scene duration
                 };
                 scenes.push(sceneToUpdate);
                 // Immediately after pushing the scene to scenes (right after the object literal):
@@ -1744,6 +1745,10 @@
             startAnimationLoop();
             
             runCountdown(() => {
+                // Snapshot longest *visual* duration at the start of this take
+                const baselineVisualMs = currentScene.durationMs || 0;
+                currentScene._padBaselineMs = baselineVisualMs;
+
                 isRecording = true;
                 if (movieInteraction.active && movieInteraction.primed) {
                     movieInteraction.primed = false;
@@ -1814,8 +1819,9 @@
 
             // Compute durations
             const elapsedMs = Date.now() - recordingStartTime;
-            // Target = longest of existing scene duration or this new take
-            const targetMs = Math.max(currentScene.durationMs || 0, Math.max(500, elapsedMs));
+            // Pad only to visuals baseline, never to audio
+            const baseline = currentScene._padBaselineMs || 0;
+            const targetMs = Math.max(baseline, Math.max(500, elapsedMs));
 
             // Keep isRecording = true until we actually finish & stop the MediaRecorder
             // so the drawing path continues writing frames into recordingCanvas.
@@ -1837,6 +1843,9 @@
 
                 lastRecordingDurationMs = targetMs; // store padded length
                 isRecording = false;
+                // Add cleanup here, after recording officially stops
+                delete currentScene._padBaselineMs;
+
 
                 sceneActionsContainer.classList.remove('hidden');
                 recordLayerBtn.textContent = 'Re-record Layer';
@@ -2023,18 +2032,20 @@
 
             for (const scene of scenes) {
                 // In generateFinalMovie(), enforce the same normalization per scene before you compute sceneDur:
-                // Normalize scene duration against intrinsic media/audio so we never shrink.
+                // visuals-only baseline
                 const mediaMs = (scene.backgroundType === 'video')
                   ? getMediaDurationMs(scene.backgroundElement, 'video')
                   : getMediaDurationMs(scene.backgroundElement, 'image');
-                const audioMs = scene.audioElement ? Math.floor((scene.audioElement.duration || 0) * 1000) : 0;
-                ensureSceneDurationMs(scene, Math.max(mediaMs, audioMs));
+                ensureSceneDurationMs(scene, mediaMs);
+
+                // sceneDur is always visual-based
+                const sceneDur = Math.max(scene.durationMs || 0, 1000);
 
                 // A) For video background scenes: replace the whole video branch with the time-driven loop below
                 if (scene.backgroundType === 'video') {
                   await new Promise(sceneResolve => {
                     const bg = scene.backgroundElement;
-                    const sceneDur = Math.max(scene.durationMs || 0, 1000);
+                    // const sceneDur = Math.max(scene.durationMs || 0, 1000); // This line moved above
                     const startTs = performance.now();
 
                     // Audio wiring (existing code)
@@ -2064,7 +2075,11 @@
                       if ((now - startTs) >= sceneDur) {
                         cancelAnimationFrame(sceneAnimFrame);
                         bg.pause(); bg.currentTime = 0;
-                        if (hasMp3) { scene.audioElement.pause(); scene.audioElement.currentTime = 0; scene.audioElement.loop = false; }
+                        if (scene.audioElement) { // Existing audio stop logic
+                          scene.audioElement.pause();
+                          scene.audioElement.currentTime = 0;
+                          scene.audioElement.loop = false;
+                        }
                         if (audioSourceNode) audioSourceNode.disconnect();
                         if (videoAudioSourceNode) videoAudioSourceNode.disconnect();
                         // restore loop default
@@ -2127,7 +2142,7 @@
                 // B) For image background scenes: render for scene.durationMs (not a fixed 3s)
                 else { // Image background
                   await new Promise(sceneResolve => {
-                    const sceneDur = Math.max(scene.durationMs || 3000, 1000);
+                    // const sceneDur = Math.max(scene.durationMs || 3000, 1000); // This line moved above
                     const startTs = performance.now();
 
                     // If an MP3 is attached, loop it during the whole sceneDur
@@ -2143,7 +2158,7 @@
                     const drawFrame = () => {
                       const now = performance.now();
                       if ((now - startTs) >= sceneDur) {
-                        if (scene.audioElement) {
+                        if (scene.audioElement) { // Existing audio stop logic
                           scene.audioElement.pause();
                           scene.audioElement.currentTime = 0;
                           scene.audioElement.loop = false;
@@ -2793,7 +2808,7 @@
                 // When adding scene audio, bump duration if the audio is longer
                 currentScene.audioElement.addEventListener('loadedmetadata', () => {
                   const aDur = Math.floor((currentScene.audioElement.duration || 0) * 1000);
-                  if (aDur > 0) ensureSceneDurationMs(currentScene, aDur);
+                  currentScene.audioDurationMs = aDur; // store, but don't extend scene duration
                 });
 
                 toast('Audio added! It will play during recording.', 4000);
@@ -2807,6 +2822,7 @@
                     URL.revokeObjectURL(currentScene.audioElement.src);
                     currentScene.audioElement = null;
                     currentScene.audioName = null;
+                    currentScene.audioDurationMs = 0; // Reset audio duration
                     toast('Audio removed from scene.', 2000);
                     updateAudioUI();
                 }
