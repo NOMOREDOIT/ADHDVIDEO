@@ -1493,249 +1493,184 @@ setTimeout(() => {
             }
         }
 
-                async function generateFinalMovie() {
-            if (scenes.length === 0) {
-                toast('Please create at least one scene to generate a project.', 3000);
-                return;
+async function generateFinalMovie() {
+    // Guard if there's nothing to generate
+    if (scenes.length === 0) {
+        toast('Please create at least one scene to generate a project.', 3000);
+        return;
+    }
+    if (isRecording) {
+        toast('Please stop the current recording before generating.', 3000);
+        return;
+    }
+
+    generationOverlay.classList.add('visible');
+    const finalChunks = [];
+
+    // Set master dimensions from the first scene
+    masterWidth = scenes[0].backgroundElement.naturalWidth || scenes[0].backgroundElement.videoWidth || 1280;
+    masterHeight = scenes[0].backgroundElement.naturalHeight || scenes[0].backgroundElement.videoHeight || 720;
+    recordingCanvas.width = masterWidth;
+    recordingCanvas.height = masterHeight;
+
+    // Set up Web Audio API to combine audio tracks from all scenes
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const destinationNode = audioContext.createMediaStreamDestination();
+    const finalStream = recordingCanvas.captureStream(30);
+    const hasAudio = scenes.some(s => s.backgroundType === 'video' || s.audioElement);
+
+    if (hasAudio) {
+        finalStream.addTrack(destinationNode.stream.getAudioTracks()[0]);
+    }
+
+    // Configure MediaRecorder for MP4 or WebM
+    const videoBitsPerSecond = 8000000;
+    let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+    let finalFileType = 'video/webm';
+    const mp4MimeType = hasAudio ? 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' : 'video/mp4; codecs="avc1.42E01E"';
+    if (MediaRecorder.isTypeSupported(mp4MimeType)) {
+        mimeType = mp4MimeType;
+        finalFileType = 'video/mp4';
+    }
+
+    const finalRecorder = new MediaRecorder(finalStream, {mimeType, videoBitsPerSecond});
+    finalRecorder.ondataavailable = e => {
+        if (e.data.size > 0) finalChunks.push(e.data);
+    };
+
+    // Promise to handle the asynchronous generation process
+    const generationPromise = new Promise(resolve => {
+        finalRecorder.onstop = () => {
+            const finalBlob = new Blob(finalChunks, {type: finalFileType});
+            finalProjectUrl = URL.createObjectURL(finalBlob);
+            
+            // --- UI update calls after generation (you can adapt these) ---
+            generationOverlay.classList.remove('visible');
+            toast('Project generation complete!', 4000);
+            movieDownloadBtn.dataset.filetype = finalFileType;
+            previewBtn.classList.remove('hidden');
+            movieDownloadBtn.classList.remove('hidden');
+            postGenerationActions.classList.remove('hidden');
+            // --- End of UI updates ---
+
+            audioContext.close();
+            resolve();
+        };
+    });
+
+    finalRecorder.start();
+
+    // Loop through each scene and render it frame by frame
+    for (const scene of scenes) {
+        const mediaMs = (scene.backgroundType === 'video') ? getMediaDurationMs(scene.backgroundElement, 'video') : getMediaDurationMs(scene.backgroundElement, 'image');
+        ensureSceneDurationMs(scene, mediaMs);
+        const sceneDur = Math.max(scene.durationMs || 0, 1000);
+
+        await new Promise(sceneResolve => {
+            const startTs = performance.now();
+            let audioSourceNode = null;
+            let videoAudioSourceNode = null;
+            
+            // Connect scene audio to the central audio destination
+            if (scene.audioElement) {
+                audioSourceNode = audioContext.createMediaElementSource(scene.audioElement);
+                audioSourceNode.connect(destinationNode);
+                scene.audioElement.loop = true;
+                scene.audioElement.currentTime = 0;
+                scene.audioElement.play();
+            } else if (scene.backgroundType === 'video' && !scene.backgroundElement.muted) {
+                videoAudioSourceNode = audioContext.createMediaElementSource(scene.backgroundElement);
+                videoAudioSourceNode.connect(destinationNode);
+            }
+            
+            if (scene.backgroundType === 'video') {
+                scene.backgroundElement.currentTime = 0;
+                scene.backgroundElement.play();
             }
 
-            if (isRecording) {
-                toast('Please stop the current recording before generating.', 3000);
-                return;
-            }
-            generationOverlay.classList.add('visible');
-            const finalChunks = [];
+            // Create temporary layer states for this scene's generation
+            const tempLayers = scene.layers.map(l => ({
+                ...l,
+                projectileTimestamp: startTs,
+                projectileStartX: l.x,
+                projectileStartY: l.y,
+                projectileInitialRotation: l.rot,
+                projectileInitialFlipX: l.flipX,
+            }));
 
-            // Master dimensions based on the first scene
-            masterWidth = scenes[0].backgroundElement.naturalWidth || scenes[0].backgroundElement.videoWidth || 1280;
-            masterHeight = scenes[0].backgroundElement.naturalHeight || scenes[0].backgroundElement.videoHeight || 720;
-
-            recordingCanvas.width = masterWidth;
-            recordingCanvas.height = masterHeight;
-
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const destinationNode = audioContext.createMediaStreamDestination();
-
-            const finalStream = recordingCanvas.captureStream(30);
-            const videoTrack = finalStream.getVideoTracks()[0];
-
-            const hasAudio = scenes.some(s => s.backgroundType === 'video' || s.audioElement);
-            if (hasAudio) {
-                const audioTrack = destinationNode.stream.getAudioTracks()[0];
-                if (audioTrack) finalStream.addTrack(audioTrack); // Guard against null track
-            }
-
-            const videoBitsPerSecond = 8000000;
-            let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
-            let finalFileType = 'video/webm';
-
-            const mp4MimeType = hasAudio ? 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' : 'video/mp4; codecs="avc1.42E01E"';
-            if (MediaRecorder.isTypeSupported(mp4MimeType)) {
-                mimeType = mp4MimeType;
-                finalFileType = 'video/mp4';
-                toast('Exporting to high-quality MP4.', 2000);
-            } else {
-                toast('MP4 not supported, falling back to WebM.', 3000);
-            }
-
-            const finalRecorder = new MediaRecorder(finalStream, {mimeType, videoBitsPerSecond});
-
-            finalRecorder.ondataavailable = e => {
-                if (e.data.size > 0) finalChunks.push(e.data);
-            };
-
-            const generationPromise = new Promise(resolve => {
-                finalRecorder.onstop = () => {
-                    const finalBlob = new Blob(finalChunks, {type: finalFileType});
-                    finalProjectUrl = URL.createObjectURL(finalBlob);
-                    movieDownloadBtn.dataset.filetype = finalFileType;
-                    generationOverlay.classList.remove('visible');
-                    toast('Project generation complete! You can now preview or download.', 4000);
-                    previewBtn.classList.remove('hidden');
-                    movieDownloadBtn.classList.remove('hidden');
-                    postGenerationActions.classList.remove('hidden');
-                    controlsPanel.scrollTo({ top: controlsPanel.scrollHeight, behavior: 'smooth' });
-                    audioContext.close();
-                    resolve();
-                };
-            });
-
-            const renderSceneFrameForGeneration = (scene, layersToDraw) => {
-                // Ensure consistent compositing mode
-                recordingCtx.globalCompositeOperation = 'source-over';
-                
-                recordingCtx.clearRect(0, 0, masterWidth, masterHeight);
-                recordingCtx.save();
-                
-                // Normalize "no-op" filters to 'none' for background
-                const bgFilter = (scene.bgBrightness === 1 && scene.bgSaturation === 1)
-                    ? 'none'
-                    : `brightness(${scene.bgBrightness}) saturate(${scene.bgSaturation})`;
-                recordingCtx.filter = bgFilter;
-                recordingCtx.drawImage(scene.backgroundElement, 0, 0, masterWidth, masterHeight);
-                recordingCtx.restore();
-
-                layersToDraw.forEach(l => {
-                    recordingCtx.save();
-                    recordingCtx.globalAlpha = l.opacity;
-
-                    // Normalize "no-op" filters to 'none' for layers
-                    const lyrFilter = (l.brightness === 1 && l.saturation === 1)
-                        ? 'none'
-                        : `brightness(${l.brightness}) saturate(${l.saturation})`;
-                    recordingCtx.filter = lyrFilter;
-                    
-                    const scaleX = recordingCanvas.width / movieCanvas.width;
-                    const scaleY = recordingCanvas.height / movieCanvas.height;
-                    const finalX = l.x * scaleX;
-                    const finalY = l.y * scaleY;
-                    recordingCtx.translate(finalX, finalY);
-                    recordingCtx.rotate(l.rot * Math.PI / 180);
-                    if (l.flipX) recordingCtx.scale(-1, 1);
-
-                    if (l.type === 'image' || l.type === 'video') {
-                        const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
-                        const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
-                        if (assetWidth > 0) {
-                            const scaledSize = l.size * scaleX;
-                            const dWidth = scaledSize;
-                            const dHeight = scaledSize * (assetHeight / assetWidth);
-                            recordingCtx.drawImage(l.asset, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
-                        }
-                    } else if (l.type === 'text') {
-                        const scaledFontSize = l.fontSize * scaleY;
-                        recordingCtx.font = `${scaledFontSize}px ${l.font}`;
-                        recordingCtx.fillStyle = l.color;
-                        recordingCtx.textAlign = 'center';
-                        recordingCtx.textBaseline = 'middle';
-                        recordingCtx.fillText(l.text, 0, 0);
-                    }
-                    recordingCtx.restore();
-                });
-            };
-
-            let hasRecorderStarted = false;
-
-            for (const scene of scenes) {
-                async function seedFirstFrames(sceneToSeed, layersToSeed) {
-                    // First seeded frame as a hard copy (opaque replacement)
-                    const prevOp = recordingCtx.globalCompositeOperation;
-                    recordingCtx.globalCompositeOperation = 'copy';
-                    renderSceneFrameForGeneration(sceneToSeed, layersToSeed);
-                    recordingCtx.globalCompositeOperation = prevOp;
-
-                    // Push a couple more delivered frames to prime the stream
-                    for (let i = 0; i < 2; i++) {
-                        if (videoTrack && typeof videoTrack.requestFrame === 'function') {
-                            videoTrack.requestFrame();
-                        }
-                        await new Promise(r => requestAnimationFrame(() => r()));
-                    }
+            const generationAnimLoop = () => {
+                const now = performance.now();
+                if ((now - startTs) >= sceneDur) {
+                    // Clean up audio nodes for this scene
+                    if (audioSourceNode) audioSourceNode.disconnect();
+                    if (videoAudioSourceNode) videoAudioSourceNode.disconnect();
+                    if (scene.audioElement) scene.audioElement.pause();
+                    if (scene.backgroundType === 'video') scene.backgroundElement.pause();
+                    return sceneResolve();
                 }
 
-                await new Promise(sceneResolve => {
-                    const mediaDur = (scene.backgroundType === 'video') ? getMediaDurationMs(scene.backgroundElement, 'video') : getMediaDurationMs(scene.backgroundElement, 'image');
-                    const audioDur = scene.audioDurationMs || 0;
-                    const committedLayersMaxDur = scene.committedLayerSrcs.length > 0 ? lastRecordingDurationMs : 0;
-                    ensureSceneDurationMs(scene, Math.max(mediaDur, audioDur, committedLayersMaxDur));
-                    const sceneDur = Math.max(scene.durationMs, 1000);
-
-                    const bg = scene.backgroundElement;
-                    let startTs = 0;
-
-                    let audioSourceNode = null, videoAudioSourceNode = null;
-                    const hasMp3 = !!scene.audioElement;
-
-                    if (scene.backgroundType === 'video') {
-                        bg.loop = false;
-                        bg.muted = hasMp3;
-                    }
-                    if (hasMp3) {
-                        audioSourceNode = audioContext.createMediaElementSource(scene.audioElement);
-                        audioSourceNode.connect(destinationNode);
-                        scene.audioElement.loop = true;
-                        scene.audioElement.currentTime = 0;
-                    } else if (scene.backgroundType === 'video' && !bg.muted) {
-                        videoAudioSourceNode = audioContext.createMediaElementSource(bg);
-                        videoAudioSourceNode.connect(destinationNode);
-                    }
-
-                    const tempLayers = scene.layers.map(l => ({ ...l, projectileTimestamp: 0 }));
-
-                    let sceneAnimFrame;
-                    const generationAnimLoop = () => {
-                        const now = performance.now();
-                        const elapsedTime = now - startTs;
-
-                        if (elapsedTime >= sceneDur) {
-                            cancelAnimationFrame(sceneAnimFrame);
-                            if (scene.backgroundType === 'video') { bg.pause(); bg.currentTime = 0; }
-                            if (scene.audioElement) { scene.audioElement.pause(); scene.audioElement.currentTime = 0; scene.audioElement.loop = false; }
-                            if (audioSourceNode) audioSourceNode.disconnect();
-                            if (videoAudioSourceNode) videoAudioSourceNode.disconnect();
-                            if (scene.backgroundType === 'video') { bg.loop = true; bg.muted = true; }
-                            return sceneResolve();
-                        }
-                        
-                        tempLayers.forEach(l => {
-                            if (l.isProjectileActive) {
-                                const currentLayerTime = (now - l.projectileTimestamp) / 1000;
-                                l.x = l.projectileStartX + l.projectileVectorX * currentLayerTime;
-                                l.y = l.projectileStartY + l.projectileVectorY * currentLayerTime + 0.5 * l.gravityValue * currentLayerTime * currentLayerTime;
-                                l.rot = l.projectileInitialRotation;
-                                l.flipX = l.projectileInitialFlipX;
-                            }
-                        });
-
-                        renderSceneFrameForGeneration(scene, tempLayers);
-                        sceneAnimFrame = requestAnimationFrame(generationAnimLoop);
-                    };
-
-                    const startGenerationLoop = async () => {
-                        startTs = performance.now();
-                        tempLayers.forEach(l => { l.projectileTimestamp = startTs; });
-
-                        try { await audioContext.resume(); } catch (_) {}
-
-                        if (!hasRecorderStarted) {
-                            await seedFirstFrames(scene, tempLayers);
-                            finalRecorder.start();
-                            hasRecorderStarted = true;
-                        }
-                        
-                        if (scene.audioElement) {
-                            try { await scene.audioElement.play(); } catch (e) { console.warn('Audio play blocked:', e); }
-                        }
-                        
-                        generationAnimLoop();
-                    };
-
-                    if (scene.backgroundType === 'video') {
-                        bg.currentTime = 0;
-                        const onFirstFrameReady = () => {
-                            if (bg.paused) bg.play().catch(e => console.warn("Playback prevented:", e));
-                            startGenerationLoop();
-                        };
-                        
-                        if ('requestVideoFrameCallback' in bg) {
-                            bg.requestVideoFrameCallback(onFirstFrameReady);
-                        } else {
-                            requestAnimationFrame(() => requestAnimationFrame(onFirstFrameReady));
-                        }
-                    } else {
-                        startGenerationLoop();
+                // Update physics for any projectile layers
+                tempLayers.forEach(l => {
+                    if (l.isProjectileActive) {
+                        const elapsedTimeSeconds = (now - l.projectileTimestamp) / 1000;
+                        l.x = l.projectileStartX + l.projectileVectorX * elapsedTimeSeconds;
+                        l.y = l.projectileStartY + l.projectileVectorY * elapsedTimeSeconds + 0.5 * l.gravityValue * elapsedTimeSeconds * elapsedTimeSeconds;
+                        l.rot = l.projectileInitialRotation;
+                        l.flipX = l.projectileInitialFlipX;
                     }
                 });
-            }
 
-            if(hasRecorderStarted) {
-                finalRecorder.stop();
-            } else {
-                generationOverlay.classList.remove('visible');
-                toast('Nothing to generate.', 2000);
+                renderSceneFrameForGeneration(scene, tempLayers);
+                requestAnimationFrame(generationAnimLoop);
+            };
+
+            generationAnimLoop();
+        });
+    }
+
+    finalRecorder.stop();
+    return generationPromise;
+}
+
+// Helper function used by generateFinalMovie to draw a single frame
+function renderSceneFrameForGeneration(scene, layersToDraw) {
+    recordingCtx.clearRect(0, 0, masterWidth, masterHeight);
+    recordingCtx.save();
+    recordingCtx.filter = `brightness(${scene.bgBrightness}) saturate(${scene.bgSaturation})`;
+    recordingCtx.drawImage(scene.backgroundElement, 0, 0, masterWidth, masterHeight);
+    recordingCtx.restore();
+
+    layersToDraw.forEach(l => {
+        recordingCtx.save();
+        recordingCtx.globalAlpha = l.opacity;
+        recordingCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
+        const scaleX = recordingCanvas.width / movieCanvas.width;
+        const scaleY = recordingCanvas.height / movieCanvas.height;
+        const finalX = l.x * scaleX;
+        const finalY = l.y * scaleY;
+        recordingCtx.translate(finalX, finalY);
+        recordingCtx.rotate(l.rot * Math.PI / 180);
+        if (l.flipX) recordingCtx.scale(-1, 1);
+        if (l.type === 'image' || l.type === 'video') {
+            const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+            const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+            if (assetWidth > 0) {
+                const scaledSize = l.size * scaleX;
+                const dWidth = scaledSize;
+                const dHeight = scaledSize * (assetHeight / assetWidth);
+                recordingCtx.drawImage(l.asset, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
             }
-            return generationPromise;
+        } else if (l.type === 'text') {
+            const scaledFontSize = l.fontSize * scaleY;
+            recordingCtx.font = `${scaledFontSize}px ${l.font}`;
+            recordingCtx.fillStyle = l.color;
+            recordingCtx.textAlign = 'center';
+            recordingCtx.textBaseline = 'middle';
+            recordingCtx.fillText(l.text, 0, 0);
         }
+        recordingCtx.restore();
+    });
+}
 
 
         // --- Interaction Logic ---
