@@ -7,28 +7,78 @@
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
 /* --- In-Window Loading Overlay Styles --- */
-#loading-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background-color:#faf9f5;color:#2b2b2b;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease-in-out}#loading-overlay h1{font-family:'VT323',monospace;font-size:2.5rem;text-shadow:2px 2px 0 #000}#loading-overlay h1::after{content:'.';display:inline-block;width:3ch;text-align:left;animation:ellipsis 1.4s infinite}:root{--bg:#f2efe8;--ink:#2b2b2b;--mid:#c2c2c2;--light:#faf9f5;--light-rgb:250,249,245;--shadow:#7a7a7a;--danger-color:#cc4444;--action-color:#4477cc;--success-color:#55cc55;--bg-rgb:242,239,232}html{box-sizing:border-box}*,:before,:after{box-sizing:inherit}body{font-family:'VT323',monospace;background:var(--bg) url(./assets/wallpaper.png) repeat fixed;color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:10px;margin:0;height:100vh;overflow:hidden;transition:background-color .3s,color .3s}body.dark-mode{--bg:#1a1d2d;--ink:#e0e5f0;--mid:#3d4a6e;--light:#252a40;--light-rgb:37,42,64;--shadow:#0d0f16;--danger-color:#a83e3e;--action-color:#5a8de8;--success-color:#4a9d4a;--bg-rgb:26,29,45}.window{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);width:100%;max-width:1600px;margin:0 auto;height:calc(100vh - 20px);display:flex;flex-direction:column;overflow:hidden;transition:background-color .3s,border-color .3s,box-shadow .3s}.titlebar{height:28px;background:var(--mid);display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-bottom:2px solid var(--ink);font-size:20px;flex-shrink:0;cursor:default;position:relative;transition:background-color .3s,border-color .3s}body.dark-mode .titlebar{color:var(--ink)}.titlebar-controls{display:flex;align-items:center;gap:8px}.controls-fake{display:flex;gap:4px}.btn-square{width:16px;height:16px;background:var(--light);border:2px solid var(--ink)}.controls-fake .btn-square:first-child{background-color:var(--success-color)}.controls-fake .btn-square:last-child{background-color:var(--danger-color)}#shortcuts-btn,#visuals-btn,#audio-btn,#text-btn,#theme-toggle-btn{font-family:inherit;font-size:16px;background:var(--light);border:2px solid var(--ink);padding:0 8px;cursor:pointer;transition:background-color .3s,border-color .3s,color .3s;color:var(--ink)}#theme-toggle-btn{padding:0 4px;font-size:18px}#shortcuts-dropdown{right:8px}#shortcuts-dropdown.visible{display:block}#shortcuts-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#shortcuts-dropdown ul{margin:0;padding:0;list-style:none;font-size:1rem}#shortcuts-dropdown li{display:flex;justify-content:space-between;padding:2px 0}#shortcuts-dropdown li kbd{font-family:inherit;border:2px solid var(--ink);padding:0 4px;background:var(--bg)}#visuals-dropdown,#audio-dropdown,#text-dropdown,#shortcuts-dropdown{display:none;position:absolute;top:28px;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;z-index:100;width:250px;transition:background .2s,backdrop-filter .2s,box-shadow .2s,border-color .2s}body.dark-mode #shortcuts-dropdown li kbd{border-color:var(--mid)}#visuals-dropdown{right:320px}#text-dropdown{right:216px}#audio-dropdown{right:102px}#visuals-dropdown.visible,#audio-dropdown.visible,#text-dropdown.visible{display:block}#visuals-dropdown h5,#visuals-dropdown h6,#visuals-dropdown .slider-container,#audio-dropdown h5,#audio-dropdown p,#audio-dropdown .action-buttons,#text-dropdown h5,#text-dropdown h6,#text-dropdown .slider-container{transition:opacity .2s}#visuals-dropdown h5,#audio-dropdown h5,#text-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#visuals-dropdown h6,#text-dropdown h6{font-size:1.1rem;font-weight:700;text-align:left;margin-top:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid);padding-bottom:2px}#visuals-dropdown label,#text-dropdown label{display:block;margin-top:.5rem;font-size:.9rem}#visuals-dropdown.is-scrubbing{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;border-color:transparent}#visuals-dropdown.is-scrubbing>h5,#visuals-dropdown.is-scrubbing>div>h6,#visuals-dropdown.is-scrubbing .slider-container{opacity:0;pointer-events:none}#visuals-dropdown.is-scrubbing .slider-container.is-active-slider{opacity:1;pointer-events:auto}#visuals-dropdown input[type=range],#text-dropdown input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--ink);outline:0}#visuals-dropdown input[type=range]::-webkit-slider-thumb,#text-dropdown input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #visuals-dropdown input[type=range]::-webkit-slider-thumb,body.dark-mode #text-dropdown input[type=range]::-webkit-slider-thumb{background:var(--action-color)}#visuals-dropdown input[type=range]::-moz-range-thumb,#text-dropdown input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #visuals-dropdown input[type=range]::-moz-range-thumb,body.dark-mode #text-dropdown input[type=range]::-moz-range-thumb{background:var(--action-color)}#asset-visuals-controls.disabled,#text-visuals-controls.disabled,#audio-controls.disabled{opacity:.5;pointer-events:none}#audio-file-name{font-size:.9rem;text-align:center;word-break:break-all;padding:.5rem;background:var(--bg);border:2px inset var(--mid);min-height:40px}.mg-btn{font-family:inherit;font-size:18px;background:var(--light);border:2px solid var(--ink);padding:8px 16px;margin:4px;cursor:pointer;text-decoration:none;color:var(--ink);transition:.2s all;box-shadow:2px 2px 0 var(--shadow);width:100%;white-space:nowrap}body.dark-mode .mg-btn:hover{filter:brightness(1.2)}.mg-btn:hover{transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow)}.mg-btn:disabled,.mg-btn.disabled{opacity:.5;pointer-events:none;box-shadow:none;transform:none}.mg-btn.active{background-color:var(--danger-color);color:var(--light);box-shadow:none;transform:translate(2px,2px)}.mg-btn.success{background-color:var(--success-color)}.mg-btn.record{background-color:var(--danger-color);color:var(--light)}.mg-btn.generate{background-color:var(--ink);color:var(--light)}body.dark-mode .mg-btn.generate{background-color:var(--action-color);color:var(--ink)}body.dark-mode .mg-btn.record,body.dark-mode .mg-btn.active{color:var(--ink)}.hidden{display:none!important}#studio-container{display:grid;grid-template-columns:320px 1fr;grid-template-rows:minmax(0,1fr);gap:1.5rem;padding:1.5rem;flex-grow:1;min-height:0}#controls-panel{display:flex;flex-direction:column;gap:1rem;overflow-y:auto;min-height:0}#canvas-panel{display:flex;align-items:center;justify-content:center;border:2px solid var(--ink);background-color:var(--mid);position:relative;min-height:0}#controls-panel fieldset{background:var(--light);border:2px solid var(--ink);padding:.8rem;margin:0;text-align:left;transition:background-color .3s,border-color .3s,color .3s}#controls-panel legend{font-size:1.2rem;font-weight:400;padding:0 .25rem}.action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.scene-controls-container{display:flex;flex-direction:column;gap:.5rem}.scene-controls-container>.mg-btn{margin-left:0;margin-right:0}#scene-actions-container .mg-btn,#mg-commit-layer-btn{white-space:normal;text-align:center}#recording-status{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.2rem;color:var(--danger-color)}#recording-indicator{width:12px;height:12px;background-color:var(--danger-color);border:1px solid var(--ink);border-radius:50%;animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}.placeholder-text{color:var(--shadow);font-size:.9rem;text-align:center;padding:1rem;width:100%}body.dark-mode .placeholder-text{color:var(--ink)}#mg-asset-palette{display:flex;gap:.5rem;flex-wrap:wrap;min-height:70px;align-content:flex-start}.palette-slot,.layer-thumb{width:60px;height:60px;border:2px solid var(--ink);background:var(--light);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow)}.layer-thumb.locked{opacity:.6;cursor:default;box-shadow:none}.layer-thumb.locked .layer-controls{display:none}.layer-thumb.locked:hover .layer-controls{display:flex}.layer-thumb{cursor:grab}.palette-slot.empty{display:flex;align-items:center;justify-content:center;font-size:3rem;line-height:1;color:var(--mid);transition:all .2s}.palette-slot.empty:hover{background-color:#e0e0e0;color:var(--ink)}body.dark-mode .palette-slot.empty:hover{background-color:var(--mid);color:var(--ink)}.layer-thumb img,.layer-thumb video{width:100%;height:100%;object-fit:cover;pointer-events:none}.layer-thumb.active{border:2px solid var(--action-color);transform:scale(1.05);box-shadow:none}.layer-controls{position:absolute;top:-5px;right:-5px;display:flex;gap:2px}.layer-btn{background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center}#scene-tray{display:flex;gap:.5rem;flex-wrap:wrap;min-height:65px;align-content:flex-start;padding-bottom:.5rem;border-bottom:2px solid var(--mid);margin-bottom:.5rem}.scene-thumb{width:80px;height:55px;border:2px solid var(--ink);background-color:var(--mid);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow);background-size:cover;background-position:center;display:flex;color:var(--light);text-shadow:1px 1px 0 var(--ink);align-items:center;justify-content:center;font-size:1.5rem;transition:all .2s}body.dark-mode .scene-thumb{text-shadow:1px 1px 0 var(--shadow)}.scene-thumb.active{border-color:var(--action-color);transform:scale(1.05);box-shadow:0 0 0 var(--shadow)}.scene-delete-btn{position:absolute;top:-5px;right:-5px;background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center;opacity:0;transition:opacity .2s}.scene-thumb:hover .scene-delete-btn{opacity:1}.scene-thumb.active:hover .scene-delete-btn{display:none}#mg-movie-canvas,#mg-controls-overlay-canvas{position:absolute}#mg-controls-overlay-canvas{pointer-events:none}#mg-movie-canvas{pointer-events:auto}#video-volume-controls{position:absolute;bottom:10px;right:10px;display:flex;align-items:center;justify-content:flex-end;z-index:10;height:34px}#video-volume-btn{font-size:1.5rem;cursor:pointer;padding:4px;user-select:none;background:0 0;border:none}#volume-slider-wrapper{display:flex;align-items:center;width:0;opacity:0;overflow:hidden;transition:width .35s ease-in-out,opacity .35s ease-in-out}#video-volume-controls.open #volume-slider-wrapper{width:100px;opacity:1;margin-right:8px}#video-volume-slider{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--ink);outline:0}#video-volume-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #video-volume-slider::-webkit-slider-thumb{background:var(--action-color)}#video-volume-slider::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #video-volume-slider::-moz-range-thumb{background:var(--action-color)}.mg-overlay-base{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s .3s;background:rgba(10,10,10,.25)}body.dark-mode .mg-overlay-base{background:rgba(var(--bg-rgb),.5)}.mg-overlay-base.visible{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .3s,visibility 0s 0s}.overlay-close-btn{position:absolute;top:8px;right:10px;background:0 0;border:none;line-height:1;cursor:pointer;padding:5px;font-family:'VT323',monospace;color:var(--ink);font-size:2rem;z-index:10;transition:opacity .2s}.overlay-close-btn:hover{opacity:.6}#mg-asset-picker-grid-wrapper{background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:1.5rem;max-width:800px;width:90vw;max-height:85vh;display:flex;flex-direction:column;position:relative}#mg-asset-picker-grid-wrapper h4{font-size:1.5rem;text-align:center;font-weight:400;margin:0 0 1rem}#mg-asset-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:.5rem;overflow-y:auto;padding:.5rem;flex-grow:1}.mg-template{width:auto;height:80px}.mg-template img{width:100%;height:100%;object-fit:contain;cursor:pointer}#mg-asset-picker-actions{margin-top:1rem;text-align:center;display:flex;gap:.5rem;justify-content:center}#mg-toast{visibility:hidden;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--light);border:2px solid var(--ink);padding:.5rem 1rem;color:var(--ink);font-size:1rem;z-index:2000;box-shadow:4px 4px 0 var(--ink)}#mg-countdown-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;display:flex;align-items:center;justify-content:center;z-index:3000;color:var(--light);text-shadow:2px 2px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink);font-size:15vw;pointer-events:auto}body.dark-mode #mg-countdown-overlay{color:var(--ink);text-shadow:2px 2px 0 var(--action-color),-2px -2px 0 var(--action-color),2px -2px 0 var(--action-color),-2px 2px 0 var(--action-color)}#canvas-placeholder{position:absolute;width:calc(100% - 20px);height:calc(100% - 20px);border:4px dashed var(--shadow);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;color:var(--shadow);transition:all .2s;padding:2rem;overflow:hidden;position:relative}#canvas-placeholder h3,#canvas-placeholder p{position:relative;z-index:2}#canvas-placeholder video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:.6}#canvas-placeholder h3{font-size:2rem;margin:0 0 .5rem}#canvas-placeholder p{font-size:1.2rem}#canvas-placeholder:hover,#canvas-panel.drag-over #canvas-placeholder{border-color:var(--ink);color:var(--ink);background-color:rgba(255,255,255,.5)}body.dark-mode #canvas-placeholder:hover,body.dark-mode #canvas-panel.drag-over #canvas-placeholder{background-color:rgba(var(--light-rgb),.5)}#canvas-panel.drag-over{background-color:var(--shadow)}#layer-instructions{padding:0 0 .5rem 0;margin:0;font-size:1rem}#mg-preview-container{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px}#mg-preview-container .overlay-close-btn{top:-10px;right:-10px;background:var(--danger-color);color:var(--light);border:2px solid var(--ink)}#mg-preview-video{display:block;max-width:80vw;max-height:75vh;background:#000}#mg-generation-overlay{z-index:4000}#mg-generation-overlay .window{max-width:400px;height:auto;padding:2rem;text-align:center}body.dark-mode #mg-generation-overlay .window{background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}#mg-generation-overlay h3{font-size:2rem;margin:0 0 1rem}#mg-generation-overlay h3::after{display:inline-block;animation:ellipsis 1.4s infinite;content:".";width:1em;text-align:left}@keyframes ellipsis{0%{content:"."}33%{content:".."}66%{content:"..."}}#mg-confirmation-overlay{z-index:5000}#mg-confirmation-dialog{padding:1.5rem;text-align:center;width:90%;max-width:400px;height:auto}#mg-confirmation-dialog p{font-size:1.2rem;margin:0 0 1.5rem}#mg-confirmation-dialog .action-buttons{display:flex;justify-content:center}#scene-actions-container{grid-template-columns:2fr 1fr 1fr;gap:.5rem}#scene-actions-container #mg-record-layer-btn{font-size:20px}#mg-gravity-menu.window{position:absolute;z-index:101;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;width:200px;height:auto;text-align:center;display:none}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}body.dark-mode #mg-gravity-menu input[type=number]{border-color:var(--mid);color:var(--ink)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#text-content,#text-font{transition:background-color .3s,border-color .3s,color .3s}
+#loading-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background-color:#faf9f5;color:#2b2b2b;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease-in-out}#loading-overlay h1{font-family:'VT323',monospace;font-size:2.5rem;text-shadow:2px 2px 0 #000}#loading-overlay h1::after{content:'.';display:inline-block;width:3ch;text-align:left;animation:ellipsis 1.4s infinite}:root{--bg:#f2efe8;--ink:#2b2b2b;--mid:#c2c2c2;--light:#faf9f5;--light-rgb:250,249,245;--shadow:#7a7a7a;--danger-color:#cc4444;--action-color:#4477cc;--success-color:#55cc55;--bg-rgb:242,239,232}html{box-sizing:border-box}*,:before,:after{box-sizing:inherit}body{font-family:'VT323',monospace;background:var(--bg) url(./assets/wallpaper.png) repeat fixed;color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:10px;margin:0;height:100vh;overflow:hidden;transition:background-color .3s,color .3s}body.dark-mode{--bg:#1a1d2d;--ink:#e0e5f0;--mid:#3d4a6e;--light:#252a40;--light-rgb:37,42,64;--shadow:#0d0f16;--danger-color:#a83e3e;--action-color:#5a8de8;--success-color:#4a9d4a;--bg-rgb:26,29,45}.window{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);width:100%;max-width:1600px;margin:0 auto;height:calc(100vh - 20px);display:flex;flex-direction:column;overflow:hidden;transition:background-color .3s,border-color .3s,box-shadow .3s}.titlebar{height:28px;background:var(--mid);display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-bottom:2px solid var(--ink);font-size:20px;flex-shrink:0;cursor:default;position:relative;transition:background-color .3s,border-color .3s}body.dark-mode .titlebar{color:var(--ink)}.titlebar-controls{display:flex;align-items:center;gap:8px}.controls-fake{display:flex;gap:4px}.btn-square{width:16px;height:16px;background:var(--light);border:2px solid var(--ink)}.controls-fake .btn-square:first-child{background-color:var(--success-color)}.controls-fake .btn-square:last-child{background-color:var(--danger-color)}#shortcuts-btn,#visuals-btn,#audio-btn,#text-btn,#theme-toggle-btn{font-family:inherit;font-size:16px;background:var(--light);border:2px solid var(--ink);padding:0 8px;cursor:pointer;transition:background-color .3s,border-color .3s,color .3s;color:var(--ink)}#theme-toggle-btn{padding:0 4px;font-size:18px}#shortcuts-dropdown{right:8px}#shortcuts-dropdown.visible{display:block}#shortcuts-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#shortcuts-dropdown ul{margin:0;padding:0;list-style:none;font-size:1rem}#shortcuts-dropdown li{display:flex;justify-content:space-between;padding:2px 0}#shortcuts-dropdown li kbd{font-family:inherit;border:2px solid var(--ink);padding:0 4px;background:var(--bg)}#visuals-dropdown,#audio-dropdown,#text-dropdown,#shortcuts-dropdown{display:none;position:absolute;top:28px;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;z-index:100;width:250px;transition:background .2s,backdrop-filter .2s,box-shadow .2s,border-color .2s}body.dark-mode #shortcuts-dropdown li kbd{border-color:var(--mid)}#visuals-dropdown{right:320px}#text-dropdown{right:216px}#audio-dropdown{right:102px}#visuals-dropdown.visible,#audio-dropdown.visible,#text-dropdown.visible{display:block}#visuals-dropdown h5,#visuals-dropdown h6,#visuals-dropdown .slider-container,#audio-dropdown h5,#audio-dropdown p,#audio-dropdown .action-buttons,#text-dropdown h5,#text-dropdown h6,#text-dropdown .slider-container{transition:opacity .2s}#visuals-dropdown h5,#audio-dropdown h5,#text-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#visuals-dropdown h6,#text-dropdown h6{font-size:1.1rem;font-weight:700;text-align:left;margin-top:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid);padding-bottom:2px}#visuals-dropdown label,#text-dropdown label{display:block;margin-top:.5rem;font-size:.9rem}#visuals-dropdown.is-scrubbing{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;border-color:transparent}#visuals-dropdown.is-scrubbing>h5,#visuals-dropdown.is-scrubbing>div>h6,#visuals-dropdown.is-scrubbing .slider-container{opacity:0;pointer-events:none}#visuals-dropdown.is-scrubbing .slider-container.is-active-slider{opacity:1;pointer-events:auto}#visuals-dropdown input[type=range],#text-dropdown input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--ink);outline:0}#visuals-dropdown input[type=range]::-webkit-slider-thumb,#text-dropdown input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #visuals-dropdown input[type=range]::-webkit-slider-thumb,body.dark-mode #text-dropdown input[type=range]::-webkit-slider-thumb{background:var(--action-color)}#visuals-dropdown input[type=range]::-moz-range-thumb,#text-dropdown input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #visuals-dropdown input[type=range]::-moz-range-thumb,body.dark-mode #text-dropdown input[type=range]::-moz-range-thumb{background:var(--action-color)}#asset-visuals-controls.disabled,#text-visuals-controls.disabled,#audio-controls.disabled{opacity:.5;pointer-events:none}#audio-file-name{font-size:.9rem;text-align:center;word-break:break-all;padding:.5rem;background:var(--bg);border:2px inset var(--mid);min-height:40px}.mg-btn{font-family:inherit;font-size:18px;background:var(--light);border:2px solid var(--ink);padding:8px 16px;margin:4px;cursor:pointer;text-decoration:none;color:var(--ink);transition:.2s all;box-shadow:2px 2px 0 var(--shadow);width:100%;white-space:nowrap}body.dark-mode .mg-btn:hover{filter:brightness(1.2)}.mg-btn:hover{transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow)}.mg-btn:disabled,.mg-btn.disabled{opacity:.5;pointer-events:none;box-shadow:none;transform:none}.mg-btn.active{background-color:var(--danger-color);color:var(--light);box-shadow:none;transform:translate(2px,2px)}.mg-btn.success{background-color:var(--success-color)}.mg-btn.record{background-color:var(--danger-color);color:var(--light)}.mg-btn.generate{background-color:var(--ink);color:var(--light)}body.dark-mode .mg-btn.generate{background-color:var(--action-color);color:var(--ink)}body.dark-mode .mg-btn.record,body.dark-mode .mg-btn.active{color:var(--ink)}.hidden{display:none!important}#studio-container{display:grid;grid-template-columns:320px 1fr;grid-template-rows:minmax(0,1fr);gap:1.5rem;padding:1.5rem;flex-grow:1;min-height:0}#controls-panel{display:flex;flex-direction:column;gap:1rem;overflow-y:auto;min-height:0}#canvas-panel{display:flex;align-items:center;justify-content:center;border:2px solid var(--ink);background-color:var(--mid);position:relative;min-height:0;transition:background-color .5s ease-in-out}#controls-panel fieldset{background:var(--light);border:2px solid var(--ink);padding:.8rem;margin:0;text-align:left;transition:background-color .3s,border-color .3s,color .3s}#controls-panel legend{font-size:1.2rem;font-weight:400;padding:0 .25rem}.action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.scene-controls-container{display:flex;flex-direction:column;gap:.5rem}.scene-controls-container>.mg-btn{margin-left:0;margin-right:0}#scene-actions-container .mg-btn,#mg-commit-layer-btn{white-space:normal;text-align:center}#recording-status{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.2rem;color:var(--danger-color)}#recording-indicator{width:12px;height:12px;background-color:var(--danger-color);border:1px solid var(--ink);border-radius:50%;animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}.placeholder-text{color:var(--shadow);font-size:.9rem;text-align:center;padding:1rem;width:100%}body.dark-mode .placeholder-text{color:var(--ink)}#mg-asset-palette{display:flex;gap:.5rem;flex-wrap:wrap;min-height:70px;align-content:flex-start}.palette-slot,.layer-thumb{width:60px;height:60px;border:2px solid var(--ink);background:var(--light);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow)}.layer-thumb.locked{opacity:.6;cursor:default;box-shadow:none}.layer-thumb.locked .layer-controls{display:none}.layer-thumb.locked:hover .layer-controls{display:flex}.layer-thumb{cursor:grab}.palette-slot.empty{display:flex;align-items:center;justify-content:center;font-size:3rem;line-height:1;color:var(--mid);transition:all .2s}.palette-slot.empty:hover{background-color:#e0e0e0;color:var(--ink)}body.dark-mode .palette-slot.empty:hover{background-color:var(--mid);color:var(--ink)}.layer-thumb img,.layer-thumb video{width:100%;height:100%;object-fit:cover;pointer-events:none}.layer-thumb.active{border:2px solid var(--action-color);transform:scale(1.05);box-shadow:none}.layer-controls{position:absolute;top:-5px;right:-5px;display:flex;gap:2px}.layer-btn{background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center}#scene-tray{display:flex;gap:.5rem;flex-wrap:wrap;min-height:65px;align-content:flex-start;padding-bottom:.5rem;border-bottom:2px solid var(--mid);margin-bottom:.5rem}.scene-thumb{width:80px;height:55px;border:2px solid var(--ink);background-color:var(--mid);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow);background-size:cover;background-position:center;display:flex;color:var(--light);text-shadow:1px 1px 0 var(--ink);align-items:center;justify-content:center;font-size:1.5rem;transition:all .2s}body.dark-mode .scene-thumb{text-shadow:1px 1px 0 var(--shadow)}.scene-thumb.active{border-color:var(--action-color);transform:scale(1.05);box-shadow:0 0 0 var(--shadow)}.scene-delete-btn{position:absolute;top:-5px;right:-5px;background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center;opacity:0;transition:opacity .2s}.scene-thumb:hover .scene-delete-btn{opacity:1}.scene-thumb.active:hover .scene-delete-btn{display:none}#mg-movie-canvas,#mg-controls-overlay-canvas{position:absolute}#mg-controls-overlay-canvas{pointer-events:none}#mg-movie-canvas{pointer-events:auto}#video-volume-controls{position:absolute;bottom:10px;right:10px;display:flex;align-items:center;justify-content:flex-end;z-index:10;height:34px}#video-volume-btn{font-size:1.5rem;cursor:pointer;padding:4px;user-select:none;background:0 0;border:none}#volume-slider-wrapper{display:flex;align-items:center;width:0;opacity:0;overflow:hidden;transition:width .35s ease-in-out,opacity .35s ease-in-out}#video-volume-controls.open #volume-slider-wrapper{width:100px;opacity:1;margin-right:8px}#video-volume-slider{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--ink);outline:0}#video-volume-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #video-volume-slider::-webkit-slider-thumb{background:var(--action-color)}#video-volume-slider::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #video-volume-slider::-moz-range-thumb{background:var(--action-color)}.mg-overlay-base{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s .3s;background:rgba(10,10,10,.25)}body.dark-mode .mg-overlay-base{background:rgba(var(--bg-rgb),.5)}.mg-overlay-base.visible{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .3s,visibility 0s 0s}.overlay-close-btn{position:absolute;top:8px;right:10px;background:0 0;border:none;line-height:1;cursor:pointer;padding:5px;font-family:'VT323',monospace;color:var(--ink);font-size:2rem;z-index:10;transition:opacity .2s}.overlay-close-btn:hover{opacity:.6}#mg-asset-picker-grid-wrapper{background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:1.5rem;max-width:800px;width:90vw;max-height:85vh;display:flex;flex-direction:column;position:relative}#mg-asset-picker-grid-wrapper h4{font-size:1.5rem;text-align:center;font-weight:400;margin:0 0 1rem}#mg-asset-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:.5rem;overflow-y:auto;padding:.5rem;flex-grow:1}.mg-template{width:auto;height:80px}.mg-template img{width:100%;height:100%;object-fit:contain;cursor:pointer}#mg-asset-picker-actions{margin-top:1rem;text-align:center;display:flex;gap:.5rem;justify-content:center}#mg-toast{visibility:hidden;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--light);border:2px solid var(--ink);padding:.5rem 1rem;color:var(--ink);font-size:1rem;z-index:2000;box-shadow:4px 4px 0 var(--ink)}#mg-countdown-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;display:flex;align-items:center;justify-content:center;z-index:3000;color:var(--light);text-shadow:2px 2px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink);font-size:15vw;pointer-events:auto}body.dark-mode #mg-countdown-overlay{color:var(--ink);text-shadow:2px 2px 0 var(--action-color),-2px -2px 0 var(--action-color),2px -2px 0 var(--action-color),-2px 2px 0 var(--action-color)}#canvas-placeholder{position:absolute;width:calc(100% - 20px);height:calc(100% - 20px);border:4px dashed var(--shadow);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;color:var(--shadow);transition:all .2s;padding:2rem;overflow:hidden;position:relative}#canvas-placeholder h3,#canvas-placeholder p{position:relative;z-index:2}#canvas-placeholder video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:.6}#canvas-placeholder h3{font-size:2rem;margin:0 0 .5rem}#canvas-placeholder p{font-size:1.2rem}#canvas-placeholder:hover,#canvas-panel.drag-over #canvas-placeholder{border-color:var(--ink);color:var(--ink);background-color:rgba(255,255,255,.5)}body.dark-mode #canvas-placeholder:hover,body.dark-mode #canvas-panel.drag-over #canvas-placeholder{background-color:rgba(var(--light-rgb),.5)}#canvas-panel.drag-over{background-color:var(--shadow)}#layer-instructions{padding:0 0 .5rem 0;margin:0;font-size:1rem}#mg-preview-container{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px}#mg-preview-container .overlay-close-btn{top:-10px;right:-10px;background:var(--danger-color);color:var(--light);border:2px solid var(--ink)}#mg-preview-video{display:block;max-width:80vw;max-height:75vh;background:#000}#mg-generation-overlay{z-index:4000}#mg-generation-overlay .window{max-width:400px;height:auto;padding:2rem;text-align:center}body.dark-mode #mg-generation-overlay .window{background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}#mg-generation-overlay h3{font-size:2rem;margin:0 0 1rem}#mg-generation-overlay h3::after{display:inline-block;animation:ellipsis 1.4s infinite;content:".";width:1em;text-align:left}@keyframes ellipsis{0%{content:"."}33%{content:".."}66%{content:"..."}}#mg-confirmation-overlay{z-index:5000}#mg-confirmation-dialog{padding:1.5rem;text-align:center;width:90%;max-width:400px;height:auto}#mg-confirmation-dialog p{font-size:1.2rem;margin:0 0 1.5rem}#mg-confirmation-dialog .action-buttons{display:flex;justify-content:center}#scene-actions-container{grid-template-columns:2fr 1fr 1fr;gap:.5rem}#scene-actions-container #mg-record-layer-btn{font-size:20px}#mg-gravity-menu.window{position:absolute;z-index:101;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;width:200px;height:auto;text-align:center;display:none}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}body.dark-mode #mg-gravity-menu input[type=number]{border-color:var(--mid);color:var(--ink)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#text-content,#text-font{transition:background-color .3s,border-color .3s,color .3s}#text-layer-manager{display:flex;gap:.5rem;align-items:center;padding-bottom:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid)}#text-layer-palette{display:flex;gap:.5rem;flex-wrap:wrap;flex-grow:1;min-height:44px}#add-new-text-layer-btn{width:40px;height:40px;flex-shrink:0;font-size:2rem;line-height:1;padding:0}.text-thumb{width:60px;height:40px;display:flex;align-items:center;justify-content:center;overflow:hidden;background-color:var(--ink);color:var(--light);font-size:.8rem;padding:2px;text-align:center}.text-thumb span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+
+/* --- VISUALLY DISABLE THE '+' BUTTON --- */
+.palette-slot.empty:disabled {
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none;
+    background-color: var(--light);
+}
+.palette-slot.empty:disabled:hover {
+    background-color: var(--light);
+    color: var(--mid);
+}
+
+/* --- VISUALLY DISABLE THE TITLE BAR BUTTONS --- */
+#shortcuts-btn:disabled,
+#visuals-btn:disabled,
+#audio-btn:disabled,
+#text-btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: default;
+}
+
+/* --- STACK LAYERS & COLLAGE THUMB --- */
+#mg-stacked-layers-palette {
+    display:flex;
+    gap:.5rem;
+    flex-wrap:wrap;
+    min-height: 0; /* <<< FIX FOR VERTICAL SPACE */
+    align-content:flex-start
+}
+.committed-collage-thumb {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.committed-collage-thumb img {
+    width: 100%;
+    flex-grow: 1; /* Each image takes up equal space */
+    object-fit: cover;
+    min-height: 0; /* Important for flexbox shrinking */
+}
+
 </style>
 </head>
 <body>
 <div class=window>
 <div id="loading-overlay"><h1>Generating Movie-Maker-Studio.exe</h1></div>
-<div class=titlebar><span>Movie-Maker-Studio.exe</span><div class=titlebar-controls><button id="theme-toggle-btn" title="Toggle Dark/Light Theme">◐</button><button id=visuals-btn>Edit Visuals</button><div id=visuals-dropdown><h5>Visuals Editor</h5><div id=asset-visuals-controls class=disabled><h6>Selected Asset</h6><div class=slider-container><label for=asset-opacity>Opacity</label><input type=range id=asset-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=asset-brightness>Brightness</label><input type=range id=asset-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=asset-saturation>Saturation</label><input type=range id=asset-saturation min=0 max=2 step=.01 value=1></div></div><div id=background-visuals-controls><h6>Background</h6><div class=slider-container><label for=bg-brightness>Brightness</label><input type=range id=bg-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=bg-saturation>Saturation</label><input type=range id=bg-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=text-btn>+ Add Text Layer</button><div id=text-dropdown><h5>Text Editor</h5><div id=text-visuals-controls class=disabled><div class=slider-container><label for=text-content>Text Content</label><input type=text id=text-content value="New Text" style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)></div><div class=slider-container><label for=text-font>Font</label><select id=text-font style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)><option value="'VT323', monospace">VT323</option><option value="Arial, sans-serif">Arial</option><option value="Verdana, sans-serif">Verdana</option><option value="Georgia, serif">Georgia</option><option value="Times New Roman, serif">Times New Roman</option><option value="Courier New, monospace">Courier New</option><option value="Impact, fantasy">Impact</option><option value="Comic Sans MS, cursive">Comic Sans MS</option></select></div><div class=slider-container><label for=text-size>Size</label><input type=range id=text-size min=20 max=200 step=1 value=60></div><div class=slider-container><label for=text-color>Color</label><input type=color id=text-color value=#FFFFFF style=width:100%;border:none;padding:0></div><div class=slider-container><label for=text-opacity>Opacity</label><input type=range id=text-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=text-brightness>Brightness</label><input type=range id=text-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=text-saturation>Saturation</label><input type=range id=text-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=audio-btn>+ Scene Audio</button><div id=audio-dropdown><h5>Scene Audio</h5><div id=audio-controls><p id=audio-file-name>No audio added.</p><div class=action-buttons><label class=mg-btn>Upload <input type=file id=scene-audio-input accept=audio/* style=display:none></label><button class=mg-btn id=remove-audio-btn>Remove</button></div></div></div><button id=shortcuts-btn>Shortcuts</button><div class=controls-fake><div class=btn-square></div><div class=btn-square></div></div><div id=shortcuts-dropdown><h5>Keyboard Shortcuts</h5><ul><li><span>Start/Stop Recording</span><kbd>R</kbd></li><li><span>Enlarge Asset</span><kbd>D</kbd></li><li><span>Shrink Asset</span><kbd>F</kbd></li><li><span>Flip Asset Horizontally</span><kbd>S</kbd></li><li><span>Toggle Gravity Menu</span><kbd>G</kbd></li><li><span>Delete Asset</span><kbd>Delete</kbd></li></ul></div></div></div><main id=studio-container><div id=controls-panel><fieldset><legend>Scenes</legend><div id=scene-tray></div><button class=mg-btn id=add-scene-btn style=margin-top:.5rem title="Add a new scene with an image or video background">+ Create Scene</button></fieldset><fieldset><legend>Layers</legend><p id=layer-instructions class=placeholder-text>Create a scene to begin.</p><div id=mg-asset-palette></div></fieldset><fieldset><legend>Current Scene</legend><div class=scene-controls-container><div id=scene-actions-container class=action-buttons><button class="mg-btn record" id=mg-record-layer-btn disabled>Record Layer</button><button class=mg-btn id=mg-preview-scene-btn disabled>Preview Scene</button><button class=mg-btn id=mg-delete-scene-btn disabled>Delete Scene</button></div><div id=stop-actions-container class="action-buttons hidden"><button class="mg-btn active" id=mg-stop-layer-btn style=grid-column:span 2>Stop</button></div><div id=recording-status class=hidden><div id=recording-indicator></div><span id=recording-timer>00:00</span></div><button class="mg-btn hidden" id=mg-commit-layer-btn>Commit Layer & Add Next</button></div></fieldset><fieldset><legend>Project</legend><button class="mg-btn generate" id=mg-generate-project-btn disabled>Generate Project</button><div class=action-buttons id=post-generation-actions style=margin-top:.5rem><button class="mg-btn hidden" id=mg-preview-btn>Preview</button><button class="mg-btn hidden" id=mg-movie-download>Download</button></div></fieldset></div><div id=canvas-panel><canvas id=mg-movie-canvas></canvas><canvas id=mg-controls-overlay-canvas></canvas><div id=canvas-placeholder><video src=welcomevid.mp4 autoplay loop muted playsinline></video><h3>Click, Paste, or Drag & Drop File</h3><p>to add a background image or video &amp; begin creating</p></div><div id=video-volume-controls class=hidden><div id=volume-slider-wrapper><input type=range id=video-volume-slider min=0 max=1 step=.05 value=1></div><button id=video-volume-btn>🔊</button></div></div></main><input type=file id=initial-background-input accept=image/*,video/* style=display:none></div><div id=mg-asset-library-overlay class=mg-overlay-base><div id=mg-asset-picker-grid-wrapper class=window><button id=mg-asset-library-close class=overlay-close-btn>X</button><h4>Click an asset to add it to the canvas</h4><div id=mg-asset-picker-grid></div><div id=mg-asset-picker-actions><label class=mg-btn>Upload Custom <input type=file id=mg-asset-picker-file accept=image/png,video/mp4,video/quicktime,video/* style=display:none></label></div></div></div><div id=mg-preview-popup class=mg-overlay-base><div id=mg-preview-container><button id=mg-preview-close-btn class=overlay-close-btn>X</button><video id=mg-preview-video controls autoplay></video></div></div><div id=mg-generation-overlay class=mg-overlay-base><div class=window><h3>Generating Project</h3><p>Please wait while your scene(s) are combined into the final video.</p></div></div><div id=mg-confirmation-overlay class=mg-overlay-base><div id=mg-confirmation-dialog class=window><p id=mg-confirmation-text>Are you sure?</p><div class=action-buttons><button id=mg-confirm-yes-btn class="mg-btn active">Yes</button><button id=mg-confirm-no-btn class=mg-btn>No</button></div></div></div><div id=mg-gravity-menu class="window hidden"><h5>Set Gravity</h5><p id=gravity-instructions style="font-size:.9rem;margin-bottom:.5rem;color:var(--ink);min-height:30px;display:flex;align-items:center;justify-content:center"></p><p>Gravity: <input type=number id=gravity-input value=0 step=.1 style=width:100px></p><div class=action-buttons><button class=mg-btn id=apply-gravity-btn>Apply</button><button class=mg-btn id=cancel-gravity-btn>Cancel</button></div></div><div id=mg-toast></div><div id=mg-countdown-overlay class=hidden><span id=mg-countdown-span>3</span></div></body>
+<div class=titlebar><span>Movie-Maker-Studio.exe</span><div class=titlebar-controls><button id="theme-toggle-btn" title="Toggle Dark/Light Theme">◐</button><button id=visuals-btn>Edit Visuals</button><div id=visuals-dropdown><h5>Visuals Editor</h5><div id=asset-visuals-controls class=disabled><h6>Selected Asset</h6><div class=slider-container><label for=asset-opacity>Opacity</label><input type=range id=asset-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=asset-brightness>Brightness</label><input type=range id=asset-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=asset-saturation>Saturation</label><input type=range id=asset-saturation min=0 max=2 step=.01 value=1></div></div><div id=background-visuals-controls><h6>Background</h6><div class=slider-container><label for=bg-brightness>Brightness</label><input type=range id=bg-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=bg-saturation>Saturation</label><input type=range id=bg-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=text-btn>Text Layers</button><div id=text-dropdown><h5>Text Editor</h5><div id=text-layer-manager><div id=text-layer-palette></div><button id=add-new-text-layer-btn class="palette-slot empty" title="Add new text layer">+</button></div><div id=text-visuals-controls class=disabled><div class=slider-container><label for=text-content>Text Content</label><textarea id=text-content rows=3 style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)>New Text</textarea></div><div class=slider-container><label for=text-font>Font</label><select id=text-font style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)><option value="'VT323', monospace">VT323</option><option value="Arial, sans-serif">Arial</option><option value="Verdana, sans-serif">Verdana</option><option value="Georgia, serif">Georgia</option><option value="Times New Roman, serif">Times New Roman</option><option value="Courier New, monospace">Courier New</option><option value="Impact, fantasy">Impact</option><option value="Comic Sans MS, cursive">Comic Sans MS</option></select></div><div class=slider-container><label for=text-size>Size</label><input type=range id=text-size min=20 max=200 step=1 value=60></div><div class=slider-container><label for=text-color>Color</label><input type=color id=text-color value=#FFFFFF style=width:100%;border:none;padding:0></div><div class=slider-container><label for=text-opacity>Opacity</label><input type=range id=text-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=text-brightness>Brightness</label><input type=range id=text-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=text-saturation>Saturation</label><input type=range id=text-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=audio-btn>+ Scene Audio</button><div id=audio-dropdown><h5>Scene Audio</h5><div id=audio-controls><p id=audio-file-name>No audio added.</p><div class=action-buttons><label class=mg-btn>Upload <input type=file id=scene-audio-input accept=audio/* style=display:none></label><button class=mg-btn id=remove-audio-btn>Remove</button></div></div></div><button id=shortcuts-btn>Shortcuts</button><div class=controls-fake><div class=btn-square></div><div class=btn-square></div></div><div id=shortcuts-dropdown><h5>Keyboard Shortcuts</h5><ul><li><span>Start/Stop Recording</span><kbd>R</kbd></li><li><span>Enlarge Asset</span><kbd>D</kbd></li><li><span>Shrink Asset</span><kbd>F</kbd></li><li><span>Flip Asset Horizontally</span><kbd>S</kbd></li><li><span>Toggle Gravity Menu</span><kbd>G</kbd></li><li><span>Delete Asset</span><kbd>Delete</kbd></li></ul></div></div></div><main id=studio-container><div id=controls-panel><fieldset><legend>Scenes</legend><div id=scene-tray></div><button class=mg-btn id=add-scene-btn style=margin-top:.5rem title="Add a new scene with an image or video background">+ Create Scene</button></fieldset><fieldset><legend>Layers</legend><p id=layer-instructions class=placeholder-text>Create a scene to begin.</p><div id=mg-asset-palette></div></fieldset>
+
+            <!-- *** NEW HTML SECTION *** -->
+            <fieldset><legend>Stack Layers</legend>
+                <div id="mg-stacked-layers-palette"></div>
+            </fieldset>
+
+<fieldset><legend>Current Scene</legend><div class=scene-controls-container><div id=scene-actions-container class=action-buttons><button class="mg-btn record" id=mg-record-layer-btn disabled>Record Layer</button><button class=mg-btn id=mg-preview-scene-btn disabled>Preview Scene</button><button class=mg-btn id=mg-delete-scene-btn disabled>Delete Scene</button></div><div id=stop-actions-container class="action-buttons hidden"><button class="mg-btn active" id=mg-stop-layer-btn style=grid-column:span 2>Stop</button></div><div id=recording-status class=hidden><div id=recording-indicator></div><span id=recording-timer>00:00</span></div><button class="mg-btn hidden" id=mg-commit-layer-btn>Commit Layer & Add Next</button></div></fieldset><fieldset><legend>Project</legend><button class="mg-btn generate" id=mg-generate-project-btn disabled>Generate Project</button><div class=action-buttons id=post-generation-actions style=margin-top:.5rem><button class="mg-btn hidden" id=mg-preview-btn>Preview</button><button class="mg-btn hidden" id=mg-movie-download>Download</button></div></fieldset></div><div id=canvas-panel><canvas id=mg-movie-canvas></canvas><canvas id=mg-controls-overlay-canvas></canvas><div id=canvas-placeholder><video src=welcomevid.mp4 autoplay loop muted playsinline></video><h3>Click, Paste, or Drag & Drop File</h3><p>to add a background image or video &amp; begin creating</p></div><div id=video-volume-controls class=hidden><div id=volume-slider-wrapper><input type=range id=video-volume-slider min=0 max=1 step=.05 value=1></div><button id=video-volume-btn>🔊</button></div></div></main><input type=file id=initial-background-input accept=image/*,video/* style=display:none></div><div id=mg-asset-library-overlay class=mg-overlay-base><div id=mg-asset-picker-grid-wrapper class=window><button id=mg-asset-library-close class=overlay-close-btn>X</button><h4>Click an asset to add it to the canvas</h4><div id=mg-asset-picker-grid></div><div id=mg-asset-picker-actions><label class=mg-btn>Upload Custom <input type=file id=mg-asset-picker-file accept=image/png,video/mp4,video/quicktime,video/* style=display:none></label></div></div></div><div id=mg-preview-popup class=mg-overlay-base><div id=mg-preview-container><button id=mg-preview-close-btn class=overlay-close-btn>X</button><video id=mg-preview-video controls autoplay></video></div></div><div id=mg-generation-overlay class=mg-overlay-base><div class=window><h3>Generating Project</h3><p>Please wait while your scene(s) are combined into the final video.</p></div></div><div id=mg-confirmation-overlay class=mg-overlay-base><div id=mg-confirmation-dialog class=window><p id=mg-confirmation-text>Are you sure?</p><div class=action-buttons><button id=mg-confirm-yes-btn class="mg-btn active">Yes</button><button id=mg-confirm-no-btn class=mg-btn>No</button></div></div></div><div id=mg-gravity-menu class="window hidden"><h5>Set Gravity</h5><p id=gravity-instructions style="font-size:.9rem;margin-bottom:.5rem;color:var(--ink);min-height:30px;display:flex;align-items:center;justify-content:center"></p><p>Gravity: <input type=number id=gravity-input value=0 step=.1 style=width:100px></p><div class=action-buttons><button class=mg-btn id=apply-gravity-btn>Apply</button><button class=mg-btn id=cancel-gravity-btn>Cancel</button></div></div><div id=mg-toast></div><div id=mg-countdown-overlay class=hidden><span id=mg-countdown-span>3</span></div></body>
 </html>
 <script>
     (function () {
         // --- Preloader Logic ---
-const loadingOverlay = document.getElementById('loading-overlay');
-setTimeout(() => {
-    // Start the fade-out
-    loadingOverlay.style.opacity = '0';
-    
-    // After the fade-out is complete, remove it completely
-    setTimeout(() => {
-        loadingOverlay.style.display = 'none';
-    }, 500); // This should match the CSS transition duration
+        const loadingOverlay = document.getElementById('loading-overlay');
+        setTimeout(() => {
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 500);
+        }, 2500);
 
-}, 2500); // 2.5 second delay
+        // --- Variable Declarations ---
         const addSceneBtn = document.getElementById('add-scene-btn');
         const assetLibraryOverlay = document.getElementById('mg-asset-library-overlay');
         const assetPalette = document.getElementById('mg-asset-palette');
@@ -61,8 +111,8 @@ setTimeout(() => {
         const videoVolumeBtn = document.getElementById('video-volume-btn');
         const recordingCanvas = document.createElement('canvas');
         const recordingCtx = recordingCanvas.getContext('2d', {
-        alpha: false,          // No premultiplied-alpha darkening on first frames
-        colorSpace: 'srgb'     // Consistent color conversion
+            alpha: false,
+            colorSpace: 'srgb'
         });
         recordingCtx.imageSmoothingEnabled = true;
         recordingCtx.imageSmoothingQuality = 'high';
@@ -105,8 +155,9 @@ setTimeout(() => {
         const textOpacitySlider = document.getElementById('text-opacity');
         const textBrightnessSlider = document.getElementById('text-brightness');
         const textSaturationSlider = document.getElementById('text-saturation');
+        const addNewTextLayerBtn = document.getElementById('add-new-text-layer-btn');
+        const textLayerPalette = document.getElementById('text-layer-palette');
         const themeToggleBtn = document.getElementById('theme-toggle-btn');
-
         const DAMPING_FACTOR = 0.5;
         const RESIZE_SPEED = 1.546875;
         const assetCache = {};
@@ -114,7 +165,7 @@ setTimeout(() => {
         let activeSceneId = null;
         let lastRecordingDurationMs = 0;
         let activeMovieLayerId = null;
-        let movieInteraction = {active: false}; // type: 'drag', 'resize', 'rotate', 'projectile-draw'
+        let movieInteraction = { active: false };
         let mediaRecorder = null;
         let recordedChunks = [];
         let isRecording = false;
@@ -123,33 +174,60 @@ setTimeout(() => {
         let animationFrameId = null;
         let recordingIntervalId = null;
         let recordingStartTime = 0;
-        let resizeState = {isResizing: false, direction: 0, animationFrameId: null};
+        let resizeState = { isResizing: false, direction: 0, animationFrameId: null };
         let isDraggingSlider = false;
         let masterWidth = 1280;
         let masterHeight = 720;
-
-        // PROJECTILE & GRAVITY GLOBAL VARIABLES
-        let projectileVectorStart = null; // {x, y} for drawing the arrow on canvas (always layer center)
-        let projectileVectorEnd = null;   // {x, y} for drawing the arrow on canvas (mouse position)
-        const VELOCITY_MULTIPLIER = 0.15; // Increased velocity multiplier for faster motion (adjusted from 0.1 to 0.15)
-        const PROJECTILE_HANDLE_SIZE = 20; // Slightly larger handle
-        const PROJECTILE_HANDLE_OFFSET = 15; // Offset from corner of bounding box
-
+        let projectileVectorStart = null;
+        let projectileVectorEnd = null;
+        const VELOCITY_MULTIPLIER = 0.15;
+        const PROJECTILE_HANDLE_SIZE = 20;
+        const PROJECTILE_HANDLE_OFFSET = 15;
         const gravityMenu = document.getElementById('mg-gravity-menu');
         const gravityInput = document.getElementById('gravity-input');
         const applyGravityBtn = document.getElementById('apply-gravity-btn');
         const cancelGravityBtn = document.getElementById('cancel-gravity-btn');
-        const gravityInstructions = document.getElementById('gravity-instructions'); // Reference to instruction text
-
-        const GRAVITY_TRAJECTORY_STEPS = 50; // How many points to draw for the curved trajectory
-        // Removed GRAVITY_TRAJECTORY_TIME as it is now dynamic
-
-        // NEW: Constants for dynamic trajectory time scaling
-        const TRAJECTORY_TIME_SCALING_FACTOR = 0.2; // How aggressively the trajectory time scales with velocity magnitude (adjust for desired length)
-        const MAX_TRAJECTORY_TIME_SECONDS = 15;    // Maximum time to simulate the trajectory in seconds
+        const gravityInstructions = document.getElementById('gravity-instructions');
+        const GRAVITY_TRAJECTORY_STEPS = 50;
+        const TRAJECTORY_TIME_SCALING_FACTOR = 0.2;
+        const MAX_TRAJECTORY_TIME_SECONDS = 15;
 
         const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
         const getActiveLayer = () => getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
+
+        // --- EFFECT ADDED ---
+        // Two new helper functions to calculate and apply the "foggy glass" background effect.
+        /**
+         * Calculates the average color of an image or video element.
+         * @param {HTMLImageElement|HTMLVideoElement} element The media element.
+         * @returns {string} An RGB color string like "123, 45, 67".
+         */
+        function getDominantColor(element) {
+            const tempCanvas = document.createElement('canvas');
+            const ctx = tempCanvas.getContext('2d');
+            tempCanvas.width = 1;
+            tempCanvas.height = 1;
+            ctx.drawImage(element, 0, 0, 1, 1);
+            const data = ctx.getImageData(0, 0, 1, 1).data;
+            return `${data[0]}, ${data[1]}, ${data[2]}`;
+        }
+
+        /**
+         * Applies the foggy glass background effect to the canvas panel.
+         * @param {object|null} scene The scene object, or null to clear the effect.
+         */
+        function updateCanvasPanelBackground(scene) {
+            if (scene && scene.dominantColor) {
+                canvasPanel.style.backgroundColor = `rgba(${scene.dominantColor}, 0.4)`;
+                canvasPanel.style.backdropFilter = 'blur(15px)';
+                canvasPanel.style.webkitBackdropFilter = 'blur(15px)'; // For Safari support
+            } else {
+                canvasPanel.style.backgroundColor = '';
+                canvasPanel.style.backdropFilter = '';
+                canvasPanel.style.webkitBackdropFilter = '';
+            }
+        }
+
 
         let toastTimeoutId;
         const toast = (msg, duration = 4000) => {
@@ -204,12 +282,10 @@ setTimeout(() => {
             }
 
             recordedChunks = [];
-
-            // Reset projectile drawing state
             projectileVectorStart = null;
             projectileVectorEnd = null;
-            gravityMenu.classList.add('hidden'); // Hide gravity menu
-            gravityInstructions.textContent = ''; // Clear gravity instructions on reset
+            gravityMenu.classList.add('hidden');
+            gravityInstructions.textContent = '';
         }
 
         function updateProjectControlsState() {
@@ -224,36 +300,39 @@ setTimeout(() => {
         }
 
         function updateControlsState() {
-            const hasScenes = scenes.length > 0;
-            const currentScene = getCurrentScene();
-            const hasImageOrVideoLayer = currentScene?.layers.some(l => l.type === 'image' || l.type === 'video');
-            const hasTextLayer = currentScene?.layers.some(l => l.type === 'text');
-            const hasAnyLayers = currentScene && currentScene.layers.length > 0;
-            addSceneBtn.disabled = isRecording;
-            deleteSceneBtn.disabled = !hasScenes || isRecording;
-            recordLayerBtn.disabled = !hasAnyLayers || isRecording;
-            textBtn.disabled = !hasScenes || isRecording;
-            if (hasTextLayer) {
-                textBtn.textContent = "Edit Text"
-            } else {
-                textBtn.textContent = "+ Add Text Layer"
-            }
-            const hasPreviewableContent = currentScene && (!!layerRecordingUrl || currentScene.backgroundType === 'video');
-            previewSceneBtn.disabled = !hasPreviewableContent || isRecording;
-            updateProjectControlsState();
-            renderLayerPalette()
-        }
+    const hasScenes = scenes.length > 0;
+    const currentScene = getCurrentScene();
+    const hasAnyLayers = currentScene && currentScene.layers.some(l => !l.committed);
+    const isPendingCommit = !!layerRecordingUrl;
 
-        function handleBackgroundUpload(file, mode, isFromLayerCommit = false) {
+    addSceneBtn.disabled = isRecording;
+    deleteSceneBtn.disabled = !hasScenes || isRecording;
+    recordLayerBtn.disabled = !hasAnyLayers || isRecording;
+    
+    textBtn.disabled = !hasScenes || isRecording || isPendingCommit;
+    addNewTextLayerBtn.disabled = isRecording || isPendingCommit || !currentScene;
+
+    // --- NEW, DEFINITIVE LOGIC FOR THE PREVIEW BUTTON ---
+    // A scene is previewable if a take is pending, OR if there are any committed layers.
+    const hasPreviewableContent = currentScene && (!!layerRecordingUrl || currentScene.committedLayerSrcs.length > 0);
+    
+    previewSceneBtn.disabled = !hasPreviewableContent || isRecording;
+    updateProjectControlsState();
+    renderLayerPalette();
+    renderStackedLayersPalette();
+    renderTextLayerPalette();
+}
+
+                function handleBackgroundUpload(file, mode, isFromLayerCommit = false) {
             if (!file) return;
             const fileURL = (file instanceof Blob) ? URL.createObjectURL(file) : file;
+            
+            // This entire inner function is now reverted to its original state
             const handleNewScene = (element, type, thumb, durMs) => {
                 let sceneToUpdate;
                 if (isFromLayerCommit) {
                     sceneToUpdate = getCurrentScene();
                     if (sceneToUpdate) {
-                        sceneToUpdate.layers = [];
-                        activeMovieLayerId = null;
                         sceneToUpdate.backgroundElement = element;
                         sceneToUpdate.backgroundType = type;
                         sceneToUpdate.thumbnail = thumb;
@@ -263,8 +342,7 @@ setTimeout(() => {
                         toast('Layer committed! Add another asset to continue layering.', 4000)
                     }
                 } else {
-                    // MODIFICATION: Set initial duration to 0 for videos, but keep a default for images.
-                    const initialDur = type === 'video' ? 0 : (durMs ?? getMediaDurationMs(element, type));
+                    const initialDur = durMs ?? getMediaDurationMs(element, type);
                     sceneToUpdate = {
                         id: Date.now(),
                         backgroundElement: element,
@@ -280,22 +358,23 @@ setTimeout(() => {
                         bgSaturation: 1,
                         audioElement: null,
                         audioName: null,
-                        durationMs: 0, // This will be updated by layer recordings
+                        durationMs: 0,
                         audioDurationMs: 0
+                        // NOTE: The 'dominantColor' property is correctly removed from here.
                     };
                     scenes.push(sceneToUpdate);
-                    ensureSceneDurationMs(sceneToUpdate, initialDur); // Now correctly applies 0 for videos
+                    ensureSceneDurationMs(sceneToUpdate, initialDur);
                     if (mode === 'initial') {
                         canvasPlaceholder.classList.add('hidden');
                         toast('Background set! Add an asset to start.', 3000)
                     }
                 }
-                ;
                 requestAnimationFrame(() => {
                     switchScene(sceneToUpdate.id);
                     updateControlsState()
                 })
             };
+            
             if (file.type.startsWith('image/')) {
                 const img = new Image();
                 img.onload = () => handleNewScene(img, 'image', img.src, 3000);
@@ -379,13 +458,22 @@ setTimeout(() => {
             })
         }
 
-        function switchScene(sceneId) {
+                function switchScene(sceneId) {
             stopAnimationLoop();
             activeSceneId = sceneId;
             const currentScene = getCurrentScene();
+
+            // --- THIS IS THE NEW, RELIABLE LOGIC ---
+            if (currentScene && !currentScene.dominantColor) {
+                // If the color hasn't been calculated for this scene yet, do it now.
+                currentScene.dominantColor = getDominantColor(currentScene.backgroundElement);
+            }
+            // Now, apply the effect. It will use the newly calculated color or a cached one.
+            updateCanvasPanelBackground(currentScene);
+            // --- END OF NEW LOGIC ---
+            
             if (!currentScene) return;
             activeMovieLayerId = null;
-            // Clear projectile drawing state and hide gravity menu on scene switch
             projectileVectorStart = null;
             projectileVectorEnd = null;
             gravityMenu.classList.add('hidden');
@@ -394,9 +482,7 @@ setTimeout(() => {
             const w = bg.naturalWidth || bg.videoWidth;
             const h = bg.naturalHeight || bg.videoHeight;
             let aspectRatio = w / h;
-            if (!isFinite(aspectRatio) || aspectRatio === 0) {
-                aspectRatio = 16 / 9
-            }
+            if (!isFinite(aspectRatio) || aspectRatio === 0) { aspectRatio = 16 / 9 }
             const qualityWidth = 1280;
             movieCanvas.width = controlsOverlayCanvas.width = qualityWidth;
             movieCanvas.height = controlsOverlayCanvas.height = qualityWidth / aspectRatio;
@@ -412,6 +498,8 @@ setTimeout(() => {
             }
             renderSceneTray();
             renderLayerPalette();
+            renderStackedLayersPalette();
+            renderTextLayerPalette();
             drawControlsOverlay();
             resetToReadyState();
             updateControlsState();
@@ -445,15 +533,10 @@ setTimeout(() => {
                     toast('Please add a background to the scene first.', 2000);
                     return
                 }
-                const hasImageOrVideoLayer = currentScene.layers.some(l => l.type === 'image' || l.type === 'video');
-                if (hasImageOrVideoLayer) {
-                    toast('Only one image or video asset can be animated at a time. Delete the existing one first.', 4000);
-                    return
-                }
-                addMovieLayer(src, {type: 'image'});
+                addMovieLayer(src, { type: 'image' });
                 closeAssetLibrary()
             };
-            Array.from({length: 107}, (_, i) => i + 1).forEach(i => {
+            Array.from({ length: 107 }, (_, i) => i + 1).forEach(i => {
                 const src = `./assets/maker/${i}.png`;
                 const div = document.createElement('div');
                 div.className = 'mg-template';
@@ -480,132 +563,291 @@ setTimeout(() => {
                 layerInstructions.classList.add('placeholder-text');
                 return
             }
-            const hasImageOrVideoLayer = currentScene.layers.some(l => l.type === 'image' || l.type === 'video');
-            const hasTextLayer = currentScene.layers.some(l => l.type === 'text');
+            const hasActiveVisualLayers = currentScene.layers.some(l => l.type !== 'text' && !l.committed);
+            const hasUncommittedText = currentScene.layers.some(l => l.type === 'text' && !l.committed);
             const hasCommittedLayers = currentScene.committedLayerSrcs.length > 0;
-            if (hasImageOrVideoLayer || hasTextLayer) {
-                layerInstructions.textContent = "Click 'Record Layer' to animate the active asset(s), then 'Stop'."
+            
+            if (hasActiveVisualLayers || hasUncommittedText) {
+                layerInstructions.textContent = "Click 'Record Layer' to animate the asset(s) in the stack."
             } else if (hasCommittedLayers) {
-                layerInstructions.textContent = "Add another asset (image, video, or text) to continue layering on this scene."
+                layerInstructions.textContent = "Add another asset to continue layering on this scene."
             } else {
-                layerInstructions.textContent = "Add an asset (image, video, or text), click 'Record Layer' to animate it, then 'Stop'. Then use the 'Commit Layer' button to continue animating your scene."
+                layerInstructions.textContent = "Add an asset from the library to begin."
             }
         }
 
-                function renderLayerPalette() {
-            assetPalette.innerHTML = '';
-            updateLayerInstructions();
+        function renderTextLayerPalette() {
+            textLayerPalette.innerHTML = '';
             const currentScene = getCurrentScene();
-            if (!currentScene) {
-                return
-            }
+            if (!currentScene) return;
 
-            // *** CHANGE STARTS HERE ***
-            
-            // --- 1. Render Committed Layers (the "baked-in" ones) ---
-            currentScene.committedLayerSrcs.forEach((src, index) => {
+            const textLayers = currentScene.layers.filter(l => l.type === 'text');
+
+            textLayers.forEach(layer => {
                 const thumb = document.createElement('div');
-                thumb.className = 'layer-thumb locked';
-                
-                // Check if this is the MOST RECENT committed layer
-                const isLastCommittedLayer = (index === currentScene.committedLayerSrcs.length - 1);
+                thumb.className = 'layer-thumb text-thumb';
+                thumb.classList.toggle('active', layer.id === activeMovieLayerId && !layer.committed);
+                thumb.dataset.layerId = layer.id;
 
-                // Create the thumbnail image
-                let imgContent;
-                if (src.startsWith('data:image')) {
-                    imgContent = `<img src="${src}" style="background-color: var(--ink);">`;
+                if (layer.committed) {
+                    thumb.classList.add('locked');
+                    thumb.title = "This text is committed to the scene.";
                 } else {
-                    imgContent = `<img src="${src}">`;
+                    thumb.title = "Click to select";
                 }
 
-                // ONLY add the 'X' delete button if it's the last one
-                if (isLastCommittedLayer) {
-                    thumb.title = "Most recent commit. Click X to revert.";
-                    thumb.innerHTML = `${imgContent}<div class="layer-controls"><div class="layer-btn delete" title="Revert this commit">x</div></div>`;
-                    thumb.querySelector('.delete').onclick = (e) => {
-                        e.stopPropagation();
-                        // It's still good practice to confirm, even for the last one
-                        const text = "Are you sure you want to revert your last commit?";
-                        openConfirmationModal(text, () => {
-                            deleteCommittedLayer(index);
-                            closeConfirmationModal();
-                        });
-                    };
-                } else {
-                    // Older layers are locked and have no delete button
-                    thumb.title = "This layer is locked.";
-                    thumb.innerHTML = imgContent;
-                }
+                let thumbContent = `<span>${layer.text.split('\n')[0] || "Empty"}</span>`;
                 
-                assetPalette.appendChild(thumb);
-            });
-
-            // --- 2. Render Active/Uncommitted Layers ---
-            // This part remains unchanged - active layers can always be deleted.
-            currentScene.layers.forEach(activeLayer => {
-                const thumb = document.createElement('div');
-                thumb.className = 'layer-thumb';
-                thumb.classList.toggle('active', activeLayer.id === activeMovieLayerId);
-                thumb.dataset.layerId = activeLayer.id;
-                thumb.title = "Click to select";
-                let thumbContent;
-                if (activeLayer.type === 'video') {
-                    thumbContent = `<video src="${activeLayer.src}" muted loop autoplay playsinline></video>`
-                } else if (activeLayer.type === 'image') {
-                    thumbContent = `<img src="${activeLayer.src}">`
-                } else if (activeLayer.type === 'text') {
-                    thumbContent = `<span style="font-family: ${activeLayer.font}; font-size: 1.2rem; color: ${activeLayer.color}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 2px;">${activeLayer.text}</span>`;
-                    thumb.style.backgroundColor = 'var(--ink)';
-                    thumb.style.display = 'flex';
-                    thumb.style.alignItems = 'center';
-                    thumb.style.justifyContent = 'center'
+                if (!layer.committed) {
+                    thumb.innerHTML = `${thumbContent}<div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
+                } else {
+                    thumb.innerHTML = thumbContent;
                 }
-                thumb.innerHTML = `${thumbContent}<div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
+
                 thumb.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('layer-btn')) return;
-                    if (activeMovieLayerId !== activeLayer.id) {
-                        activeMovieLayerId = activeLayer.id;
-                        projectileVectorStart = null;
-                        projectileVectorEnd = null;
-                        gravityMenu.classList.add('hidden');
-                        gravityInstructions.textContent = '';
+                    if (e.target.classList.contains('layer-btn') || layer.committed) return;
+                    
+                    if (activeMovieLayerId !== layer.id) {
+                        activeMovieLayerId = layer.id;
                         renderLayerPalette();
+                        renderStackedLayersPalette();
+                        renderTextLayerPalette();
                         drawControlsOverlay();
-                        updateEditPanelsUI()
+                        updateEditPanelsUI();
                     }
                 });
-                thumb.querySelector('.delete').onclick = (e) => {
-                    e.stopPropagation();
-                    deleteMovieLayer(activeLayer.id)
-                };
-                assetPalette.appendChild(thumb)
+
+                if (!layer.committed) {
+                    thumb.querySelector('.delete').onclick = (e) => {
+                        e.stopPropagation();
+                        deleteMovieLayer(layer.id);
+                    };
+                }
+                
+                textLayerPalette.appendChild(thumb);
             });
-            
-            // --- 3. Render the '+' slot ---
-            // This part also remains unchanged.
-            const hasImageOrVideoLayer = currentScene.layers.some(l => l.type === 'image' || l.type === 'video');
-            if (!hasImageOrVideoLayer && currentScene.committedLayerSrcs.length < 8) {
-                const emptySlot = document.createElement('div');
-                emptySlot.className = 'palette-slot empty';
-                emptySlot.innerHTML = '+';
-                emptySlot.title = "Add a new image or video asset";
-                emptySlot.onclick = openAssetLibrary;
-                assetPalette.appendChild(emptySlot)
-            }
-               // *** CHANGE ENDS HERE ***
         }
+        
+        function renderStackedLayersPalette() {
+    const stackPalette = document.getElementById('mg-stacked-layers-palette');
+    stackPalette.innerHTML = ''; 
+
+    const currentScene = getCurrentScene();
+    if (!currentScene) {
+        return;
+    }
+
+    const activeVisualLayers = currentScene.layers.filter(l => l.type !== 'text' && !l.committed);
+
+    if (activeVisualLayers.length === 0) {
+        return;
+    }
+    
+    // --- CHECK FOR THE PENDING STATE ONCE, BEFORE THE LOOP ---
+    const isPendingCommit = !!layerRecordingUrl;
+    
+    activeVisualLayers.slice(1).forEach(activeLayer => {
+        const thumb = document.createElement('div');
+        thumb.className = 'layer-thumb';
+        thumb.classList.toggle('active', activeLayer.id === activeMovieLayerId);
+        thumb.dataset.layerId = activeLayer.id;
+        
+        let thumbContent = activeLayer.type === 'video' ? `<video src="${activeLayer.src}" muted loop autoplay playsinline></video>` : `<img src="${activeLayer.src}">`;
+        
+        // --- LOGIC TO LOCK THE THUMBNAILS AND CHANGE THE TITLE ---
+        if (isPendingCommit || isRecording) {
+            thumb.classList.add('locked'); // This class applies the disabling styles.
+            thumb.title = "This asset is part of the recorded take.";
+            thumb.innerHTML = thumbContent; // Render without the 'x' button.
+        } else {
+            thumb.title = "Click to select";
+            thumb.innerHTML = `${thumbContent}<div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
+            thumb.addEventListener('click', (e) => {
+                if (e.target.classList.contains('layer-btn')) return;
+                if (activeMovieLayerId !== activeLayer.id) {
+                    activeMovieLayerId = activeLayer.id;
+                    renderLayerPalette();
+                    renderStackedLayersPalette();
+                    renderTextLayerPalette();
+                    drawControlsOverlay();
+                    updateEditPanelsUI();
+                }
+            });
+            thumb.querySelector('.delete').onclick = (e) => {
+                e.stopPropagation();
+                // The logic here remains the same as our previous fix.
+                if (isPendingCommit) {
+                    resetTake();
+                    toast('Take cancelled.', 2000);
+                } else {
+                    deleteMovieLayer(activeLayer.id);
+                }
+            };
+        }
+
+        stackPalette.appendChild(thumb);
+    });
+
+    const emptySlot = document.createElement('button');
+    emptySlot.className = 'palette-slot empty';
+    emptySlot.innerHTML = '+';
+    emptySlot.title = "Add another asset to the stack";
+    emptySlot.onclick = openAssetLibrary;
+
+    if (isRecording || isPendingCommit) {
+        emptySlot.disabled = true;
+        emptySlot.title = "Commit or re-record the current layer to add more assets.";
+    }
+    
+    stackPalette.appendChild(emptySlot);
+}
+        
+function renderLayerPalette() {
+    assetPalette.innerHTML = '';
+    updateLayerInstructions();
+    const currentScene = getCurrentScene();
+
+    if (!currentScene) {
+        const emptySlot = document.createElement('button');
+        emptySlot.className = 'palette-slot empty';
+        emptySlot.innerHTML = '+';
+        emptySlot.title = "Create a scene first";
+        emptySlot.disabled = true;
+        assetPalette.appendChild(emptySlot);
+        return;
+    }
+
+    currentScene.committedLayerSrcs.forEach((srcOrArray, index) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'layer-thumb locked';
+        
+        if (Array.isArray(srcOrArray)) {
+            const collageContainer = document.createElement('div');
+            collageContainer.className = 'committed-collage-thumb';
+            srcOrArray.forEach(src => {
+                if (src.startsWith('data:image')) return;
+                const img = document.createElement('img');
+                img.src = src;
+                collageContainer.appendChild(img);
+            });
+            thumb.appendChild(collageContainer);
+        } else {
+            if (!srcOrArray.startsWith('data:image')) {
+                let imgContent = `<img src="${srcOrArray}">`;
+                thumb.innerHTML = imgContent;
+            }
+        }
+
+        const isLastCommittedLayer = (index === currentScene.committedLayerSrcs.length - 1);
+        if (isLastCommittedLayer) {
+            thumb.title = "Most recent commit. Click X to revert.";
+            const controls = document.createElement('div');
+            controls.className = 'layer-controls';
+            controls.innerHTML = `<div class="layer-btn delete" title="Revert this commit">x</div>`;
+            controls.querySelector('.delete').onclick = (e) => {
+                e.stopPropagation();
+                openConfirmationModal("Are you sure you want to revert your last commit?", () => {
+                    deleteCommittedLayer(index);
+                    closeConfirmationModal();
+                });
+            };
+            thumb.appendChild(controls);
+        } else {
+            thumb.title = "This layer is locked.";
+        }
+        assetPalette.appendChild(thumb);
+    });
+
+    const activeVisualLayers = currentScene.layers.filter(l => l.type !== 'text' && !l.committed);
+    if (activeVisualLayers.length > 0) {
+        const primaryAsset = activeVisualLayers[0];
+        const thumb = document.createElement('div');
+        thumb.className = 'layer-thumb';
+        thumb.classList.toggle('active', primaryAsset.id === activeMovieLayerId);
+        thumb.title = "Primary active layer. Add more in 'Stack Layers' below.";
+        let thumbContent = primaryAsset.type === 'video' ? `<video src="${primaryAsset.src}" muted loop autoplay playsinline></video>` : `<img src="${primaryAsset.src}">`;
+        
+        thumb.innerHTML = `${thumbContent}<div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
+        thumb.addEventListener('click', (e) => {
+            if (e.target.classList.contains('layer-btn')) return;
+            if (activeMovieLayerId !== primaryAsset.id) {
+                 activeMovieLayerId = primaryAsset.id;
+                 renderLayerPalette();
+                 renderStackedLayersPalette();
+                 renderTextLayerPalette();
+                 drawControlsOverlay();
+                 updateEditPanelsUI();
+            }
+        });
+        
+        // --- NEW, DEFINITIVE LOGIC FOR THE PRIMARY ASSET 'X' BUTTON ---
+        thumb.querySelector('.delete').onclick = (e) => {
+            e.stopPropagation();
+            const isPendingCommit = !!layerRecordingUrl;
+
+            if (isPendingCommit) {
+                // If a recording is pending, cancel the take and REMOVE all active layers.
+                const scene = getCurrentScene();
+                if (!scene) return;
+                
+                // Filter out all layers that are not committed.
+                scene.layers = scene.layers.filter(l => l.committed === true);
+                activeMovieLayerId = null;
+
+                // Reset the recording UI.
+                resetToReadyState();
+                
+                // Force a re-render of the palettes and controls to show the new empty state.
+                renderLayerPalette();
+                renderStackedLayersPalette();
+                updateControlsState();
+                toast('Layer cancelled and removed.', 3000);
+
+            } else {
+                // If not pending a commit, delete only the selected layer as normal.
+                deleteMovieLayer(primaryAsset.id);
+            }
+        };
+        assetPalette.appendChild(thumb);
+
+    } else {
+        const emptySlot = document.createElement('button');
+        emptySlot.className = 'palette-slot empty';
+        emptySlot.innerHTML = '+';
+        emptySlot.title = "Add a new image or video asset";
+        emptySlot.onclick = openAssetLibrary;
+        
+        const isPendingCommit = !!layerRecordingUrl;
+        if (isRecording || isPendingCommit) {
+            emptySlot.disabled = true;
+            emptySlot.title = "Commit or re-record to add a new primary asset.";
+        }
+
+        assetPalette.appendChild(emptySlot);
+    }
+}
 
         function deleteCommittedLayer(indexToDelete) {
             const scene = getCurrentScene();
             if (!scene) return;
-            if (scene.committedLayerSrcs[indexToDelete].startsWith('blob:')) {
-                URL.revokeObjectURL(scene.committedLayerSrcs[indexToDelete])
+            const sources = scene.committedLayerSrcs[indexToDelete];
+            if (Array.isArray(sources)) {
+                sources.forEach(src => {
+                    if (src.startsWith('blob:')) URL.revokeObjectURL(src);
+                });
+            } else if (typeof sources === 'string' && sources.startsWith('blob:')) {
+                URL.revokeObjectURL(sources);
             }
+            
             const backgroundToRestore = scene.backgroundHistory[indexToDelete];
             scene.backgroundElement = backgroundToRestore;
             scene.backgroundType = (backgroundToRestore.tagName === 'VIDEO') ? 'video' : 'image';
             scene.backgroundHistory.splice(indexToDelete + 1);
             scene.committedLayerSrcs.splice(indexToDelete);
+
+            scene.layers = scene.layers.filter(l => l.type !== 'text');
+
+
             ensureSceneDurationMs(scene, getMediaDurationMs(scene.backgroundElement, scene.backgroundType));
             let newThumbnail;
             if (backgroundToRestore.tagName === 'VIDEO') {
@@ -669,7 +911,7 @@ setTimeout(() => {
             } else {
                 textVisualsControls.classList.add('disabled');
                 textContentInput.value = "New Text";
-                textFontSelect.value = "Arial, sans-serif";
+                textFontSelect.value = "'VT323', monospace";
                 textSizeSlider.value = 60;
                 textColorInput.value = "#FFFFFF";
                 textOpacitySlider.value = 1;
@@ -708,18 +950,14 @@ setTimeout(() => {
             }
         }
 
-                function addMovieLayer(src, properties = {}) {
+        function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
             if (!currentScene) {
                 toast('Add a background first.', 2000);
                 return
             }
             const assetType = properties.type || 'image';
-            const hasImageOrVideoLayer = currentScene.layers.some(l => l.type === 'image' || l.type === 'video');
-            if (hasImageOrVideoLayer) {
-                toast('Only one image or video asset can be animated at a time. Delete the existing one first.', 4000);
-                return
-            }
+
             const createLayer = (element) => {
                 const scene = getCurrentScene();
                 if (!scene) return;
@@ -729,12 +967,8 @@ setTimeout(() => {
                     element.playsinline = true;
                     element.loop = true;
                     const prime = () => {
-                        try {
-                            element.currentTime = 0.001
-                        } catch (e) {
-                        }
-                        element.play().catch(() => {
-                        })
+                        try { element.currentTime = 0.001 } catch (e) {}
+                        element.play().catch(() => {})
                     };
                     if (element.readyState >= 2) {
                         prime()
@@ -755,24 +989,24 @@ setTimeout(() => {
                     opacity: 1,
                     brightness: 1,
                     saturation: 1,
-                    isProjectileActive: false, // Toggled by clicking handle
+                    isProjectileActive: false,
                     projectileVectorX: 0,
                     projectileVectorY: 0,
-                    projectileStartX: 0, // Recorded at start of recording
+                    projectileStartX: 0,
                     projectileStartY: 0,
                     projectileTimestamp: 0,
                     projectileInitialRotation: 0,
                     projectileInitialFlipX: false,
-                    gravityValue: 0 // New property for gravity
+                    gravityValue: 0
                 };
                 scene.layers.push(newLayer);
                 activeMovieLayerId = newLayer.id;
                 renderLayerPalette();
+                renderStackedLayersPalette(); 
                 updateControlsState();
                 updateEditPanelsUI();
                 drawMovieFrame();
                 drawControlsOverlay();
-                // Reset saved starting positions since the layer composition has changed
                 if (getCurrentScene()) getCurrentScene().layerStartingStates = null;
                 toast('Asset Added! Ready to record.', 3000)
             };
@@ -783,22 +1017,15 @@ setTimeout(() => {
                     cached.muted = true;
                     cached.playsinline = true;
                     cached.loop = true;
-                    try {
-                        cached.currentTime = 0.001
-                    } catch (e) {
-                    }
-                    cached.play().catch(() => {
-                    })
+                    try { cached.currentTime = 0.001 } catch (e) {}
+                    cached.play().catch(() => {})
                 }
                 createLayer(cached);
                 return
             }
             if (assetType === 'image') {
                 const image = new Image();
-                image.onload = () => {
-                    assetCache[src] = image;
-                    createLayer(image)
-                };
+                image.onload = () => { assetCache[src] = image; createLayer(image) };
                 image.onerror = () => toast(`Could not load asset: ${src}`);
                 image.src = src
             } else if (assetType === 'video') {
@@ -807,10 +1034,7 @@ setTimeout(() => {
                 video.muted = true;
                 video.playsinline = true;
                 video.loop = true;
-                const onLoaded = () => {
-                    assetCache[src] = video;
-                    createLayer(video)
-                };
+                const onLoaded = () => { assetCache[src] = video; createLayer(video) };
                 video.addEventListener('loadeddata', onLoaded, {once: true});
                 video.onerror = () => toast(`Could not load video asset: ${src}`);
                 video.src = src
@@ -823,17 +1047,13 @@ setTimeout(() => {
                 toast('Add a background first.', 2000);
                 return
             }
-            const hasTextLayer = currentScene.layers.some(l => l.type === 'text');
-            if (hasTextLayer) {
-                toast('Only one text layer can be animated at a time. Delete the existing one first.', 4000);
-                return
-            }
+            
             const newTextLayer = {
                 id: Date.now() + Math.random(),
                 type: 'text',
                 text: 'New Text',
-                font: "Arial, sans-serif",
-                fontSize: 100,
+                font: "'VT323', monospace",
+                fontSize: 60,
                 color: '#FFFFFF',
                 x: movieCanvas.width / 2,
                 y: movieCanvas.height / 2,
@@ -852,44 +1072,71 @@ setTimeout(() => {
                 projectileTimestamp: 0,
                 projectileInitialRotation: 0,
                 projectileInitialFlipX: false,
-                gravityValue: 0 // New property for gravity
+                gravityValue: 0, 
+                committed: false
             };
             currentScene.layers.push(newTextLayer);
             activeMovieLayerId = newTextLayer.id;
             renderLayerPalette();
+            renderStackedLayersPalette();
+            renderTextLayerPalette();
             updateControlsState();
             updateEditPanelsUI();
             drawMovieFrame();
             drawControlsOverlay();
-            // Reset saved starting positions since the layer composition has changed
             if (getCurrentScene()) getCurrentScene().layerStartingStates = null;
-            toast('Text layer added! Ready to record.', 3000);
-            textDropdown.classList.add('visible');
-            textContentInput.focus()
+            toast('Text layer added!', 2000);
+            textContentInput.focus();
+            textContentInput.select();
         }
 
         function deleteMovieLayer(layerId) {
             const currentScene = getCurrentScene();
             if (!currentScene) return;
             const layer = currentScene.layers.find(l => l.id === layerId);
-            if (layer && layer.type === 'video') {
-                layer.asset.pause()
+            if (!layer) return;
+
+            const isTextLayer = layer.type === 'text';
+
+            if (layer.type === 'video') {
+                layer.asset.pause();
             }
             currentScene.layers = currentScene.layers.filter(l => l.id !== layerId);
+
             if (activeMovieLayerId === layerId) {
                 activeMovieLayerId = null;
-                // If the deleted layer was the active projectile one, reset drawing state
                 projectileVectorStart = null;
                 projectileVectorEnd = null;
-                gravityMenu.classList.add('hidden'); // Hide gravity menu
+                gravityMenu.classList.add('hidden');
             }
+
             renderLayerPalette();
+            renderStackedLayersPalette();
+            if (isTextLayer) {
+                renderTextLayerPalette();
+            }
             updateControlsState();
             updateEditPanelsUI();
             drawMovieFrame();
             drawControlsOverlay();
-            // Reset saved starting positions since the layer composition has changed
             if (getCurrentScene()) getCurrentScene().layerStartingStates = null;
+        }
+        
+        function getTextBlockMetrics(ctx, text, font, fontSize) {
+            ctx.save();
+            ctx.font = `${fontSize}px ${font}`;
+            const lines = text.split('\n');
+            const lineHeight = fontSize * 1.2;
+            let maxWidth = 0;
+            lines.forEach(line => {
+                const lineWidth = ctx.measureText(line).width;
+                if (lineWidth > maxWidth) {
+                    maxWidth = lineWidth;
+                }
+            });
+            const totalHeight = lines.length * lineHeight;
+            ctx.restore();
+            return { lines, lineHeight, maxWidth, totalHeight };
         }
 
         function drawMovieFrame() {
@@ -909,26 +1156,21 @@ setTimeout(() => {
             movieCtx.restore();
             movieLayers.forEach(l => {
                 
-                // *** NEW CODE START ***
-                // Manually handle video looping to prevent flickering on the canvas.
-                // We check if the video is very close to its end and reset it.
+                if (l.committed) return;
+
                 if (l.type === 'video' && l.asset.duration) {
-                    // Check if less than a fraction of a second remains (e.g., 0.1s)
                     if (l.asset.duration - l.asset.currentTime < 0.1) {
-                        l.asset.currentTime = 0; // Reset time
-                        l.asset.play();          // Ensure it continues playing
+                        l.asset.currentTime = 0;
+                        l.asset.play();
                     }
                 }
-                // *** NEW CODE END ***
                 
                 movieCtx.save();
 
-                // Apply projectile motion during recording or if just active (for live preview of movement)
                 if (isRecording && l.isProjectileActive && l.projectileTimestamp > 0) {
                     const elapsedTimeSeconds = (Date.now() - l.projectileTimestamp) / 1000;
                     l.x = l.projectileStartX + l.projectileVectorX * elapsedTimeSeconds;
-                    l.y = l.projectileStartY + l.projectileVectorY * elapsedTimeSeconds + 0.5 * l.gravityValue * elapsedTimeSeconds * elapsedTimeSeconds; // Apply gravity
-                    // Maintain initial rotation and flip state during projectile motion
+                    l.y = l.projectileStartY + l.projectileVectorY * elapsedTimeSeconds + 0.5 * l.gravityValue * elapsedTimeSeconds * elapsedTimeSeconds;
                     l.rot = l.projectileInitialRotation;
                     l.flipX = l.projectileInitialFlipX;
                 }
@@ -958,10 +1200,13 @@ setTimeout(() => {
                     movieCtx.fillStyle = l.color;
                     movieCtx.textAlign = 'center';
                     movieCtx.textBaseline = 'middle';
-                    const textMetrics = movieCtx.measureText(l.text);
-                    l.width = textMetrics.width;
-                    l.height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
-                    movieCtx.fillText(l.text, 0, 0)
+                    const metrics = getTextBlockMetrics(movieCtx, l.text, l.font, l.fontSize);
+                    l.width = metrics.maxWidth;
+                    l.height = metrics.totalHeight;
+                    const startY = -metrics.totalHeight / 2 + metrics.lineHeight / 2 - (l.fontSize * 0.1);
+                    metrics.lines.forEach((line, index) => {
+                        movieCtx.fillText(line, 0, startY + (index * metrics.lineHeight));
+                    });
                 }
                 movieCtx.restore()
             });
@@ -978,6 +1223,8 @@ setTimeout(() => {
                 const previewCanvasWidth = movieCanvas.width;
                 const previewCanvasHeight = movieCanvas.height;
                 movieLayers.forEach(l => {
+                    if (l.committed) return;
+                    
                     recordingCtx.save();
                     recordingCtx.globalAlpha = l.opacity;
                     recordingCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
@@ -1010,38 +1257,43 @@ setTimeout(() => {
                         recordingCtx.fillStyle = l.color;
                         recordingCtx.textAlign = 'center';
                         recordingCtx.textBaseline = 'middle';
-                        recordingCtx.fillText(l.text, 0, 0)
+                        
+                        const metrics = getTextBlockMetrics(recordingCtx, l.text, l.font, finalFontSize);
+                        const startY = -metrics.totalHeight / 2 + metrics.lineHeight / 2 - (finalFontSize * 0.1);
+
+                        metrics.lines.forEach((line, index) => {
+                            recordingCtx.fillText(line, 0, startY + (index * metrics.lineHeight));
+                        });
                     }
                     recordingCtx.restore()
                 })
             }
         }
 
-
         function drawControlsOverlay() {
             controlsCtx.clearRect(0, 0, controlsOverlayCanvas.width, controlsOverlayCanvas.height);
             const activeLayer = getActiveLayer();
             if (activeLayer) {
+                if (activeLayer.type === 'text' && activeLayer.committed) {
+                    return; 
+                }
+
                 let dWidth, dHeight;
 
                 if (activeLayer.type === 'image' || activeLayer.type === 'video') {
                     const assetWidth = activeLayer.type === 'image' ? activeLayer.asset.naturalWidth : activeLayer.asset.videoWidth;
                     const assetHeight = activeLayer.type === 'image' ? activeLayer.asset.naturalHeight : activeLayer.asset.videoHeight;
                     if (assetWidth === 0) return;
-                    dWidth = activeLayer.size; // `size` represents width for image/video
+                    dWidth = activeLayer.size;
                     dHeight = activeLayer.size * (assetHeight / assetWidth);
                 } else if (activeLayer.type === 'text') {
-                    // These should have been calculated during the last drawMovieFrame
-                    if (!activeLayer.width || !activeLayer.height || activeLayer.width === 0) {
-                        controlsCtx.font = `${activeLayer.fontSize}px ${activeLayer.font}`;
-                        const textMetrics = controlsCtx.measureText(activeLayer.text);
-                        activeLayer.width = textMetrics.width;
-                        activeLayer.height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
-                    }
+                    const metrics = getTextBlockMetrics(controlsCtx, activeLayer.text, activeLayer.font, activeLayer.fontSize);
+                    activeLayer.width = metrics.maxWidth;
+                    activeLayer.height = metrics.totalHeight;
                     dWidth = activeLayer.width;
                     dHeight = activeLayer.height;
                 } else {
-                    return; // Unknown layer type
+                    return;
                 }
 
                 const HANDLE_SIZE = 16;
@@ -1052,27 +1304,22 @@ setTimeout(() => {
                 controlsCtx.translate(activeLayer.x, activeLayer.y);
                 controlsCtx.rotate(activeLayer.rot * Math.PI / 180);
 
-                // --- Draw Bounding Box (always visible for active layer) ---
                 if (!activeLayer.isProjectileActive) {
-                    controlsCtx.strokeStyle = '#00FF00'; // Solid Green bounding box
+                    controlsCtx.strokeStyle = '#00FF00'; 
                     controlsCtx.lineWidth = 2;
                 } else {
-                    controlsCtx.strokeStyle = 'rgba(0, 255, 0, 0.5)'; // Lighter green for projectile mode
+                    controlsCtx.strokeStyle = 'rgba(0, 255, 0, 0.5)'; 
                     controlsCtx.lineWidth = 1;
                 }
                 controlsCtx.strokeRect(-dWidth / 2, -dHeight / 2, dWidth, dHeight);
 
-
-                // --- Draw Normal Handles (resize/rotate) ---
-                // These should be visible if not in projectile mode, REGARDLESS OF RECORDING STATUS
-                if (!activeLayer.isProjectileActive) { // Handles are visible unless in projectile mode
-                    controlsCtx.fillStyle = '#00FF00'; // Green handles
+                if (!activeLayer.isProjectileActive) { 
+                    controlsCtx.fillStyle = '#00FF00'; 
                     controlsCtx.fillRect(-dWidth / 2 - ho, -dHeight / 2 - ho, HANDLE_SIZE, HANDLE_SIZE);
                     controlsCtx.fillRect(dWidth / 2 - ho, -dHeight / 2 - ho, HANDLE_SIZE, HANDLE_SIZE);
                     controlsCtx.fillRect(-dWidth / 2 - ho, dHeight / 2 - ho, HANDLE_SIZE, HANDLE_SIZE);
                     controlsCtx.fillRect(dWidth / 2 - ho, dHeight / 2 - ho, HANDLE_SIZE, HANDLE_SIZE);
 
-                    // Rotation handle
                     const rotHandleY = -dHeight / 2 - ROTATION_HANDLE_OFFSET;
                     const rotatedRotHandleX = (0 * Math.cos(activeLayer.rot * Math.PI / 180) - rotHandleY * Math.sin(activeLayer.rot * Math.PI / 180));
                     const rotatedRotHandleY = (0 * Math.sin(activeLayer.rot * Math.PI / 180) + rotHandleY * Math.cos(activeLayer.rot * Math.PI / 180));
@@ -1086,20 +1333,17 @@ setTimeout(() => {
                     controlsCtx.fill();
                 }
 
-
-                // --- Draw Projectile Handle (only if NOT recording) ---
-                if (!isRecording) { // Projectile handle should be hidden during recording
+                if (!isRecording) { 
                     const projectileHandleLocalX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
                     const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
 
-                    controlsCtx.fillStyle = activeLayer.isProjectileActive ? 'orange' : 'grey'; // Indicate active state
+                    controlsCtx.fillStyle = activeLayer.isProjectileActive ? 'orange' : 'grey'; 
                     controlsCtx.strokeStyle = 'black';
                     controlsCtx.lineWidth = 2;
                     controlsCtx.beginPath();
                     controlsCtx.arc(projectileHandleLocalX, projectileHandleLocalY, PROJECTILE_HANDLE_SIZE / 2, 0, 2 * Math.PI);
                     controlsCtx.fill();
                     controlsCtx.stroke();
-                    // Draw a small arrow icon inside the handle
                     controlsCtx.fillStyle = 'white';
                     controlsCtx.beginPath();
                     controlsCtx.moveTo(projectileHandleLocalX - 5, projectileHandleLocalY + 2);
@@ -1110,31 +1354,26 @@ setTimeout(() => {
                     controlsCtx.fill();
                 }
 
-                controlsCtx.restore(); // Restore after drawing transformed elements
+                controlsCtx.restore(); 
 
-
-                // --- Draw Projectile Velocity Vector and Trajectory (only if NOT recording) ---
-                if (!isRecording) { // Projectile visuals should be hidden during recording
+                if (!isRecording) { 
                     if (movieInteraction.active && movieInteraction.type === 'projectile-draw' && activeMovieLayerId === activeLayer.id) {
-                        // Draw the live, solid green arrow while the user is dragging
                         if (projectileVectorStart && projectileVectorEnd) {
                             controlsCtx.save();
-                            controlsCtx.strokeStyle = '#00FF00'; // Solid Green for live drag
+                            controlsCtx.strokeStyle = '#00FF00'; 
                             controlsCtx.lineWidth = 3;
                             controlsCtx.beginPath();
                             controlsCtx.moveTo(projectileVectorStart.x, projectileVectorStart.y);
                             controlsCtx.lineTo(projectileVectorEnd.x, projectileVectorEnd.y);
                             controlsCtx.stroke();
 
-                            // Draw arrowhead
-                            const headlen = 10; // length of head in pixels
+                            const headlen = 10;
                             const angle = Math.atan2(projectileVectorEnd.y - projectileVectorStart.y, projectileVectorEnd.x - projectileVectorStart.x);
                             controlsCtx.lineTo(projectileVectorEnd.x - headlen * Math.cos(angle - Math.PI / 6), projectileVectorEnd.y - headlen * Math.sin(angle - Math.PI / 6));
                             controlsCtx.moveTo(projectileVectorEnd.x, projectileVectorEnd.y);
                             controlsCtx.lineTo(projectileVectorEnd.x - headlen * Math.cos(angle + Math.PI / 6), projectileVectorEnd.y - headlen * Math.sin(angle + Math.PI / 6));
                             controlsCtx.stroke();
 
-                            // Display velocity text
                             const velX = (projectileVectorEnd.x - projectileVectorStart.x) * VELOCITY_MULTIPLIER;
                             const velY = (projectileVectorEnd.y - projectileVectorStart.y) * VELOCITY_MULTIPLIER;
                             controlsCtx.fillStyle = 'white';
@@ -1144,26 +1383,22 @@ setTimeout(() => {
                             controlsCtx.fillText(`Vx: ${velX.toFixed(2)}, Vy: ${velY.toFixed(2)}`, projectileVectorEnd.x + 10, projectileVectorEnd.y - 10);
                             controlsCtx.restore();
 
-                            // Draw gravity trajectory if active - NEW: Called here for live preview
                             if (activeLayer.gravityValue !== 0) {
                                 drawGravityTrajectory(activeLayer, projectileVectorStart.x, projectileVectorStart.y, velX, velY, activeLayer.gravityValue, true);
                             }
                         }
                     } else if (activeLayer.isProjectileActive && (activeLayer.projectileVectorX !== 0 || activeLayer.projectileVectorY !== 0)) {
-                        // Draw the saved, dashed green projectile vector for the active layer
                         controlsCtx.save();
-                        controlsCtx.strokeStyle = '#00FF00'; // Dashed Green for saved vector
+                        controlsCtx.strokeStyle = '#00FF00'; 
                         controlsCtx.lineWidth = 3;
-                        controlsCtx.setLineDash([5, 5]); // Dashed line for established vector
+                        controlsCtx.setLineDash([5, 5]); 
                         controlsCtx.beginPath();
                         controlsCtx.moveTo(activeLayer.x, activeLayer.y);
-                        // To show the *original* drag vector length, divide by multiplier.
                         const endX = activeLayer.x + activeLayer.projectileVectorX / VELOCITY_MULTIPLIER;
                         const endY = activeLayer.y + activeLayer.projectileVectorY / VELOCITY_MULTIPLIER;
                         controlsCtx.lineTo(endX, endY);
                         controlsCtx.stroke();
 
-                        // Draw arrowhead
                         const headlen = 10;
                         const angle = Math.atan2(endY - activeLayer.y, endX - activeLayer.x);
                         controlsCtx.lineTo(endX - headlen * Math.cos(angle - Math.PI / 6), endY - headlen * Math.sin(angle - Math.PI / 6));
@@ -1171,9 +1406,8 @@ setTimeout(() => {
                         controlsCtx.lineTo(endX - headlen * Math.cos(angle + Math.PI / 6), endY - headlen * Math.sin(angle + Math.PI / 6));
                         controlsCtx.stroke();
                         controlsCtx.restore();
-                        controlsCtx.setLineDash([]); // Reset line dash
+                        controlsCtx.setLineDash([]);
 
-                        // Draw gravity trajectory if active
                         if (activeLayer.gravityValue !== 0) {
                             drawGravityTrajectory(activeLayer, activeLayer.x, activeLayer.y, activeLayer.projectileVectorX, activeLayer.projectileVectorY, activeLayer.gravityValue, false);
                         }
@@ -1182,38 +1416,32 @@ setTimeout(() => {
             }
         }
 
-
-        // Function to draw gravity trajectory
         function drawGravityTrajectory(layer, startX, startY, initialVelX, initialVelY, gravity, isLiveDrawing) {
             controlsCtx.save();
-            // Lighter color for better visibility
-            controlsCtx.strokeStyle = 'rgba(200,200,200,0.9)'; // Changed to light grey, higher opacity
+            controlsCtx.strokeStyle = 'rgba(200,200,200,0.9)';
             controlsCtx.lineWidth = 2;
-            controlsCtx.setLineDash([3, 3]); // Dashed grey line
+            controlsCtx.setLineDash([3, 3]); 
             controlsCtx.beginPath();
             controlsCtx.moveTo(startX, startY);
 
-            // Calculate dynamic simulation time based on initial velocity magnitude
             const velocityMagnitude = Math.hypot(initialVelX, initialVelY);
             let simulatedTime = velocityMagnitude * TRAJECTORY_TIME_SCALING_FACTOR;
-            simulatedTime = Math.min(simulatedTime, MAX_TRAJECTORY_TIME_SECONDS); // Cap max time
-            simulatedTime = Math.max(simulatedTime, 0.1); // Ensure a tiny trajectory is drawn even for minimal velocity
+            simulatedTime = Math.min(simulatedTime, MAX_TRAJECTORY_TIME_SECONDS); 
+            simulatedTime = Math.max(simulatedTime, 0.1);
 
             for (let i = 1; i <= GRAVITY_TRAJECTORY_STEPS; i++) {
-                const t = (i / GRAVITY_TRAJECTORY_STEPS) * simulatedTime; // Use dynamic simulatedTime
+                const t = (i / GRAVITY_TRAJECTORY_STEPS) * simulatedTime; 
                 const currentX = startX + initialVelX * t;
                 const currentY = startY + initialVelY * t + 0.5 * gravity * t * t;
                 controlsCtx.lineTo(currentX, currentY);
 
-                // Stop drawing if it goes off-screen in a major way (optimization)
-                // Expanded bounds for better visibility of longer trajectories
                 if (currentX < -500 || currentX > movieCanvas.width + 500 || currentY < -500 || currentY > movieCanvas.height + 500) {
                     break;
                 }
             }
             controlsCtx.stroke();
             controlsCtx.restore();
-            controlsCtx.setLineDash([]); // Reset line dash
+            controlsCtx.setLineDash([]);
         }
 
 
@@ -1258,180 +1486,159 @@ setTimeout(() => {
             }, 1000);
         }
 
-                function startMovieRecording() {
-            const currentScene = getCurrentScene();
-            if (!currentScene || currentScene.layers.length === 0) {
-                toast('Please add an asset to the scene first.', 2000);
-                return;
-            }
-
-            // =====================================================================
-            // CORRECTED LOGIC: Always snapshot the CURRENT state before recording.
-            // =====================================================================
-            // This ensures that any adjustments the user made after hitting "Re-record"
-            // are respected and become the new starting point for this take.
-            currentScene.layerStartingStates = {}; // Initialize/clear the previous starting state
-            currentScene.layers.forEach(layer => {
-                currentScene.layerStartingStates[layer.id] = {
-                    x: layer.x,
-                    y: layer.y,
-                    rot: layer.rot,
-                    flipX: layer.flipX
-                };
-            });
-            // =====================================================================
-            // END OF CORRECTED LOGIC
-            // =====================================================================
-
-            resetToReadyState(); // This will clear any active projectile drawing mode and hide gravity menu
-
-            // masterWidth and masterHeight are already set in switchScene based on background
-            recordingCanvas.width = masterWidth;
-            recordingCanvas.height = masterHeight;
-
-            sceneActionsContainer.classList.add('hidden');
-            stopActionsContainer.classList.remove('hidden');
-            recordingStatus.classList.remove('hidden');
-            updateControlsState();
-            startAnimationLoop();
-
-            runCountdown(() => {
-                // Snapshot longest *visual* duration at the start of this take
-                const baselineVisualMs = currentScene._padBaselineMs || 0;
-                currentScene._padBaselineMs = baselineVisualMs;
-
-                isRecording = true;
-                if (movieInteraction.active && movieInteraction.primed) {
-                    movieInteraction.primed = false;
-                }
-                recordingStartTime = Date.now();
-                // Capture initial positions, rotations, and flip states for projectile layers
-                currentScene.layers.forEach(l => {
-                    if (l.isProjectileActive) {
-                        l.projectileStartX = l.x;
-                        l.projectileStartY = l.y;
-                        l.projectileTimestamp = recordingStartTime;
-                        l.projectileInitialRotation = l.rot;
-                        l.projectileInitialFlipX = l.flipX;
-                    }
-                });
-                recordingIntervalId = setInterval(updateTimer, 1000);
-
-                const canvasStream = recordingCanvas.captureStream(30);
-
-                const audioSourceElement = currentScene.audioElement || (currentScene.backgroundType === 'video' ? currentScene.backgroundElement : null);
-                if (audioSourceElement) {
-                    audioSourceElement.currentTime = 0;
-                    if (audioSourceElement.tagName === 'VIDEO') {
-                        audioSourceElement.volume = videoVolumeSlider.value;
-                    }
-                    let audioStream;
-                    if (audioSourceElement.captureStream) audioStream = audioSourceElement.captureStream();
-                    else if (audioSourceElement.mozCaptureStream) audioStream = audioSourceElement.mozCaptureStream();
-
-                    if (audioStream && audioStream.getAudioTracks().length > 0) {
-                        canvasStream.addTrack(audioStream.getAudioTracks()[0]);
-                    }
-                }
-
-                const hasAudio = canvasStream.getAudioTracks().length > 0;
-                const videoBitsPerSecond = 2500000;
-                let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
-                let blobFileType = 'video/webm';
-
-                const mp4MimeType = hasAudio ? 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' : 'video/mp4; codecs="avc1.42E01E"';
-                if (MediaRecorder.isTypeSupported(mp4MimeType)) {
-                    mimeType = mp4MimeType;
-                    blobFileType = 'video/mp4';
-                }
-
-                mediaRecorder = new MediaRecorder(canvasStream, {mimeType, videoBitsPerSecond});
-
-                mediaRecorder.ondataavailable = (e) => {
-                    if (e.data.size > 0) recordedChunks.push(e.data);
-                };
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, {type: blobFileType});
-                    layerRecordingUrl = URL.createObjectURL(blob);
-                    commitLayerBtn.classList.remove('hidden');
-                    commitLayerBtn.classList.add('success');
-                    updateControlsState();
-                };
-                mediaRecorder.start();
-
-                if (currentScene && currentScene.backgroundType === 'video') {
-                    currentScene.backgroundElement.play();
-                }
-                if (currentScene.audioElement) {
-                    currentScene.audioElement.play();
-                }
-                toast('Recording started!', 2000);
-            });
-        }
-        function stopMovieRecording() {
+        function startMovieRecording() {
     const currentScene = getCurrentScene();
-    if (!currentScene) return;
+     if (!currentScene || !currentScene.layers.some(l => !l.committed)) {
+        toast('Please add an asset to the scene first.', 2000);
+        return;
+    }
 
-    stopActionsContainer.classList.add('hidden');
-    recordingTimer.textContent = 'Finalizing...';
-    toast('Finalizing recording...', null);
+    currentScene.layerStartingStates = {}; 
+    currentScene.layers.forEach(layer => {
+        currentScene.layerStartingStates[layer.id] = {
+            x: layer.x,
+            y: layer.y,
+            rot: layer.rot,
+            flipX: layer.flipX
+        };
+    });
 
-    const elapsedMs = Date.now() - recordingStartTime;
-    
-    // --- FIX ---
-    // Use the scene's current maximum duration as the baseline.
-    // This ensures shorter recordings are padded to match the longest layer.
-    const baseline = currentScene.durationMs || 0;
-    
-    const targetMs = Math.max(baseline, Math.max(500, elapsedMs));
+    recordingCanvas.width = masterWidth;
+    recordingCanvas.height = masterHeight;
 
-    const finalizeStop = () => {
-        if (currentScene.backgroundType === 'video') {
-            currentScene.backgroundElement.pause();
-            currentScene.backgroundElement.currentTime = 0;
+    sceneActionsContainer.classList.add('hidden');
+    stopActionsContainer.classList.remove('hidden');
+    recordingStatus.classList.remove('hidden');
+    updateControlsState();
+    startAnimationLoop();
+
+    runCountdown(() => {
+        const baselineVisualMs = currentScene._padBaselineMs || 0;
+        currentScene._padBaselineMs = baselineVisualMs;
+
+        isRecording = true;
+        if (movieInteraction.active && movieInteraction.primed) {
+            movieInteraction.primed = false;
+        }
+        recordingStartTime = Date.now();
+        currentScene.layers.forEach(l => {
+            if (l.isProjectileActive) {
+                l.projectileStartX = l.x;
+                l.projectileStartY = l.y;
+                l.projectileTimestamp = recordingStartTime;
+                l.projectileInitialRotation = l.rot;
+                l.projectileInitialFlipX = l.flipX;
+            }
+        });
+        recordingIntervalId = setInterval(updateTimer, 1000);
+
+        const canvasStream = recordingCanvas.captureStream(30);
+
+        const audioSourceElement = currentScene.audioElement || (currentScene.backgroundType === 'video' ? currentScene.backgroundElement : null);
+        if (audioSourceElement) {
+            audioSourceElement.currentTime = 0;
+            if (audioSourceElement.tagName === 'VIDEO') {
+                audioSourceElement.volume = videoVolumeSlider.value;
+            }
+            let audioStream;
+            if (audioSourceElement.captureStream) audioStream = audioSourceElement.captureStream();
+            else if (audioSourceElement.mozCaptureStream) audioStream = audioSourceElement.mozCaptureStream();
+
+            if (audioStream && audioStream.getAudioTracks().length > 0) {
+                canvasStream.addTrack(audioStream.getAudioTracks()[0]);
+            }
+        }
+
+        const hasAudio = canvasStream.getAudioTracks().length > 0;
+        const videoBitsPerSecond = 2500000;
+        let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
+        let blobFileType = 'video/webm';
+
+        const mp4MimeType = hasAudio ? 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' : 'video/mp4; codecs="avc1.42E01E"';
+        if (MediaRecorder.isTypeSupported(mp4MimeType)) {
+            mimeType = mp4MimeType;
+            blobFileType = 'video/mp4';
+        }
+
+        mediaRecorder = new MediaRecorder(canvasStream, {mimeType, videoBitsPerSecond});
+
+        mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) recordedChunks.push(e.data);
+        };
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(recordedChunks, {type: blobFileType});
+            layerRecordingUrl = URL.createObjectURL(blob);
+            commitLayerBtn.classList.remove('hidden');
+            commitLayerBtn.classList.add('success');
+            updateControlsState();
+        };
+        mediaRecorder.start();
+
+        if (currentScene && currentScene.backgroundType === 'video') {
+            currentScene.backgroundElement.play();
         }
         if (currentScene.audioElement) {
-            currentScene.audioElement.pause();
-            currentScene.audioElement.currentTime = 0;
-            currentScene.audioElement.loop = false;
+            currentScene.audioElement.play();
         }
-
-        if (mediaRecorder?.state !== 'inactive') {
-            mediaRecorder.stop();
-        }
-
-        lastRecordingDurationMs = targetMs;
-        // ADDED: Update the scene's master duration to match the longest recording
-        ensureSceneDurationMs(currentScene, lastRecordingDurationMs);
-        isRecording = false;
-        
-        // This confusing property is no longer needed with the direct fix.
-        delete currentScene._padBaselineMs;
-
-        sceneActionsContainer.classList.remove('hidden');
-        recordLayerBtn.textContent = 'Re-record Layer';
-        recordLayerBtn.classList.remove('record');
-        recordingStatus.classList.add('hidden');
-
-        clearInterval(recordingIntervalId);
-        recordingTimer.textContent = '00:00';
-
-        toast('Layer recorded successfully! Commit it to add another layer.', 4000);
-        updateControlsState();
-    };
-
-    // The padRecordingUntil function will now correctly pad the recording if needed.
-    if (elapsedMs >= targetMs) {
-        finalizeStop();
-    } else {
-        padRecordingUntil(targetMs, finalizeStop);
-    }
+        toast('Recording started!', 2000);
+    });
 }
-                function resetTake() {
+        function stopMovieRecording() {
             const currentScene = getCurrentScene();
             if (!currentScene) return;
 
-            // Always reset layers to their last saved starting positions, if they exist.
+            stopActionsContainer.classList.add('hidden');
+            recordingTimer.textContent = 'Finalizing...';
+            toast('Finalizing recording...', null);
+
+            const elapsedMs = Date.now() - recordingStartTime;
+            
+            const baseline = currentScene.durationMs || 0;
+            
+            const targetMs = Math.max(baseline, Math.max(500, elapsedMs));
+
+            const finalizeStop = () => {
+                if (currentScene.backgroundType === 'video') {
+                    currentScene.backgroundElement.pause();
+                    currentScene.backgroundElement.currentTime = 0;
+                }
+                if (currentScene.audioElement) {
+                    currentScene.audioElement.pause();
+                    currentScene.audioElement.currentTime = 0;
+                    currentScene.audioElement.loop = false;
+                }
+
+                if (mediaRecorder?.state !== 'inactive') {
+                    mediaRecorder.stop();
+                }
+
+                lastRecordingDurationMs = targetMs;
+                isRecording = false;
+                
+                delete currentScene._padBaselineMs;
+
+                sceneActionsContainer.classList.remove('hidden');
+                recordLayerBtn.textContent = 'Re-record Layer';
+                recordLayerBtn.classList.remove('record');
+                recordingStatus.classList.add('hidden');
+
+                clearInterval(recordingIntervalId);
+                recordingTimer.textContent = '00:00';
+
+                toast('Layer recorded successfully! Commit it to add another layer.', 4000);
+                updateControlsState();
+            };
+
+            if (elapsedMs >= targetMs) {
+                finalizeStop();
+            } else {
+                padRecordingUntil(targetMs, finalizeStop);
+            }
+        }
+        function resetTake() {
+            const currentScene = getCurrentScene();
+            if (!currentScene) return;
+
             if (currentScene.layerStartingStates) {
                 toast('Ready to re-record. Adjust assets as needed.', 3000);
                 currentScene.layers.forEach(layer => {
@@ -1445,8 +1652,8 @@ setTimeout(() => {
                 });
             }
 
-            // Reset the UI and clear the previous recording data.
             resetToReadyState();
+            updateControlsState();
         }
         function previewCurrentScene() {
             if (isRecording) return;
@@ -1488,25 +1695,23 @@ setTimeout(() => {
                         previewVideo.pause();
                         previewPopup.classList.remove('visible');
                     }, targetMs);
-                }).catch(() => {
-                });
+                }).catch(() => {});
             } else if (videoElementToPlay) {
                 previewVideo.src = videoElementToPlay.src;
                 previewVideo.currentTime = 0;
                 previewVideo.loop = true;
                 previewPopup.classList.add('visible');
 
-                videoElementToPlay.volume = videoVolumeSlider.value; // Ensure video volume is respected in preview
-                videoElementToPlay.muted = false; // Unmute for preview
+                videoElementToPlay.volume = videoVolumeSlider.value;
+                videoElementToPlay.muted = false; 
                 videoElementToPlay.play().then(() => {
                     setTimeout(() => {
                         videoElementToPlay.pause();
-                        videoElementToPlay.muted = true; // Mute back after preview
+                        videoElementToPlay.muted = true;
                         videoElementToPlay.currentTime = 0;
                         previewPopup.classList.remove('visible');
                     }, targetMs);
-                }).catch(() => {
-                });
+                }).catch(() => {});
             } else {
                 previewVideo.removeAttribute('src');
                 previewPopup.classList.add('visible');
@@ -1517,7 +1722,6 @@ setTimeout(() => {
         }
 
 async function generateFinalMovie() {
-    // Guard if there's nothing to generate
     if (scenes.length === 0) {
         toast('Please create at least one scene to generate a project.', 3000);
         return;
@@ -1530,13 +1734,11 @@ async function generateFinalMovie() {
     generationOverlay.classList.add('visible');
     const finalChunks = [];
 
-    // Set master dimensions from the first scene
     masterWidth = scenes[0].backgroundElement.naturalWidth || scenes[0].backgroundElement.videoWidth || 1280;
     masterHeight = scenes[0].backgroundElement.naturalHeight || scenes[0].backgroundElement.videoHeight || 720;
     recordingCanvas.width = masterWidth;
     recordingCanvas.height = masterHeight;
 
-    // Set up Web Audio API to combine audio tracks from all scenes
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const destinationNode = audioContext.createMediaStreamDestination();
     const finalStream = recordingCanvas.captureStream(30);
@@ -1546,7 +1748,6 @@ async function generateFinalMovie() {
         finalStream.addTrack(destinationNode.stream.getAudioTracks()[0]);
     }
 
-    // Configure MediaRecorder for MP4 or WebM
     const videoBitsPerSecond = 8000000;
     let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
     let finalFileType = 'video/webm';
@@ -1561,20 +1762,17 @@ async function generateFinalMovie() {
         if (e.data.size > 0) finalChunks.push(e.data);
     };
 
-    // Promise to handle the asynchronous generation process
     const generationPromise = new Promise(resolve => {
         finalRecorder.onstop = () => {
             const finalBlob = new Blob(finalChunks, {type: finalFileType});
             finalProjectUrl = URL.createObjectURL(finalBlob);
             
-            // --- UI update calls after generation (you can adapt these) ---
             generationOverlay.classList.remove('visible');
             toast('Project generation complete!', 4000);
             movieDownloadBtn.dataset.filetype = finalFileType;
             previewBtn.classList.remove('hidden');
             movieDownloadBtn.classList.remove('hidden');
             postGenerationActions.classList.remove('hidden');
-            // --- End of UI updates ---
 
             audioContext.close();
             resolve();
@@ -1583,7 +1781,6 @@ async function generateFinalMovie() {
 
     finalRecorder.start();
 
-    // Loop through each scene and render it frame by frame
     for (const scene of scenes) {
         const mediaMs = (scene.backgroundType === 'video') ? getMediaDurationMs(scene.backgroundElement, 'video') : getMediaDurationMs(scene.backgroundElement, 'image');
         ensureSceneDurationMs(scene, mediaMs);
@@ -1594,7 +1791,6 @@ async function generateFinalMovie() {
             let audioSourceNode = null;
             let videoAudioSourceNode = null;
             
-            // Connect scene audio to the central audio destination
             if (scene.audioElement) {
                 audioSourceNode = audioContext.createMediaElementSource(scene.audioElement);
                 audioSourceNode.connect(destinationNode);
@@ -1611,7 +1807,6 @@ async function generateFinalMovie() {
                 scene.backgroundElement.play();
             }
 
-            // Create temporary layer states for this scene's generation
             const tempLayers = scene.layers.map(l => ({
                 ...l,
                 projectileTimestamp: startTs,
@@ -1624,7 +1819,6 @@ async function generateFinalMovie() {
             const generationAnimLoop = () => {
                 const now = performance.now();
                 if ((now - startTs) >= sceneDur) {
-                    // Clean up audio nodes for this scene
                     if (audioSourceNode) audioSourceNode.disconnect();
                     if (videoAudioSourceNode) videoAudioSourceNode.disconnect();
                     if (scene.audioElement) scene.audioElement.pause();
@@ -1632,7 +1826,6 @@ async function generateFinalMovie() {
                     return sceneResolve();
                 }
 
-                // Update physics for any projectile layers
                 tempLayers.forEach(l => {
                     if (l.isProjectileActive) {
                         const elapsedTimeSeconds = (now - l.projectileTimestamp) / 1000;
@@ -1655,7 +1848,6 @@ async function generateFinalMovie() {
     return generationPromise;
 }
 
-// Helper function used by generateFinalMovie to draw a single frame
 function renderSceneFrameForGeneration(scene, layersToDraw) {
     recordingCtx.clearRect(0, 0, masterWidth, masterHeight);
     recordingCtx.save();
@@ -1708,71 +1900,63 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
         }
 
         function getMovieHandleAtPoint(point, layer) {
-            const l = layer;
-            let dWidth, dHeight;
+    const l = layer;
+    let dWidth, dHeight;
 
-            if (l.type === 'image' || l.type === 'video') {
-                const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
-                const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
-                if (assetWidth === 0) return null;
-                dWidth = l.size;
-                dHeight = l.size * (assetHeight / assetWidth);
-            } else if (l.type === 'text') {
-                if (!l.width || !l.height || l.width === 0) {
-                    controlsCtx.font = `${l.fontSize}px ${l.font}`;
-                    const textMetrics = controlsCtx.measureText(l.text);
-                    l.width = textMetrics.width;
-                    l.height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
-                }
-                dWidth = l.width;
-                dHeight = l.height;
-            } else {
-                return null;
-            }
+    if (l.type === 'image' || l.type === 'video') {
+        const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+        const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+        if (assetWidth === 0) return null;
+        dWidth = l.size;
+        dHeight = l.size * (assetHeight / assetWidth);
+    } else if (l.type === 'text') {
+        const metrics = getTextBlockMetrics(controlsCtx, l.text, l.font, l.fontSize);
+        dWidth = metrics.maxWidth;
+        dHeight = metrics.totalHeight;
+    } else {
+        return null;
+    }
 
-            const radius = 20;
-            const angle = l.rot * Math.PI / 180;
-            const cos = Math.cos(angle);
-            const sin = Math.sin(angle);
-            const ROTATION_HANDLE_OFFSET = 30;
+    const radius = 20;
+    const angle = l.rot * Math.PI / 180;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const ROTATION_HANDLE_OFFSET = 30;
 
-            // Projectile Handle detection (only if NOT recording)
-            if (!isRecording) {
-                const projectileHandleLocalX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
-                const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
-                const projectileHandleWorldX = l.x + (projectileHandleLocalX * cos - projectileHandleLocalY * sin);
-                const projectileHandleWorldY = l.y + (projectileHandleLocalX * sin + projectileHandleLocalY * cos);
+    if (!isRecording) {
+        const projectileHandleLocalX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
+        const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
+        const projectileHandleWorldX = l.x + (projectileHandleLocalX * cos - projectileHandleLocalY * sin);
+        const projectileHandleWorldY = l.y + (projectileHandleLocalX * sin + projectileHandleLocalY * cos);
 
-                if (Math.hypot(point.x - projectileHandleWorldX, point.y - projectileHandleWorldY) < PROJECTILE_HANDLE_SIZE / 2 + 5) {
-                    return 'projectile-toggle';
-                }
-            }
-
-
-            // Normal handles (visible and interactive if not in projectile mode, regardless of recording status)
-            if (!l.isProjectileActive) {
-                // Rotation handle
-                const rotHandleY = -dHeight / 2 - ROTATION_HANDLE_OFFSET;
-                const rotatedRotHandleX = l.x + (0 * cos - rotHandleY * sin);
-                const rotatedRotHandleY = l.y + (0 * sin + rotHandleY * cos);
-
-                if (Math.hypot(point.x - rotatedRotHandleX, point.y - rotatedRotHandleY) < radius) return 'rotate';
-
-                const handles = {
-                    tl: {x: -dWidth / 2, y: -dHeight / 2},
-                    tr: {x: dWidth / 2, y: -dHeight / 2},
-                    bl: {x: -dWidth / 2, y: dHeight / 2},
-                    br: {x: dWidth / 2, y: dHeight / 2}
-                };
-                for (const name in handles) {
-                    const h = handles[name];
-                    const handleWorldX = l.x + h.x * cos - h.y * sin;
-                    const handleWorldY = l.y + h.x * sin + h.y * cos;
-                    if (Math.hypot(point.x - handleWorldX, point.y - handleWorldY) < radius) return name;
-                }
-            }
-            return null;
+        if (Math.hypot(point.x - projectileHandleWorldX, point.y - projectileHandleWorldY) < PROJECTILE_HANDLE_SIZE / 2 + 5) {
+            return 'projectile-toggle';
         }
+    }
+
+    if (!l.isProjectileActive) {
+        const rotHandleY = -dHeight / 2 - ROTATION_HANDLE_OFFSET;
+        const rotatedRotHandleX = l.x + (0 * cos - rotHandleY * sin);
+        const rotatedRotHandleY = l.y + (0 * sin + rotHandleY * cos);
+
+        if (Math.hypot(point.x - rotatedRotHandleX, point.y - rotatedRotHandleY) < radius) return 'rotate';
+
+        const handles = {
+            tl: {x: -dWidth / 2, y: -dHeight / 2},
+            tr: {x: dWidth / 2, y: -dHeight / 2},
+            bl: {x: -dWidth / 2, y: dHeight / 2},
+            br: {x: dWidth / 2, y: dHeight / 2}
+        };
+        for (const name in handles) {
+            const h = handles[name];
+            const handleWorldX = l.x + h.x * cos - h.y * sin;
+            const handleWorldY = l.y + h.x * sin + h.y * cos;
+            if (Math.hypot(point.x - handleWorldX, point.y - handleWorldY) < radius) return name;
+        }
+    }
+
+    return null;
+}
 
         function isPointInMovieLayer(point, layer) {
             const l = layer;
@@ -1785,14 +1969,9 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 dWidth = l.size;
                 dHeight = l.size * (assetHeight / assetWidth);
             } else if (l.type === 'text') {
-                if (!l.width || !l.height || l.width === 0) {
-                    controlsCtx.font = `${l.fontSize}px ${l.font}`;
-                    const textMetrics = controlsCtx.measureText(l.text);
-                    l.width = textMetrics.width;
-                    l.height = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
-                }
-                dWidth = l.width;
-                dHeight = l.height;
+                const metrics = getTextBlockMetrics(controlsCtx, l.text, l.font, l.fontSize);
+                dWidth = metrics.maxWidth;
+                dHeight = metrics.totalHeight;
             } else {
                 return false;
             }
@@ -1806,9 +1985,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
         }
 
         function positionGravityMenu(layer) {
-            // Get canvas position relative to viewport
             const canvasRect = movieCanvas.getBoundingClientRect();
-            // Get parent panel position relative to viewport
             const panelRect = canvasPanel.getBoundingClientRect();
 
             let dWidth, dHeight;
@@ -1818,8 +1995,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 dWidth = layer.size;
                 dHeight = layer.size * (assetHeight / assetWidth);
             } else if (layer.type === 'text') {
-                // Ensure text dimensions are calculated (should be by drawMovieFrame)
-                controlsCtx.font = `${layer.fontSize}px ${l.font}`;
+                controlsCtx.font = `${layer.fontSize}px ${layer.font}`;
                 const textMetrics = controlsCtx.measureText(layer.text);
                 dWidth = textMetrics.width;
                 dHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
@@ -1831,153 +2007,156 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             const cos = Math.cos(angle);
             const sin = Math.sin(angle);
 
-            // Calculate world coordinates of the projectile handle (unrotated, then rotated by layer.rot)
             const projectileHandleLocalX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
-            const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET; // Top-right, offset out
+            const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET; 
 
-            // Rotate the local handle position around the layer's origin (0,0 in local space)
             const rotatedHandleX = (projectileHandleLocalX * cos - projectileHandleLocalY * sin);
             const rotatedHandleY = (projectileHandleLocalX * sin + projectileHandleLocalY * cos);
 
-            // Add layer's world position to get the handle's world position
             const projectileHandleWorldX = layer.x + rotatedHandleX;
             const projectileHandleWorldY = layer.y + rotatedHandleY;
 
-            // Scale world coordinates to display coordinates
             const scaleFactorX = canvasRect.width / movieCanvas.width;
             const scaleFactorY = canvasRect.height / movieCanvas.height;
 
             const displayX = (projectileHandleWorldX * scaleFactorX);
             const displayY = (projectileHandleWorldY * scaleFactorY);
 
-            // Position relative to the *viewport*, considering canvasPanel's offset
-            gravityMenu.style.left = `${panelRect.left + displayX + 10}px`; // 10px to the right of the handle on screen
-            gravityMenu.style.top = `${panelRect.top + displayY - gravityMenu.offsetHeight / 2}px`; // Vertically center with the handle
+            gravityMenu.style.left = `${panelRect.left + displayX + 10}px`;
+            gravityMenu.style.top = `${panelRect.top + displayY - gravityMenu.offsetHeight / 2}px`; 
 
-            // IMPORTANT: Remove 'hidden' class to ensure 'display: block' takes effect
             gravityMenu.classList.remove('hidden');
-            gravityMenu.style.display = 'block'; // Ensure display is block
+            gravityMenu.style.display = 'block';
 
-            gravityInput.value = layer.gravityValue.toFixed(1); // Set current gravity value
-            gravityInstructions.textContent = 'Click & drag on the asset to set initial speed & direction. Use "Gravity" below for vertical acceleration (+/-).'; // Set initial message
+            gravityInput.value = layer.gravityValue.toFixed(1);
+            gravityInstructions.textContent = 'Click & drag on the asset to set initial speed & direction. Use "Gravity" below for vertical acceleration (+/-).';
         }
 
 
-        let ignoreNextWindowClick = false; // NEW GLOBAL FLAG
+        let ignoreNextWindowClick = false;
 
         function handleMovieInteractionStart(e) {
-            e.preventDefault();
-            const point = getMovieCanvasPoint(e);
-            const currentScene = getCurrentScene();
-            if (!currentScene) return;
+    e.preventDefault();
+    const point = getMovieCanvasPoint(e);
+    const currentScene = getCurrentScene();
+    if (!currentScene) return;
 
-            let clickedLayer = null;
-            let clickedHandle = null;
+    let clickedLayer = null;
+    let clickedHandle = null;
 
-            // Find clicked layer and handle, prioritizing active layer
-            for (let i = currentScene.layers.length - 1; i >= 0; i--) {
-                const l = currentScene.layers[i];
-                clickedHandle = getMovieHandleAtPoint(point, l);
-                if (clickedHandle) {
-                    clickedLayer = l;
-                    break;
-                }
-                if (isPointInMovieLayer(point, l)) {
-                    clickedLayer = l;
-                    break;
-                }
-            }
+    for (let i = currentScene.layers.length - 1; i >= 0; i--) {
+        const l = currentScene.layers[i];
+        if (l.type === 'text' && l.committed) continue;
 
-            if (clickedLayer) {
-                // If a new layer is clicked, make it active
-                if (activeMovieLayerId !== clickedLayer.id) {
-                    activeMovieLayerId = clickedLayer.id;
-                    // Reset projectile drawing state if we switch active layers
-                    projectileVectorStart = null;
-                    projectileVectorEnd = null;
-                    gravityMenu.classList.add('hidden'); // Hide gravity menu when switching layers
-                    gravityInstructions.textContent = ''; // Clear gravity instructions
-                    drawControlsOverlay(); // Redraw with new active layer
-                    return; // Prevent immediate interaction with the newly selected layer.
-                }
-
-                const activeLayer = getActiveLayer(); // Should be clickedLayer now
-
-                // --- Handle interactions ---
-
-                // Projectile Toggle Click (only if not recording)
-                if (!isRecording && clickedHandle === 'projectile-toggle') {
-                    activeLayer.isProjectileActive = !activeLayer.isProjectileActive;
-                    if (!activeLayer.isProjectileActive) {
-                        activeLayer.projectileVectorX = 0;
-                        activeLayer.projectileVectorY = 0;
-                        activeLayer.gravityValue = 0; // Reset gravity when turning off projectile mode
-                        gravityMenu.classList.add('hidden');
-                        gravityInstructions.textContent = 'Projectile motion OFF.'; // Update message
-                    } else {
-                        ignoreNextWindowClick = true; // NEW: Set flag to ignore next click for window listener
-                        positionGravityMenu(activeLayer); // Show and position gravity menu
-                    }
-                    // Reset live drawing state
-                    projectileVectorStart = null;
-                    projectileVectorEnd = null;
-                    drawControlsOverlay(); // Redraw handles / arrow
-                    return;
-                }
-
-                // If in projectile motion mode and click on the layer itself to start drawing vector (only if not recording)
-                if (!isRecording && activeLayer.isProjectileActive && isPointInMovieLayer(point, activeLayer)) {
-                    movieInteraction = {
-                        active: true,
-                        type: 'projectile-draw',
-                        layerId: activeLayer.id,
-                        startX: activeLayer.x, // Arrow starts from layer center
-                        startY: activeLayer.y,
-                    };
-                    projectileVectorStart = {x: activeLayer.x, y: activeLayer.y};
-                    projectileVectorEnd = point;
-                    gravityMenu.classList.add('hidden'); // Hide gravity menu while drawing
-                    drawControlsOverlay();
-                    return;
-                }
-
-                // Generic dragging, resizing, rotation for the active layer
-                // This block now *always* applies if the above projectile-specific checks didn't return.
-                if (clickedHandle && clickedHandle !== 'projectile-toggle') { // Resize or Rotate handles
-                    movieInteraction = {
-                        active: true,
-                        type: clickedHandle === 'rotate' ? 'rotate' : 'resize',
-                        layerId: activeLayer.id,
-                        handle: clickedHandle, // Store specific handle for resize
-                        startX: point.x,
-                        startY: point.y,
-                        initialState: JSON.parse(JSON.stringify(activeLayer))
-                    };
-                } else if (isPointInMovieLayer(point, activeLayer)) { // Drag the object itself
-                    movieInteraction = {
-                        active: true, type: 'drag', layerId: activeLayer.id,
-                        offsetX: point.x - activeLayer.x,
-                        offsetY: point.y - activeLayer.y,
-                        targetX: activeLayer.x,
-                        targetY: activeLayer.y,
-                        primed: isCountdownActive // Keep this for potential countdown priming
-                    };
-                }
-                startAnimationLoop();
-                return;
-            }
-
-            // If no layer or handle was clicked, deactivate any active layer
-            if (activeMovieLayerId) {
-                activeMovieLayerId = null;
-                projectileVectorStart = null;
-                projectileVectorEnd = null;
-                gravityMenu.classList.add('hidden'); // Hide gravity menu when no layer is active
-                gravityInstructions.textContent = ''; // Clear gravity instructions
-                drawControlsOverlay();
-                updateEditPanelsUI();
-            }
+        const handle = getMovieHandleAtPoint(point, l);
+        if (handle) {
+            clickedLayer = l;
+            clickedHandle = handle;
+            break;
         }
+        if (isPointInMovieLayer(point, l)) {
+            clickedLayer = l;
+            break;
+        }
+    }
+
+    if (clickedHandle) {
+        if (activeMovieLayerId !== clickedLayer.id) {
+            activeMovieLayerId = clickedLayer.id;
+            renderLayerPalette();
+            renderStackedLayersPalette();
+            renderTextLayerPalette();
+            updateEditPanelsUI();
+        }
+
+        const activeLayer = getActiveLayer();
+        if (!activeLayer) return;
+
+        if (!isRecording && clickedHandle === 'projectile-toggle') {
+            activeLayer.isProjectileActive = !activeLayer.isProjectileActive;
+            if (!activeLayer.isProjectileActive) {
+                activeLayer.projectileVectorX = 0;
+                activeLayer.projectileVectorY = 0;
+                activeLayer.gravityValue = 0;
+                gravityMenu.classList.add('hidden');
+                gravityInstructions.textContent = 'Projectile motion OFF.';
+            } else {
+                ignoreNextWindowClick = true;
+                positionGravityMenu(activeLayer);
+            }
+            projectileVectorStart = null;
+            projectileVectorEnd = null;
+            drawControlsOverlay();
+            return;
+        }
+
+        movieInteraction = {
+            active: true,
+            type: clickedHandle === 'rotate' ? 'rotate' : 'resize',
+            layerId: activeLayer.id,
+            handle: clickedHandle,
+            startX: point.x,
+            startY: point.y,
+            initialState: JSON.parse(JSON.stringify(activeLayer))
+        };
+        startAnimationLoop();
+        return;
+    }
+
+    if (clickedLayer) {
+        if (activeMovieLayerId !== clickedLayer.id) {
+            activeMovieLayerId = clickedLayer.id;
+            renderLayerPalette();
+            renderStackedLayersPalette();
+            renderTextLayerPalette();
+            updateEditPanelsUI();
+        }
+        
+        const activeLayer = getActiveLayer();
+        if (!activeLayer) return;
+
+        if (!isRecording && activeLayer.isProjectileActive) {
+            movieInteraction = {
+                active: true,
+                type: 'projectile-draw',
+                layerId: activeLayer.id,
+                startX: activeLayer.x,
+                startY: activeLayer.y,
+            };
+            projectileVectorStart = { x: activeLayer.x, y: activeLayer.y };
+            projectileVectorEnd = point;
+            gravityMenu.classList.add('hidden');
+            drawControlsOverlay();
+            return;
+        }
+
+        movieInteraction = {
+            active: true,
+            type: 'drag',
+            layerId: activeLayer.id,
+            offsetX: point.x - activeLayer.x,
+            offsetY: point.y - activeLayer.y,
+            targetX: activeLayer.x,
+            targetY: activeLayer.y,
+            primed: isCountdownActive
+        };
+        startAnimationLoop();
+        return;
+    }
+
+    if (activeMovieLayerId) {
+        activeMovieLayerId = null;
+        projectileVectorStart = null;
+        projectileVectorEnd = null;
+        gravityMenu.classList.add('hidden');
+        gravityInstructions.textContent = '';
+        drawControlsOverlay();
+        updateEditPanelsUI();
+        renderLayerPalette();
+        renderStackedLayersPalette();
+        renderTextLayerPalette();
+    }
+}
 
         function handleMovieInteractionMove(e) {
             if (!movieInteraction.active) {
@@ -1989,17 +2168,14 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             const l = getActiveLayer();
             if (!l) return;
 
-            // Projectile Drawing (only when NOT recording, interaction type is projectile-draw)
             if (!isRecording && movieInteraction.type === 'projectile-draw') {
                 projectileVectorEnd = point;
-                // Calculate the temporary vector based on current arrow length
                 l.projectileVectorX = (projectileVectorEnd.x - projectileVectorStart.x) * VELOCITY_MULTIPLIER;
                 l.projectileVectorY = (projectileVectorEnd.y - projectileVectorStart.y) * VELOCITY_MULTIPLIER;
-                drawControlsOverlay(); // Redraw live vector and velocity text
+                drawControlsOverlay();
                 return;
             }
 
-            // Other interactions (drag, resize, rotate) always apply if movieInteraction.active
             if (movieInteraction.type === 'drag') {
                 l.x = point.x - movieInteraction.offsetX;
                 l.y = point.y - movieInteraction.offsetY;
@@ -2025,23 +2201,19 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
         }
 
         function handleMovieInteractionEnd(e) {
-            // Finalize projectile drawing (only if NOT recording)
             if (!isRecording && movieInteraction.type === 'projectile-draw') {
                 const activeLayer = getActiveLayer();
                 if (activeLayer) {
-                    // UPDATED: The toast message is now more accurate and confirms the action.
                     toast('Asset motion set!', 2000);
                 }
-                // Reset drawing points
                 projectileVectorStart = null;
                 projectileVectorEnd = null;
-                drawControlsOverlay(); // Redraw without live drawing arrow
+                drawControlsOverlay();
             }
             movieInteraction.active = false
         }
 
         function updateCursor(e) {
-            // If the gravity menu is open, cursor should not change based on underlying elements
             if (!gravityMenu.classList.contains('hidden') && gravityMenu.style.display !== 'none') {
                 movieCanvas.style.cursor = 'default';
                 return;
@@ -2050,25 +2222,28 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             const point = getMovieCanvasPoint(e);
             const currentScene = getCurrentScene();
             if (!currentScene) {
-                movieCanvas.style.cursor = 'default'; // Ensure cursor is default if no scene
+                movieCanvas.style.cursor = 'default';
                 return;
             }
             let newCursor = 'default';
             const activeLayer = getActiveLayer();
 
             if (activeLayer) {
+                if (activeLayer.type === 'text' && activeLayer.committed) {
+                    movieCanvas.style.cursor = 'default';
+                    return;
+                }
+
                 const handle = getMovieHandleAtPoint(point, activeLayer);
 
-                // If currently recording:
                 if (isRecording) {
-                    // If in projectile mode, only allow drag. No resize/rotate handles visible/interactive by mouse.
                     if (activeLayer.isProjectileActive) {
                         if (isPointInMovieLayer(point, activeLayer)) {
                             newCursor = 'move';
                         } else {
-                            newCursor = 'default'; // No interactive handles in projectile mode during recording
+                            newCursor = 'default';
                         }
-                    } else { // Not in projectile mode, so resize/rotate handles ARE visible and interactive.
+                    } else { 
                         if (handle) {
                             newCursor = handle === 'rotate' ? 'grab' : (handle === 'tl' || handle === 'br' ? 'nwse-resize' : 'nesw-resize');
                         } else if (isPointInMovieLayer(point, activeLayer)) {
@@ -2079,22 +2254,18 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                     return;
                 }
 
-                // If NOT recording:
-                // Projectile handle always takes precedence
                 if (handle === 'projectile-toggle') {
                     newCursor = 'pointer';
                     movieCanvas.style.cursor = newCursor;
                     return;
                 }
 
-                // If projectile motion is active for this layer, and cursor is over the layer (not projectile handle)
                 if (activeLayer.isProjectileActive && isPointInMovieLayer(point, activeLayer)) {
-                    newCursor = 'crosshair'; // Indicate ready to draw projectile
+                    newCursor = 'crosshair';
                     movieCanvas.style.cursor = newCursor;
                     return;
                 }
 
-                // Normal handles & drag if projectile motion is OFF for this layer
                 if (!activeLayer.isProjectileActive) {
                     if (handle) {
                         newCursor = handle === 'rotate' ? 'grab' : (handle === 'tl' || handle === 'br' ? 'nwse-resize' : 'nesw-resize')
@@ -2105,11 +2276,11 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             }
 
             if (newCursor === 'default') {
-                // If no active layer or conditions not met, check for other layers to select
                 for (let i = currentScene.layers.length - 1; i >= 0; i--) {
                     const l = currentScene.layers[i];
+                    if (l.type === 'text' && l.committed) continue;
                     if (isPointInMovieLayer(point, l)) {
-                        newCursor = 'pointer'; // Indicate draggable/selectable
+                        newCursor = 'pointer'; 
                         break
                     }
                 }
@@ -2121,35 +2292,26 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             if (!resizeState.isResizing) return;
             const activeLayer = getActiveLayer();
             if (activeLayer) {
-                // We use Math.pow() to get more control over the curve.
-                // An exponent of 0.5 is a square root (very damped).
-                // An exponent of 1.0 is linear (too dramatic).
-                // 0.75 is a great "in-between" value that adds a bit more drama.
-                const EXPONENT = 0.78; 
-
-                // This factor is re-tuned for the new Math.pow() calculation.
+                const EXPONENT = 0.78;
                 const RESIZE_POWER_FACTOR = 0.01;
 
                 if (activeLayer.type === 'text') {
-                    // Calculate speed using the new power function
                     const dynamicSpeed = Math.pow(activeLayer.fontSize, EXPONENT) * RESIZE_POWER_FACTOR;
                     activeLayer.fontSize += dynamicSpeed * resizeState.direction;
-                    
-                    activeLayer.fontSize = Math.max(10, activeLayer.fontSize); 
+                    activeLayer.fontSize = Math.max(10, activeLayer.fontSize);
                 } else {
-                    // Calculate speed using the new power function
                     const dynamicSpeed = Math.pow(activeLayer.size, EXPONENT) * RESIZE_POWER_FACTOR;
                     activeLayer.size += dynamicSpeed * resizeState.direction;
-                    
-                    activeLayer.size = Math.max(20, activeLayer.size); 
+                    activeLayer.size = Math.max(20, activeLayer.size);
                 }
+                drawMovieFrame();
+                drawControlsOverlay();
             }
             resizeState.animationFrameId = requestAnimationFrame(continuousResizeLoop);
         }
 
         function handleKeyDown(e) {
             const key = e.key.toLowerCase();
-            // Allow input fields to behave normally
             if (document.activeElement === textContentInput || document.activeElement === gravityInput) {
                 if (key === 'escape') {
                     document.activeElement.blur();
@@ -2157,12 +2319,10 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 }
                 return;
             }
-            // Allow general input elements to behave normally
             if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT' || document.activeElement.tagName === 'TEXTAREA') return;
 
             const activeLayer = getActiveLayer();
 
-            // Always allow 'R' to toggle recording
             if (key === 'r') {
                 e.preventDefault();
                 if (isRecording) {
@@ -2173,48 +2333,44 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 return;
             }
 
-            // Always allow 'G' to toggle gravity menu if an active layer exists
             if (key === 'g') {
                 e.preventDefault();
                 if (activeLayer) {
                     const isGravityMenuVisible = !gravityMenu.classList.contains('hidden') && gravityMenu.style.display !== 'none';
                     if (isGravityMenuVisible) {
                         gravityMenu.classList.add('hidden');
-                        drawControlsOverlay(); // Redraw to hide the menu if it was open
+                        drawControlsOverlay();
                     } else {
-                        // Ensure projectile motion is active to open the gravity menu via shortcut
                         if (!activeLayer.isProjectileActive) {
                             activeLayer.isProjectileActive = true;
                             activeLayer.projectileVectorX = 0;
                             activeLayer.projectileVectorY = 0;
-                            activeLayer.gravityValue = 0; // Start with 0 gravity
+                            activeLayer.gravityValue = 0;
                             toast('Projectile motion enabled via G key.', 2000);
                         }
-                        ignoreNextWindowClick = true; // NEW: Set flag to ignore next click for window listener
+                        ignoreNextWindowClick = true;
                         positionGravityMenu(activeLayer);
-                        drawControlsOverlay(); // Redraw to show the menu
+                        drawControlsOverlay();
                     }
                 } else {
                     toast('Select an asset first to open the Gravity menu.', 2000);
                 }
-                return; // Consume the event for 'g'
+                return;
             }
             
-            // If no active layer, subsequent shortcuts are not applicable.
             if (!activeLayer) return;
 
-            // Allow transform shortcuts (flip, resize, delete) regardless of projectile mode or recording status
-            if (key === 's') { // Flip
+            if (key === 's') {
                 e.preventDefault();
                 activeLayer.flipX = !activeLayer.flipX;
-                drawControlsOverlay(); // Update visuals immediately
-            } else if (key === 'd' || key === 'f') { // Enlarge/Shrink
+                drawControlsOverlay();
+            } else if (key === 'd' || key === 'f') {
                 e.preventDefault();
                 if (resizeState.isResizing) return;
                 resizeState.isResizing = true;
                 resizeState.direction = (key === 'd') ? 1 : -1;
                 continuousResizeLoop();
-            } else if (key === 'delete' || key === 'backspace') { // Delete
+            } else if (key === 'delete' || key === 'backspace') {
                 e.preventDefault();
                 deleteMovieLayer(activeLayer.id);
                 toast('Layer deleted', 2000);
@@ -2250,8 +2406,11 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             updateControlsState();
             updateEditPanelsUI();
             updateAudioUI();
-            gravityMenu.classList.add('hidden'); // Ensure gravity menu is hidden
-            toast("Project cleared.", 2000)
+            gravityMenu.classList.add('hidden');
+            // --- EFFECT ADDED ---
+            // Clear the foggy background when the project is cleared.
+            updateCanvasPanelBackground(null);
+            toast("Project cleared.", 2000);
         }
 
         let confirmCallback = null;
@@ -2267,9 +2426,9 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             confirmCallback = null
         }
 
-                const setupEventListeners = () => {
-            const setValNull = e => e.target.value = null; // Helper to clear file input value
-            // --- DARK MODE LOGIC ---
+        const setupEventListeners = () => {
+            const setValNull = e => e.target.value = null;
+            
             themeToggleBtn.addEventListener('click', () => {
                 document.body.classList.toggle('dark-mode');
                 const isDarkMode = document.body.classList.contains('dark-mode');
@@ -2278,7 +2437,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 themeToggleBtn.title = isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode';
             });
 
-            // Apply saved theme on load
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
@@ -2286,8 +2444,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 themeToggleBtn.title = 'Switch to Light Mode';
             }
 
-
-            // Initial Background/Scene creation
             initialBackgroundInput.addEventListener('change', e => {
                 handleBackgroundUpload(e.target.files[0], 'initial');
                 setValNull(e)
@@ -2304,7 +2460,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 setValNull(e)
             });
 
-            // Asset Library
             document.getElementById('mg-asset-library-close').addEventListener('click', closeAssetLibrary);
             assetLibraryOverlay.addEventListener('click', e => {
                 if (e.target === assetLibraryOverlay) closeAssetLibrary()
@@ -2316,12 +2471,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 const isVideo = file.type.startsWith('video/');
                 if (!isImage && !isVideo) {
                     toast('Unsupported file. Use PNG, MP4, or MOV.', 3000);
-                    setValNull(e);
-                    return
-                }
-                const currentScene = getCurrentScene();
-                if (currentScene?.layers.some(l => l.type === 'image' || l.type === 'video')) {
-                    toast('An image or video asset already exists. Delete it before adding a new one.', 4000);
                     setValNull(e);
                     return
                 }
@@ -2359,100 +2508,60 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 setValNull(e)
             });
 
-            // Text Layer
             textBtn.addEventListener('click', e => {
-                e.stopPropagation(); // Prevent global window click from closing dropdowns
-                const currentScene = getCurrentScene();
-                const hasTextLayer = currentScene?.layers.some(l => l.type === 'text');
-                if (!currentScene) {
-                    toast('Please add a background to the scene first.', 2000);
-                    return
-                }
-                if (isRecording) {
-                    toast('Cannot add/edit text while recording.', 2000);
-                    return
-                }
-                if (hasTextLayer) {
-                    textDropdown.classList.toggle('visible');
-                    const textLayer = currentScene.layers.find(l => l.type === 'text');
-                    if (textLayer && activeMovieLayerId !== textLayer.id) {
-                        activeMovieLayerId = textLayer.id;
-                        renderLayerPalette();
-                        drawControlsOverlay();
-                        updateEditPanelsUI()
-                    }
-                } else {
-                    addTextLayer()
-                }
-                // Close other dropdowns
+                e.stopPropagation();
+                textDropdown.classList.toggle('visible');
                 shortcutsDropdown.classList.remove('visible');
                 visualsDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
-                gravityMenu.classList.add('hidden'); // Projectile/Gravity: Hide gravity menu
+                gravityMenu.classList.add('hidden');
+            });
+            
+            addNewTextLayerBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                if (isRecording) {
+                    toast('Cannot add text while recording.', 2000);
+                    return;
+                }
+                addTextLayer();
             });
 
-            // Scene Actions (Record, Stop, Preview Scene, Commit, Delete Scene)
             recordLayerBtn.addEventListener('click', () => {
-                // If the button says "Re-record Layer", it should ONLY reset the take.
                 if (recordLayerBtn.textContent === 'Re-record Layer') {
                     resetTake();
                 } 
-                // Otherwise, the button says "Record Layer" and it should start the recording.
                 else {
                     startMovieRecording();
                 }
             });
             stopLayerBtn.addEventListener('click', stopMovieRecording);
             previewSceneBtn.addEventListener('click', previewCurrentScene);
+            
             commitLayerBtn.addEventListener('click', () => {
                 const currentScene = getCurrentScene();
                 if (!currentScene || !layerRecordingUrl) return;
 
-                // Reset saved starting positions since we are committing and moving to a new state
                 currentScene.layerStartingStates = null;
-
-                // Ensure scene duration is updated with the latest recording
                 ensureSceneDurationMs(currentScene, Math.max(500, lastRecordingDurationMs));
+                
+                const visualLayersToCommit = currentScene.layers.filter(l => l.type === 'image' || l.type === 'video');
+                const sourcesToCommit = visualLayersToCommit.map(l => l.src);
+                
+                if (sourcesToCommit.length > 0) {
+                    currentScene.committedLayerSrcs.push(sourcesToCommit);
+                }
 
-                // Process active layers to create static representations for committed layers
-                currentScene.layers.forEach(recordedLayer => {
-                    let layerRepresentationSrc = '';
-                    if (recordedLayer.type === 'image' || recordedLayer.type === 'video') {
-                        // For image/video, keep original src
-                        layerRepresentationSrc = recordedLayer.src;
-                    } else if (recordedLayer.type === 'text') {
-                        // For text, render to a canvas and save as image data URL
-                        const tempCanvas = document.createElement('canvas');
-                        tempCanvas.width = movieCanvas.width;
-                        tempCanvas.height = movieCanvas.height;
-                        const tempCtx = tempCanvas.getContext('2d');
-
-                        tempCtx.font = `${recordedLayer.fontSize}px ${recordedLayer.font}`;
-                        tempCtx.fillStyle = recordedLayer.color;
-                        tempCtx.textAlign = 'center';
-                        tempCtx.textBaseline = 'middle';
-                        tempCtx.save();
-                        tempCtx.globalAlpha = recordedLayer.opacity;
-                        tempCtx.filter = `brightness(${recordedLayer.brightness}) saturate(${recordedLayer.saturation})`;
-                        tempCtx.translate(recordedLayer.x, recordedLayer.y);
-                        tempCtx.rotate(recordedLayer.rot * Math.PI / 180);
-                        if (recordedLayer.flipX) {
-                            tempCtx.scale(-1, 1)
-                        }
-                        tempCtx.fillText(recordedLayer.text, 0, 0);
-                        tempCtx.restore();
-                        layerRepresentationSrc = tempCanvas.toDataURL('image/png');
-                    }
-                    if (layerRepresentationSrc) {
-                        currentScene.committedLayerSrcs.push(layerRepresentationSrc);
+                currentScene.layers.forEach(layer => {
+                    if (layer.type === 'text') {
+                        layer.committed = true;
                     }
                 });
 
-                // Fetch the recorded layer video blob and set it as the new background
+                currentScene.layers = currentScene.layers.filter(l => l.type === 'text');
+
                 fetch(layerRecordingUrl).then(res => res.blob()).then(blob => {
-                    handleBackgroundUpload(blob, '', true); // Set blob as new background, clear active layers
-                    lastRecordingDurationMs = 0; // Reset last recording duration
-                    // Ensure the scene's duration property is correctly set after the new background is loaded
+                    handleBackgroundUpload(blob, '', true);
+                    lastRecordingDurationMs = 0;
                     const scene = getCurrentScene();
                     if (scene && scene.backgroundType === 'video') {
                         const bg = scene.backgroundElement;
@@ -2469,7 +2578,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 })
             });
 
-            // Project Actions (Generate, Preview, Download)
             generateProjectBtn.addEventListener('click', generateFinalMovie);
             movieDownloadBtn.addEventListener('click', () => {
                 if (finalProjectUrl) {
@@ -2495,7 +2603,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 previewPopup.classList.remove('visible')
             });
 
-            // Confirmation Modal
             deleteSceneBtn.addEventListener('click', () => {
                 const text = "This will permanently delete the current scene. Are you sure?";
                 openConfirmationModal(text, () => {
@@ -2507,10 +2614,9 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 if (confirmCallback) confirmCallback()
             });
             confirmNoBtn.addEventListener('click', closeConfirmationModal);
-            confirmationOverlay.addEventListener('click', e => e.stopPropagation()); // Prevent clicks on overlay closing it
+            confirmationOverlay.addEventListener('click', e => e.stopPropagation());
             document.getElementById('mg-confirmation-dialog').addEventListener('click', e => e.stopPropagation());
 
-            // Canvas Interaction
             movieCanvas.addEventListener('mousedown', handleMovieInteractionStart);
             window.addEventListener('mousemove', handleMovieInteractionMove);
             window.addEventListener('mouseup', handleMovieInteractionEnd);
@@ -2520,11 +2626,9 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 }
             });
 
-            // Keyboard Shortcuts
             window.addEventListener('keydown', handleKeyDown);
             window.addEventListener('keyup', handleKeyUp);
 
-            // Video Volume Controls
             videoVolumeBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 videoVolumeControls.classList.toggle('open')
@@ -2535,9 +2639,8 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                     currentScene.backgroundElement.volume = e.target.value
                 }
             });
-            videoVolumeControls.addEventListener('click', e => e.stopPropagation()); // Prevent clicks on volume controls closing other things
+            videoVolumeControls.addEventListener('click', e => e.stopPropagation());
 
-            // Drag and Drop for Background
             canvasPlaceholder.addEventListener('click', () => initialBackgroundInput.click());
             canvasPanel.addEventListener('dragover', e => {
                 e.preventDefault();
@@ -2556,24 +2659,21 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 }
             });
 
-            // Dropdown Buttons
             shortcutsBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 shortcutsDropdown.classList.toggle('visible');
-                // Close others
                 visualsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
-                gravityMenu.classList.add('hidden'); // Projectile/Gravity: Hide gravity menu
+                gravityMenu.classList.add('hidden');
             });
             visualsBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 visualsDropdown.classList.toggle('visible');
-                // Close others
                 shortcutsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
-                gravityMenu.classList.add('hidden'); // Projectile/Gravity: Hide gravity menu
+                gravityMenu.classList.add('hidden');
                 if (visualsDropdown.classList.contains('visible')) {
                     updateEditPanelsUI()
                 }
@@ -2581,26 +2681,22 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             audioBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 audioDropdown.classList.toggle('visible');
-                // Close others
                 shortcutsDropdown.classList.remove('visible');
                 visualsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
-                gravityMenu.classList.add('hidden'); // Projectile/Gravity: Hide gravity menu
+                gravityMenu.classList.add('hidden');
                 if (audioDropdown.classList.contains('visible')) {
                     updateAudioUI()
                 }
             });
 
-            // Prevent dropdowns from closing when clicked inside
             visualsDropdown.addEventListener('click', e => e.stopPropagation());
             textDropdown.addEventListener('click', e => e.stopPropagation());
             audioDropdown.addEventListener('click', e => e.stopPropagation());
             shortcutsDropdown.addEventListener('click', e => e.stopPropagation());
 
-
-            // Projectile/Gravity: Gravity Menu Event Listeners
             applyGravityBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent global click from hiding it immediately
+                e.stopPropagation();
                 const activeLayer = getActiveLayer();
                 if (activeLayer) {
                     activeLayer.gravityValue = parseFloat(gravityInput.value);
@@ -2610,19 +2706,18 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                     }
                     toast(`Gravity set to ${activeLayer.gravityValue.toFixed(1)}`, 2000);
                     gravityMenu.classList.add('hidden');
-                    gravityInstructions.textContent = ''; // Clear instructions after closing
-                    drawControlsOverlay(); // Redraw to ensure correct cursor (crosshair over asset)
+                    gravityInstructions.textContent = '';
+                    drawControlsOverlay();
                 }
             });
             cancelGravityBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent global click from hiding it immediately
+                e.stopPropagation();
                 gravityMenu.classList.add('hidden');
-                gravityInstructions.textContent = ''; // Clear message when cancelled/closed
-                drawControlsOverlay(); // Redraw to hide the menu
+                gravityInstructions.textContent = '';
+                drawControlsOverlay();
             });
-            gravityMenu.addEventListener('click', e => e.stopPropagation()); // Prevent clicks inside menu from closing it
+            gravityMenu.addEventListener('click', e => e.stopPropagation());
 
-            // Scene Audio Upload/Remove
             sceneAudioInput.addEventListener('change', e => {
                 const file = e.target.files[0];
                 const currentScene = getCurrentScene();
@@ -2653,7 +2748,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 }
             });
 
-            // Visual Adjustments (Sliders & Inputs)
             assetOpacitySlider.addEventListener('input', e => {
                 const activeLayer = getActiveLayer();
                 if (activeLayer && (activeLayer.type === 'image' || activeLayer.type === 'video')) activeLayer.opacity = parseFloat(e.target.value)
@@ -2673,7 +2767,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                     activeLayer.text = e.target.value;
                     drawMovieFrame();
                     drawControlsOverlay();
-                    renderLayerPalette()
+                    renderTextLayerPalette();
                 }
             });
             textFontSelect.addEventListener('change', e => {
@@ -2682,7 +2776,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                     activeLayer.font = e.target.value;
                     drawMovieFrame();
                     drawControlsOverlay();
-                    renderLayerPalette()
+                    renderTextLayerPalette();
                 }
             });
             textSizeSlider.addEventListener('input', e => {
@@ -2762,21 +2856,16 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
 
             window.addEventListener('mouseup', endDrag);
 
-            // Universal click listener to close dropdowns
             window.addEventListener('click', (e) => {
                 if (isDraggingSlider) return;
-                // Projectile/Gravity: If we are drawing projectile, do not close dropdowns, but allow handleMovieInteractionEnd to finalize
                 if (movieInteraction.active && movieInteraction.type === 'projectile-draw') return;
 
-                // Projectile/Gravity: If the flag is set, this click was intended to open a menu, so ignore it for closing.
                 if (ignoreNextWindowClick) {
-                    ignoreNextWindowClick = false; // Reset the flag
-                    return; // Ignore this click
+                    ignoreNextWindowClick = false;
+                    return;
                 }
 
-
-                // Projectile/Gravity: Close gravity menu if clicking outside of it or its toggle button
-                if (gravityMenu.style.display === 'block') { // Check if it's actually visible
+                if (gravityMenu.style.display === 'block') {
                     const activeLayer = getActiveLayer();
                     if (activeLayer) {
                         const canvasRect = movieCanvas.getBoundingClientRect();
@@ -2794,7 +2883,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                             dWidth = textMetrics.width;
                             dHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
                         } else {
-                            dWidth = 0; dHeight = 0; // Fallback
+                            dWidth = 0; dHeight = 0;
                         }
 
                         const angle = activeLayer.rot * Math.PI / 180;
@@ -2806,11 +2895,9 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                         const projectileHandleWorldX = activeLayer.x + (projectileHandleLocalX * cos - projectileHandleLocalY * sin);
                         const projectileHandleWorldY = activeLayer.y + (projectileHandleLocalX * sin + projectileHandleLocalY * cos);
 
-                        // Scale world coordinates to display coordinates relative to viewport
                         const projectileHandleDisplayX = (projectileHandleWorldX / movieCanvas.width) * canvasRect.width + panelRect.left;
                         const projectileHandleDisplayY = (projectileHandleWorldY / movieCanvas.height) * canvasRect.height + panelRect.top;
 
-                        // Create a slightly larger hit area for the handle in display coordinates
                         const handleHitbox = {
                             x: projectileHandleDisplayX - PROJECTILE_HANDLE_SIZE / 2 - 5,
                             y: projectileHandleDisplayY - PROJECTILE_HANDLE_SIZE / 2 - 5,
@@ -2821,22 +2908,20 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                         const clickX = e.clientX;
                         const clickY = e.clientY;
 
-                        // Check if click is outside gravity menu AND outside projectile handle hitbox
                         if (!gravityMenu.contains(e.target) &&
                             !(clickX >= handleHitbox.x && clickX <= handleHitbox.x + handleHitbox.width &&
                             clickY >= handleHitbox.y && clickY <= handleHitbox.y + handleHitbox.height))
                         {
                             gravityMenu.classList.add('hidden');
-                            gravityInstructions.textContent = ''; // Clear message
-                            drawControlsOverlay(); // Redraw to ensure projectile handle color is correct
+                            gravityInstructions.textContent = '';
+                            drawControlsOverlay();
                         }
                     } else {
-                         gravityMenu.classList.add('hidden'); // If no active layer, hide it
-                         gravityInstructions.textContent = ''; // Clear message
+                         gravityMenu.classList.add('hidden');
+                         gravityInstructions.textContent = '';
                     }
                 }
 
-                // Close all other dropdowns
                 if (videoVolumeControls.classList.contains('open')) videoVolumeControls.classList.remove('open');
                 if (shortcutsDropdown.classList.contains('visible')) shortcutsDropdown.classList.remove('visible');
                 if (visualsDropdown.classList.contains('visible')) visualsDropdown.classList.remove('visible');
@@ -2844,34 +2929,27 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 if (audioDropdown.classList.contains('visible')) audioDropdown.classList.remove('visible');
             });
 
-            // *** NEW CODE STARTS HERE ***
-            // Paste event listener for uploading a background
             window.addEventListener('paste', e => {
-                // Ignore paste events if the user is typing in an input field
                 const activeEl = document.activeElement;
                 if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
                     return;
                 }
 
-                // Check for files in the clipboard
                 const files = e.clipboardData?.files;
                 if (!files || files.length === 0) {
                     return;
                 }
 
-                // Find the first valid image or video file from the pasted items
                 let fileToUpload = null;
                 for (const file of files) {
                     if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
                         fileToUpload = file;
-                        break; // Use the first valid file found
+                        break;
                     }
                 }
 
                 if (fileToUpload) {
-                    e.preventDefault(); // Prevent the browser from opening the file
-
-                    // Use the existing upload function, determining if it's the first scene or a new one
+                    e.preventDefault();
                     if (scenes.length === 0) {
                         toast('Pasted file added as first scene.', 2500);
                         handleBackgroundUpload(fileToUpload, 'initial');
@@ -2881,14 +2959,14 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                     }
                 }
             });
-            // *** NEW CODE ENDS HERE ***
 
-            // Canvas Resize Observer
             const canvasResizeObserver = new ResizeObserver(resizeCanvas);
             canvasResizeObserver.observe(canvasPanel);
         };
-
-        updateControlsState();
+        
+        // Initial UI State setup
+        renderLayerPalette();
+        renderStackedLayersPalette();
         updateEditPanelsUI();
         updateAudioUI();
         setupEventListeners();
