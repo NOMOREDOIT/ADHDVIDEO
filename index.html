@@ -7,7 +7,11 @@
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>
 /* --- In-Window Loading Overlay Styles --- */
-#loading-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background-color:#faf9f5;color:#2b2b2b;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease-in-out}#loading-overlay h1{font-family:'VT323',monospace;font-size:2.5rem;text-shadow:2px 2px 0 #000}#loading-overlay h1::after{content:'.';display:inline-block;width:3ch;text-align:left;animation:ellipsis 1.4s infinite}:root{--bg:#f2efe8;--ink:#2b2b2b;--mid:#c2c2c2;--light:#faf9f5;--light-rgb:250,249,245;--shadow:#7a7a7a;--danger-color:#cc4444;--action-color:#4477cc;--success-color:#55cc55;--bg-rgb:242,239,232}html{box-sizing:border-box}*,:before,:after{box-sizing:inherit}body{font-family:'VT323',monospace;background:var(--bg) url(./assets/wallpaper.png) repeat fixed;color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:10px;margin:0;height:100vh;overflow:hidden;transition:background-color .3s,color .3s}body.dark-mode{--bg:#1a1d2d;--ink:#e0e5f0;--mid:#3d4a6e;--light:#252a40;--light-rgb:37,42,64;--shadow:#0d0f16;--danger-color:#a83e3e;--action-color:#5a8de8;--success-color:#4a9d4a;--bg-rgb:26,29,45}.window{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);width:100%;max-width:1600px;margin:0 auto;height:calc(100vh - 20px);display:flex;flex-direction:column;overflow:hidden;transition:background-color .3s,border-color .3s,box-shadow .3s}.titlebar{height:28px;background:var(--mid);display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-bottom:2px solid var(--ink);font-size:20px;flex-shrink:0;cursor:default;position:relative;transition:background-color .3s,border-color .3s}body.dark-mode .titlebar{color:var(--ink)}.titlebar-controls{display:flex;align-items:center;gap:8px}.controls-fake{display:flex;gap:4px}.btn-square{width:16px;height:16px;background:var(--light);border:2px solid var(--ink)}.controls-fake .btn-square:first-child{background-color:var(--success-color)}.controls-fake .btn-square:last-child{background-color:var(--danger-color)}#shortcuts-btn,#visuals-btn,#audio-btn,#text-btn,#theme-toggle-btn{font-family:inherit;font-size:16px;background:var(--light);border:2px solid var(--ink);padding:0 8px;cursor:pointer;transition:background-color .3s,border-color .3s,color .3s;color:var(--ink)}#theme-toggle-btn{padding:0 4px;font-size:18px}#shortcuts-dropdown{right:8px}#shortcuts-dropdown.visible{display:block}#shortcuts-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#shortcuts-dropdown ul{margin:0;padding:0;list-style:none;font-size:1rem}#shortcuts-dropdown li{display:flex;justify-content:space-between;padding:2px 0}#shortcuts-dropdown li kbd{font-family:inherit;border:2px solid var(--ink);padding:0 4px;background:var(--bg)}#visuals-dropdown,#audio-dropdown,#text-dropdown,#shortcuts-dropdown{display:none;position:absolute;top:28px;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;z-index:100;width:250px;transition:background .2s,backdrop-filter .2s,box-shadow .2s,border-color .2s}body.dark-mode #shortcuts-dropdown li kbd{border-color:var(--mid)}#visuals-dropdown{right:320px}#text-dropdown{right:216px}#audio-dropdown{right:102px}#visuals-dropdown.visible,#audio-dropdown.visible,#text-dropdown.visible{display:block}#visuals-dropdown h5,#visuals-dropdown h6,#visuals-dropdown .slider-container,#audio-dropdown h5,#audio-dropdown p,#audio-dropdown .action-buttons,#text-dropdown h5,#text-dropdown h6,#text-dropdown .slider-container{transition:opacity .2s}#visuals-dropdown h5,#audio-dropdown h5,#text-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#visuals-dropdown h6,#text-dropdown h6{font-size:1.1rem;font-weight:700;text-align:left;margin-top:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid);padding-bottom:2px}#visuals-dropdown label,#text-dropdown label{display:block;margin-top:.5rem;font-size:.9rem}#visuals-dropdown.is-scrubbing{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;border-color:transparent}#visuals-dropdown.is-scrubbing>h5,#visuals-dropdown.is-scrubbing>div>h6,#visuals-dropdown.is-scrubbing .slider-container{opacity:0;pointer-events:none}#visuals-dropdown.is-scrubbing .slider-container.is-active-slider{opacity:1;pointer-events:auto}#visuals-dropdown input[type=range],#text-dropdown input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--ink);outline:0}#visuals-dropdown input[type=range]::-webkit-slider-thumb,#text-dropdown input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #visuals-dropdown input[type=range]::-webkit-slider-thumb,body.dark-mode #text-dropdown input[type=range]::-webkit-slider-thumb{background:var(--action-color)}#visuals-dropdown input[type=range]::-moz-range-thumb,#text-dropdown input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #visuals-dropdown input[type=range]::-moz-range-thumb,body.dark-mode #text-dropdown input[type=range]::-moz-range-thumb{background:var(--action-color)}#asset-visuals-controls.disabled,#text-visuals-controls.disabled,#audio-controls.disabled{opacity:.5;pointer-events:none}#audio-file-name{font-size:.9rem;text-align:center;word-break:break-all;padding:.5rem;background:var(--bg);border:2px inset var(--mid);min-height:40px}.mg-btn{font-family:inherit;font-size:18px;background:var(--light);border:2px solid var(--ink);padding:8px 16px;margin:4px;cursor:pointer;text-decoration:none;color:var(--ink);transition:.2s all;box-shadow:2px 2px 0 var(--shadow);width:100%;white-space:nowrap}body.dark-mode .mg-btn:hover{filter:brightness(1.2)}.mg-btn:hover{transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow)}.mg-btn:disabled,.mg-btn.disabled{opacity:.5;pointer-events:none;box-shadow:none;transform:none}.mg-btn.active{background-color:var(--danger-color);color:var(--light);box-shadow:none;transform:translate(2px,2px)}.mg-btn.success{background-color:var(--success-color)}.mg-btn.record{background-color:var(--danger-color);color:var(--light)}.mg-btn.generate{background-color:var(--ink);color:var(--light)}body.dark-mode .mg-btn.generate{background-color:var(--action-color);color:var(--ink)}body.dark-mode .mg-btn.record,body.dark-mode .mg-btn.active{color:var(--ink)}.hidden{display:none!important}#studio-container{display:grid;grid-template-columns:320px 1fr;grid-template-rows:minmax(0,1fr);gap:1.5rem;padding:1.5rem;flex-grow:1;min-height:0}#controls-panel{display:flex;flex-direction:column;gap:1rem;overflow-y:auto;min-height:0}#canvas-panel{display:flex;align-items:center;justify-content:center;border:2px solid var(--ink);background-color:var(--mid);position:relative;min-height:0;transition:background-color .5s ease-in-out}#controls-panel fieldset{background:var(--light);border:2px solid var(--ink);padding:.8rem;margin:0;text-align:left;transition:background-color .3s,border-color .3s,color .3s}#controls-panel legend{font-size:1.2rem;font-weight:400;padding:0 .25rem}.action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.scene-controls-container{display:flex;flex-direction:column;gap:.5rem}.scene-controls-container>.mg-btn{margin-left:0;margin-right:0}#scene-actions-container .mg-btn,#mg-commit-layer-btn{white-space:normal;text-align:center}#recording-status{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.2rem;color:var(--danger-color)}#recording-indicator{width:12px;height:12px;background-color:var(--danger-color);border:1px solid var(--ink);border-radius:50%;animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}.placeholder-text{color:var(--shadow);font-size:.9rem;text-align:center;padding:1rem;width:100%}body.dark-mode .placeholder-text{color:var(--ink)}#mg-asset-palette{display:flex;gap:.5rem;flex-wrap:wrap;min-height:70px;align-content:flex-start}.palette-slot,.layer-thumb{width:60px;height:60px;border:2px solid var(--ink);background:var(--light);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow)}.layer-thumb.locked{opacity:.6;cursor:default;box-shadow:none}.layer-thumb.locked .layer-controls{display:none}.layer-thumb.locked:hover .layer-controls{display:flex}.layer-thumb{cursor:grab}.palette-slot.empty{display:flex;align-items:center;justify-content:center;font-size:3rem;line-height:1;color:var(--mid);transition:all .2s}.palette-slot.empty:hover{background-color:#e0e0e0;color:var(--ink)}body.dark-mode .palette-slot.empty:hover{background-color:var(--mid);color:var(--ink)}.layer-thumb img,.layer-thumb video{width:100%;height:100%;object-fit:cover;pointer-events:none}.layer-thumb.active{border:2px solid var(--action-color);transform:scale(1.05);box-shadow:none}.layer-controls{position:absolute;top:-5px;right:-5px;display:flex;gap:2px}.layer-btn{background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center}#scene-tray{display:flex;gap:.5rem;flex-wrap:wrap;min-height:65px;align-content:flex-start;padding-bottom:.5rem;border-bottom:2px solid var(--mid);margin-bottom:.5rem}.scene-thumb{width:80px;height:55px;border:2px solid var(--ink);background-color:var(--mid);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow);background-size:cover;background-position:center;display:flex;color:var(--light);text-shadow:1px 1px 0 var(--ink);align-items:center;justify-content:center;font-size:1.5rem;transition:all .2s}body.dark-mode .scene-thumb{text-shadow:1px 1px 0 var(--shadow)}.scene-thumb.active{border-color:var(--action-color);transform:scale(1.05);box-shadow:0 0 0 var(--shadow)}.scene-delete-btn{position:absolute;top:-5px;right:-5px;background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center;opacity:0;transition:opacity .2s}.scene-thumb:hover .scene-delete-btn{opacity:1}.scene-thumb.active:hover .scene-delete-btn{display:none}#mg-movie-canvas,#mg-controls-overlay-canvas{position:absolute}#mg-controls-overlay-canvas{pointer-events:none}#mg-movie-canvas{pointer-events:auto}#video-volume-controls{position:absolute;bottom:10px;right:10px;display:flex;align-items:center;justify-content:flex-end;z-index:10;height:34px}#video-volume-btn{font-size:1.5rem;cursor:pointer;padding:4px;user-select:none;background:0 0;border:none}#volume-slider-wrapper{display:flex;align-items:center;width:0;opacity:0;overflow:hidden;transition:width .35s ease-in-out,opacity .35s ease-in-out}#video-volume-controls.open #volume-slider-wrapper{width:100px;opacity:1;margin-right:8px}#video-volume-slider{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--ink);outline:0}#video-volume-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #video-volume-slider::-webkit-slider-thumb{background:var(--action-color)}#video-volume-slider::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #video-volume-slider::-moz-range-thumb{background:var(--action-color)}.mg-overlay-base{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s .3s;background:rgba(10,10,10,.25)}body.dark-mode .mg-overlay-base{background:rgba(var(--bg-rgb),.5)}.mg-overlay-base.visible{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .3s,visibility 0s 0s}.overlay-close-btn{position:absolute;top:8px;right:10px;background:0 0;border:none;line-height:1;cursor:pointer;padding:5px;font-family:'VT323',monospace;color:var(--ink);font-size:2rem;z-index:10;transition:opacity .2s}.overlay-close-btn:hover{opacity:.6}#mg-asset-picker-grid-wrapper{background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:1.5rem;max-width:800px;width:90vw;max-height:85vh;display:flex;flex-direction:column;position:relative}#mg-asset-picker-grid-wrapper h4{font-size:1.5rem;text-align:center;font-weight:400;margin:0 0 1rem}#mg-asset-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:.5rem;overflow-y:auto;padding:.5rem;flex-grow:1}.mg-template{width:auto;height:80px}.mg-template img{width:100%;height:100%;object-fit:contain;cursor:pointer}#mg-asset-picker-actions{margin-top:1rem;text-align:center;display:flex;gap:.5rem;justify-content:center}#mg-toast{visibility:hidden;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--light);border:2px solid var(--ink);padding:.5rem 1rem;color:var(--ink);font-size:1rem;z-index:2000;box-shadow:4px 4px 0 var(--ink)}#mg-countdown-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;display:flex;align-items:center;justify-content:center;z-index:3000;color:var(--light);text-shadow:2px 2px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink);font-size:15vw;pointer-events:auto}body.dark-mode #mg-countdown-overlay{color:var(--ink);text-shadow:2px 2px 0 var(--action-color),-2px -2px 0 var(--action-color),2px -2px 0 var(--action-color),-2px 2px 0 var(--action-color)}#canvas-placeholder{position:absolute;width:calc(100% - 20px);height:calc(100% - 20px);border:4px dashed var(--shadow);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;color:var(--shadow);transition:all .2s;padding:2rem;overflow:hidden;position:relative}#canvas-placeholder h3,#canvas-placeholder p{position:relative;z-index:2}#canvas-placeholder video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:.6}#canvas-placeholder h3{font-size:2rem;margin:0 0 .5rem}#canvas-placeholder p{font-size:1.2rem}#canvas-placeholder:hover,#canvas-panel.drag-over #canvas-placeholder{border-color:var(--ink);color:var(--ink);background-color:rgba(255,255,255,.5)}body.dark-mode #canvas-placeholder:hover,body.dark-mode #canvas-panel.drag-over #canvas-placeholder{background-color:rgba(var(--light-rgb),.5)}#canvas-panel.drag-over{background-color:var(--shadow)}#layer-instructions{padding:0 0 .5rem 0;margin:0;font-size:1rem}#mg-preview-container{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px}#mg-preview-container .overlay-close-btn{top:-10px;right:-10px;background:var(--danger-color);color:var(--light);border:2px solid var(--ink)}#mg-preview-video{display:block;max-width:80vw;max-height:75vh;background:#000}#mg-generation-overlay{z-index:4000}#mg-generation-overlay .window{max-width:400px;height:auto;padding:2rem;text-align:center}body.dark-mode #mg-generation-overlay .window{background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}#mg-generation-overlay h3{font-size:2rem;margin:0 0 1rem}#mg-generation-overlay h3::after{display:inline-block;animation:ellipsis 1.4s infinite;content:".";width:1em;text-align:left}@keyframes ellipsis{0%{content:"."}33%{content:".."}66%{content:"..."}}#mg-confirmation-overlay{z-index:5000}#mg-confirmation-dialog{padding:1.5rem;text-align:center;width:90%;max-width:400px;height:auto}#mg-confirmation-dialog p{font-size:1.2rem;margin:0 0 1.5rem}#mg-confirmation-dialog .action-buttons{display:flex;justify-content:center}#scene-actions-container{grid-template-columns:2fr 1fr 1fr;gap:.5rem}#scene-actions-container #mg-record-layer-btn{font-size:20px}#mg-gravity-menu.window{position:absolute;z-index:101;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;width:200px;height:auto;text-align:center;display:none}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}body.dark-mode #mg-gravity-menu input[type=number]{border-color:var(--mid);color:var(--ink)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#text-content,#text-font{transition:background-color .3s,border-color .3s,color .3s}#text-layer-manager{display:flex;gap:.5rem;align-items:center;padding-bottom:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid)}#text-layer-palette{display:flex;gap:.5rem;flex-wrap:wrap;flex-grow:1;min-height:44px}#add-new-text-layer-btn{width:40px;height:40px;flex-shrink:0;font-size:2rem;line-height:1;padding:0}.text-thumb{width:60px;height:40px;display:flex;align-items:center;justify-content:center;overflow:hidden;background-color:var(--ink);color:var(--light);font-size:.8rem;padding:2px;text-align:center}.text-thumb span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+#loading-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background-color:#faf9f5;color:#2b2b2b;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease-in-out}#loading-overlay h1{font-family:'VT323',monospace;font-size:2.5rem;text-shadow:2px 2px 0 #000}#loading-overlay h1::after{content:'.';display:inline-block;width:3ch;text-align:left;animation:ellipsis 1.4s infinite}:root{--bg:#f2efe8;--ink:#2b2b2b;--mid:#c2c2c2;--light:#faf9f5;--light-rgb:250,249,245;--shadow:#7a7a7a;--danger-color:#cc4444;--action-color:#4477cc;--success-color:#55cc55;--bg-rgb:242,239,232}html{box-sizing:border-box}*,:before,:after{box-sizing:inherit}body{font-family:'VT323',monospace;background:var(--bg) url(./assets/wallpaper.png) repeat fixed;color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:10px;margin:0;height:100vh;overflow:hidden;transition:background-color .3s,color .3s}body.dark-mode{--bg:#1a1d2d;--ink:#e0e5f0;--mid:#3d4a6e;--light:#252a40;--light-rgb:37,42,64;--shadow:#0d0f16;--danger-color:#a83e3e;--action-color:#5a8de8;--success-color:#4a9d4a;--bg-rgb:26,29,45}.window{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);width:100%;max-width:1600px;margin:0 auto;height:calc(100vh - 20px);display:flex;flex-direction:column;overflow:hidden;transition:background-color .3s,border-color .3s,box-shadow .3s}.titlebar{height:28px;background:var(--mid);display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-bottom:2px solid var(--ink);font-size:20px;flex-shrink:0;cursor:default;position:relative;transition:background-color .3s,border-color .3s}body.dark-mode .titlebar{color:var(--ink)}.titlebar-controls{display:flex;align-items:center;gap:8px}.controls-fake{display:flex;gap:4px}.btn-square{width:16px;height:16px;background:var(--light);border:2px solid var(--ink)}.controls-fake .btn-square:first-child{background-color:var(--success-color)}.controls-fake .btn-square:last-child{background-color:var(--danger-color)}#shortcuts-btn,#visuals-btn,#audio-btn,#text-btn,#theme-toggle-btn{font-family:inherit;font-size:16px;background:var(--light);border:2px solid var(--ink);padding:0 8px;cursor:pointer;transition:background-color .3s,border-color .3s,color .3s;color:var(--ink)}#theme-toggle-btn{padding:0 4px;font-size:18px}#shortcuts-dropdown{right:8px}#shortcuts-dropdown.visible{display:block}#shortcuts-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#shortcuts-dropdown ul{margin:0;padding:0;list-style:none;font-size:1rem}#shortcuts-dropdown li{display:flex;justify-content:space-between;padding:2px 0}#shortcuts-dropdown li kbd{font-family:inherit;border:2px solid var(--ink);padding:0 4px;background:var(--bg)}#visuals-dropdown,#audio-dropdown,#text-dropdown,#shortcuts-dropdown{display:none;position:absolute;top:28px;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;z-index:100;width:250px;transition:background .2s,backdrop-filter .2s,box-shadow .2s,border-color .2s}body.dark-mode #shortcuts-dropdown li kbd{border-color:var(--mid)}#visuals-dropdown{right:320px}#text-dropdown{right:216px}#audio-dropdown{right:102px}#visuals-dropdown.visible,#audio-dropdown.visible,#text-dropdown.visible{display:block}#visuals-dropdown h5,#visuals-dropdown h6,#visuals-dropdown .slider-container,#audio-dropdown h5,#audio-dropdown p,#audio-dropdown .action-buttons,#text-dropdown h5,#text-dropdown h6,#text-dropdown .slider-container{transition:opacity .2s}#visuals-dropdown h5,#audio-dropdown h5,#text-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#visuals-dropdown h6,#text-dropdown h6{font-size:1.1rem;font-weight:700;text-align:left;margin-top:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid);padding-bottom:2px}#visuals-dropdown label,#text-dropdown label{display:block;margin-top:.5rem;font-size:.9rem}#visuals-dropdown.is-scrubbing{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;border-color:transparent}#visuals-dropdown.is-scrubbing>h5,#visuals-dropdown.is-scrubbing>div>h6,#visuals-dropdown.is-scrubbing .slider-container{opacity:0;pointer-events:none}#visuals-dropdown.is-scrubbing .slider-container.is-active-slider{opacity:1;pointer-events:auto}#visuals-dropdown input[type=range],#text-dropdown input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--ink);outline:0}#visuals-dropdown input[type=range]::-webkit-slider-thumb,#text-dropdown input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #visuals-dropdown input[type=range]::-webkit-slider-thumb,body.dark-mode #text-dropdown input[type=range]::-webkit-slider-thumb{background:var(--action-color)}#visuals-dropdown input[type=range]::-moz-range-thumb,#text-dropdown input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #visuals-dropdown input[type=range]::-moz-range-thumb,body.dark-mode #text-dropdown input[type=range]::-moz-range-thumb{background:var(--action-color)}#asset-visuals-controls.disabled,#text-visuals-controls.disabled,#audio-controls.disabled{opacity:.5;pointer-events:none}#audio-file-name{font-size:.9rem;text-align:center;word-break:break-all;padding:.5rem;background:var(--bg);border:2px inset var(--mid);min-height:40px}.mg-btn{font-family:inherit;font-size:18px;background:var(--light);border:2px solid var(--ink);padding:8px 16px;margin:4px;cursor:pointer;text-decoration:none;color:var(--ink);transition:.2s all;box-shadow:2px 2px 0 var(--shadow);width:100%;white-space:nowrap}body.dark-mode .mg-btn:hover{filter:brightness(1.2)}.mg-btn:hover{transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow)}.mg-btn:disabled,.mg-btn.disabled{opacity:.5;pointer-events:none;box-shadow:none;transform:none}.mg-btn.active{background-color:var(--danger-color);color:var(--light);box-shadow:none;transform:translate(2px,2px)}.mg-btn.success{background-color:var(--success-color)}.mg-btn.record{background-color:var(--danger-color);color:var(--light)}.mg-btn.generate{background-color:var(--ink);color:var(--light)}body.dark-mode .mg-btn.generate{background-color:var(--action-color);color:var(--ink)}body.dark-mode .mg-btn.record,body.dark-mode .mg-btn.active{color:var(--ink)}.hidden{display:none!important}#studio-container{display:grid;grid-template-columns:320px 1fr;grid-template-rows:minmax(0,1fr);gap:1.5rem;padding:1.5rem;flex-grow:1;min-height:0}#controls-panel{display:flex;flex-direction:column;gap:1rem;overflow-y:auto;min-height:0}#canvas-panel{display:flex;align-items:center;justify-content:center;border:2px solid var(--ink);background-color:var(--mid);position:relative;min-height:0;transition:background-color .5s ease-in-out}#controls-panel fieldset{background:var(--light);border:2px solid var(--ink);padding:.8rem;margin:0;text-align:left;transition:background-color .3s,border-color .3s,color .3s}#controls-panel legend{font-size:1.2rem;font-weight:400;padding:0 .25rem}.action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.scene-controls-container{display:flex;flex-direction:column;gap:.5rem}.scene-controls-container>.mg-btn{margin-left:0;margin-right:0}#scene-actions-container .mg-btn,#mg-commit-layer-btn{white-space:normal;text-align:center}#recording-status{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.2rem;color:var(--danger-color)}#recording-indicator{width:12px;height:12px;background-color:var(--danger-color);border:1px solid var(--ink);border-radius:50%;animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}.placeholder-text{color:var(--shadow);font-size:.9rem;text-align:center;padding:1rem;width:100%}body.dark-mode .placeholder-text{color:var(--ink)}#mg-asset-palette{display:flex;gap:.5rem;flex-wrap:wrap;min-height:70px;align-content:flex-start}.palette-slot,.layer-thumb{width:60px;height:60px;border:2px solid var(--ink);background:var(--light);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow)}.layer-thumb.locked{opacity:.6;cursor:default;box-shadow:none}.layer-thumb.locked .layer-controls{display:none}.layer-thumb.locked:hover .layer-controls{display:flex}.layer-thumb{cursor:grab}.palette-slot.empty{display:flex;align-items:center;justify-content:center;font-size:3rem;line-height:1;color:var(--mid);transition:all .2s}.palette-slot.empty:hover{background-color:#e0e0e0;color:var(--ink)}body.dark-mode .palette-slot.empty:hover{background-color:var(--mid);color:var(--ink)}.layer-thumb img,.layer-thumb video{width:100%;height:100%;object-fit:cover;pointer-events:none}.layer-thumb.active{border:2px solid var(--action-color);transform:scale(1.05);box-shadow:none}.layer-controls{position:absolute;top:-5px;right:-5px;display:flex;gap:2px}.layer-btn{background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center}#scene-tray{display:flex;gap:.5rem;flex-wrap:wrap;min-height:65px;align-content:flex-start;padding-bottom:.5rem;border-bottom:2px solid var(--mid);margin-bottom:.5rem}.scene-thumb{width:80px;height:55px;border:2px solid var(--ink);background-color:var(--mid);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow);background-size:cover;background-position:center;display:flex;color:var(--light);text-shadow:1px 1px 0 var(--ink);align-items:center;justify-content:center;font-size:1.5rem;transition:all .2s}body.dark-mode .scene-thumb{text-shadow:1px 1px 0 var(--shadow)}.scene-thumb.active{border-color:var(--action-color);transform:scale(1.05);box-shadow:0 0 0 var(--shadow)}.scene-delete-btn{position:absolute;top:-5px;right:-5px;background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center;opacity:0;transition:opacity .2s}.scene-thumb:hover .scene-delete-btn{opacity:1}.scene-thumb.active:hover .scene-delete-btn{display:none}#mg-movie-canvas,#mg-controls-overlay-canvas{position:absolute}#mg-controls-overlay-canvas{pointer-events:none}#mg-movie-canvas{pointer-events:auto}#video-volume-controls{position:absolute;bottom:10px;right:10px;display:flex;align-items:center;justify-content:flex-end;z-index:10;height:34px}#video-volume-btn{font-size:1.5rem;cursor:pointer;padding:4px;user-select:none;background:0 0;border:none}#volume-slider-wrapper{display:flex;align-items:center;width:0;opacity:0;overflow:hidden;transition:width .35s ease-in-out,opacity .35s ease-in-out}#video-volume-controls.open #volume-slider-wrapper{width:100px;opacity:1;margin-right:8px}#video-volume-slider{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--ink);outline:0}#video-volume-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #video-volume-slider::-webkit-slider-thumb{background:var(--action-color)}#video-volume-slider::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #video-volume-slider::-moz-range-thumb{background:var(--action-color)}.mg-overlay-base{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s .3s;background:rgba(10,10,10,.25)}body.dark-mode .mg-overlay-base{background:rgba(var(--bg-rgb),.5)}.mg-overlay-base.visible{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .3s,visibility 0s 0s}.overlay-close-btn{position:absolute;top:8px;right:10px;background:0 0;border:none;line-height:1;cursor:pointer;padding:5px;font-family:'VT323',monospace;color:var(--ink);font-size:2rem;z-index:10;transition:opacity .2s}.overlay-close-btn:hover{opacity:.6}#mg-asset-picker-grid-wrapper{background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:1.5rem;max-width:800px;width:90vw;max-height:85vh;display:flex;flex-direction:column;position:relative}#mg-asset-picker-grid-wrapper h4{font-size:1.5rem;text-align:center;font-weight:400;margin:0 0 1rem}#mg-asset-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:.5rem;overflow-y:auto;padding:.5rem;flex-grow:1}.mg-template{width:auto;height:80px}.mg-template img{width:100%;height:100%;object-fit:contain;cursor:pointer}#mg-asset-picker-actions{margin-top:1rem;text-align:center;display:flex;gap:.5rem;justify-content:center}#mg-toast{visibility:hidden;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--light);border:2px solid var(--ink);padding:.5rem 1rem;color:var(--ink);font-size:1rem;z-index:2000;box-shadow:4px 4px 0 var(--ink)}#mg-countdown-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;display:flex;align-items:center;justify-content:center;z-index:3000;color:var(--light);text-shadow:2px 2px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink);font-size:15vw;pointer-events:auto}body.dark-mode #mg-countdown-overlay{color:var(--ink);text-shadow:2px 2px 0 var(--action-color),-2px -2px 0 var(--action-color),2px -2px 0 var(--action-color),-2px 2px 0 var(--action-color)}#canvas-placeholder{position:absolute;width:calc(100% - 20px);height:calc(100% - 20px);border:4px dashed var(--shadow);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;color:var(--shadow);transition:all .2s;padding:2rem;overflow:hidden;position:relative}#canvas-placeholder h3,#canvas-placeholder p{position:relative;z-index:2}#canvas-placeholder video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:.6}#canvas-placeholder h3{font-size:2rem;margin:0 0 .5rem}#canvas-placeholder p{font-size:1.2rem}#canvas-placeholder:hover,#canvas-panel.drag-over #canvas-placeholder{border-color:var(--ink);color:var(--ink);background-color:rgba(255,255,255,.5)}body.dark-mode #canvas-placeholder:hover,body.dark-mode #canvas-panel.drag-over #canvas-placeholder{background-color:rgba(var(--light-rgb),.5)}#canvas-panel.drag-over{background-color:var(--shadow)}#layer-instructions{padding:0 0 .5rem 0;margin:0;font-size:1rem}#mg-preview-container{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px}#mg-preview-container .overlay-close-btn{top:-10px;right:-10px;background:var(--danger-color);color:var(--light);border:2px solid var(--ink)}#mg-preview-video{display:block;max-width:80vw;max-height:75vh;background:#000}#mg-generation-overlay{z-index:4000}
+/* --- CSS FIX STARTS HERE --- */
+#mg-generation-overlay .window{max-width:400px;height:auto;padding:2rem;text-align:center;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+/* --- CSS FIX ENDS HERE --- */
+#mg-generation-overlay h3{font-size:2rem;margin:0 0 1rem}#mg-generation-overlay h3::after{display:inline-block;animation:ellipsis 1.4s infinite;content:".";width:1em;text-align:left}@keyframes ellipsis{0%{content:"."}33%{content:".."}66%{content:"..."}}#mg-confirmation-overlay{z-index:5000}#mg-confirmation-dialog{padding:1.5rem;text-align:center;width:90%;max-width:400px;height:auto}#mg-confirmation-dialog p{font-size:1.2rem;margin:0 0 1.5rem}#mg-confirmation-dialog .action-buttons{display:flex;justify-content:center}#scene-actions-container{grid-template-columns:2fr 1fr 1fr;gap:.5rem}#scene-actions-container #mg-record-layer-btn{font-size:20px}#mg-gravity-menu.window{position:absolute;z-index:101;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;width:200px;height:auto;text-align:center;display:none}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}body.dark-mode #mg-gravity-menu input[type=number]{border-color:var(--mid);color:var(--ink)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#text-content,#text-font{transition:background-color .3s,border-color .3s,color .3s}#text-layer-manager{display:flex;gap:.5rem;align-items:center;padding-bottom:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid)}#text-layer-palette{display:flex;gap:.5rem;flex-wrap:wrap;flex-grow:1;min-height:44px}#add-new-text-layer-btn{width:40px;height:40px;flex-shrink:0;font-size:2rem;line-height:1;padding:0}.text-thumb{width:60px;height:40px;display:flex;align-items:center;justify-content:center;overflow:hidden;background-color:var(--ink);color:var(--light);font-size:.8rem;padding:2px;text-align:center}.text-thumb span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 
 /* --- VISUALLY DISABLE THE '+' BUTTON --- */
 .palette-slot.empty:disabled {
@@ -31,7 +35,7 @@
     cursor: default;
 }
 
-/* --- STACK LAYERS & COLLAGE THUMB --- */
+/* --- STACK ASSETS & COLLAGE THUMB --- */
 #mg-stacked-layers-palette {
     display:flex;
     gap:.5rem;
@@ -53,20 +57,34 @@
     min-height: 0; /* Important for flexbox shrinking */
 }
 
+/* --- DRAG AND DROP STYLES --- */
+.layer-thumb.dragging {
+    opacity: 0.5;
+}
+.layer-thumb.drag-over {
+    border-style: dashed;
+    border-color: var(--action-color);
+}
+
+
 </style>
 </head>
 <body>
 <div class=window>
 <div id="loading-overlay"><h1>Generating Movie-Maker-Studio.exe</h1></div>
-<div class=titlebar><span>Movie-Maker-Studio.exe</span><div class=titlebar-controls><button id="theme-toggle-btn" title="Toggle Dark/Light Theme">◐</button><button id=visuals-btn>Edit Visuals</button><div id=visuals-dropdown><h5>Visuals Editor</h5><div id=asset-visuals-controls class=disabled><h6>Selected Asset</h6><div class=slider-container><label for=asset-opacity>Opacity</label><input type=range id=asset-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=asset-brightness>Brightness</label><input type=range id=asset-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=asset-saturation>Saturation</label><input type=range id=asset-saturation min=0 max=2 step=.01 value=1></div></div><div id=background-visuals-controls><h6>Background</h6><div class=slider-container><label for=bg-brightness>Brightness</label><input type=range id=bg-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=bg-saturation>Saturation</label><input type=range id=bg-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=text-btn>Text Layers</button><div id=text-dropdown><h5>Text Editor</h5><div id=text-layer-manager><div id=text-layer-palette></div><button id=add-new-text-layer-btn class="palette-slot empty" title="Add new text layer">+</button></div><div id=text-visuals-controls class=disabled><div class=slider-container><label for=text-content>Text Content</label><textarea id=text-content rows=3 style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)>New Text</textarea></div><div class=slider-container><label for=text-font>Font</label><select id=text-font style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)><option value="'VT323', monospace">VT323</option><option value="Arial, sans-serif">Arial</option><option value="Verdana, sans-serif">Verdana</option><option value="Georgia, serif">Georgia</option><option value="Times New Roman, serif">Times New Roman</option><option value="Courier New, monospace">Courier New</option><option value="Impact, fantasy">Impact</option><option value="Comic Sans MS, cursive">Comic Sans MS</option></select></div><div class=slider-container><label for=text-size>Size</label><input type=range id=text-size min=20 max=200 step=1 value=60></div><div class=slider-container><label for=text-color>Color</label><input type=color id=text-color value=#FFFFFF style=width:100%;border:none;padding:0></div><div class=slider-container><label for=text-opacity>Opacity</label><input type=range id=text-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=text-brightness>Brightness</label><input type=range id=text-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=text-saturation>Saturation</label><input type=range id=text-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=audio-btn>+ Scene Audio</button><div id=audio-dropdown><h5>Scene Audio</h5><div id=audio-controls><p id=audio-file-name>No audio added.</p><div class=action-buttons><label class=mg-btn>Upload <input type=file id=scene-audio-input accept=audio/* style=display:none></label><button class=mg-btn id=remove-audio-btn>Remove</button></div></div></div><button id=shortcuts-btn>Shortcuts</button><div class=controls-fake><div class=btn-square></div><div class=btn-square></div></div><div id=shortcuts-dropdown><h5>Keyboard Shortcuts</h5><ul><li><span>Start/Stop Recording</span><kbd>R</kbd></li><li><span>Enlarge Asset</span><kbd>D</kbd></li><li><span>Shrink Asset</span><kbd>F</kbd></li><li><span>Flip Asset Horizontally</span><kbd>S</kbd></li><li><span>Toggle Gravity Menu</span><kbd>G</kbd></li><li><span>Delete Asset</span><kbd>Delete</kbd></li></ul></div></div></div><main id=studio-container><div id=controls-panel><fieldset><legend>Scenes</legend><div id=scene-tray></div><button class=mg-btn id=add-scene-btn style=margin-top:.5rem title="Add a new scene with an image or video background">+ Create Scene</button></fieldset><fieldset><legend>Layers</legend><p id=layer-instructions class=placeholder-text>Create a scene to begin.</p><div id=mg-asset-palette></div></fieldset>
+<div class=titlebar><span>Movie-Maker-Studio.exe</span><div class=titlebar-controls><button id="theme-toggle-btn" title="Toggle Dark/Light Theme">◐</button><button id=visuals-btn>Edit Visuals</button><div id=visuals-dropdown><h5>Visuals Editor</h5><div id=asset-visuals-controls class=disabled><h6>Selected Asset</h6><div class=slider-container><label for=asset-opacity>Opacity</label><input type=range id=asset-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=asset-brightness>Brightness</label><input type=range id=asset-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=asset-saturation>Saturation</label><input type=range id=asset-saturation min=0 max=2 step=.01 value=1></div></div><div id=background-visuals-controls><h6>Background</h6><div class=slider-container><label for=bg-brightness>Brightness</label><input type=range id=bg-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=bg-saturation>Saturation</label><input type=range id=bg-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=text-btn>Text Layers</button><div id=text-dropdown><h5>Text Editor</h5><div id=text-layer-manager><div id=text-layer-palette></div><button id=add-new-text-layer-btn class="palette-slot empty" title="Add new text layer">+</button></div><div id=text-visuals-controls class=disabled><div class=slider-container><label for=text-content>Text Content</label><textarea id=text-content rows=3 style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)>New Text</textarea></div><div class=slider-container><label for=text-font>Font</label><select id=text-font style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)><option value="'VT323', monospace">VT323</option><option value="Arial, sans-serif">Arial</option><option value="Verdana, sans-serif">Verdana</option><option value="Georgia, serif">Georgia</option><option value="Times New Roman, serif">Times New Roman</option><option value="Courier New, monospace">Courier New</option><option value="Impact, fantasy">Impact</option><option value="Comic Sans MS, cursive">Comic Sans MS</option></select></div><div class=slider-container><label for=text-size>Size</label><input type=range id=text-size min=20 max=200 step=1 value=60></div><div class=slider-container><label for=text-color>Color</label><input type=color id=text-color value=#FFFFFF style=width:100%;border:none;padding:0></div><div class=slider-container><label for=text-opacity>Opacity</label><input type=range id=text-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=text-brightness>Brightness</label><input type=range id=text-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=text-saturation>Saturation</label><input type=range id=text-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=audio-btn>+ Scene Audio</button><div id=audio-dropdown><h5>Scene Audio</h5><div id=audio-controls><p id=audio-file-name>No audio added.</p><div class=action-buttons><label class=mg-btn>Upload <input type=file id=scene-audio-input accept=audio/* style=display:none></label><button class=mg-btn id=remove-audio-btn>Remove</button></div></div></div><button id=shortcuts-btn>Shortcuts</button><div class=controls-fake><div class=btn-square></div><div class=btn-square></div></div><div id=shortcuts-dropdown><h5>Keyboard Shortcuts</h5><ul><li><span>Start/Stop Recording</span><kbd>R</kbd></li><li><span>Enlarge Asset</span><kbd>D</kbd></li><li><span>Shrink Asset</span><kbd>F</kbd></li><li><span>Flip Asset Horizontally</span><kbd>S</kbd></li><li><span>Move Layer Up/Left</span><kbd>Q</kbd></li><li><span>Move Layer Down/Right</span><kbd>W</kbd></li><li><span>Toggle Gravity Menu</span><kbd>G</kbd></li><li><span>Delete Asset</span><kbd>Delete</kbd></li></ul></div></div></div><main id=studio-container><div id=controls-panel><fieldset><legend>Scenes</legend><div id=scene-tray></div><button class=mg-btn id=add-scene-btn style=margin-top:.5rem title="Add a new scene with an image or video background">+ Create Scene</button></fieldset><fieldset id="layers-fieldset"><legend>Layers</legend><p id=layer-instructions class=placeholder-text>Create a scene to begin.</p><div id=mg-asset-palette></div></fieldset>
 
-            <!-- *** NEW HTML SECTION *** -->
-            <fieldset><legend>Stack Assets</legend>
+            <fieldset id="stack-assets-fieldset" class="hidden"><legend>Multi-asset Layering</legend>
+                <p class="placeholder-text" style="font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 0.8rem;">
+                    Click & drag assets to re-order your stack. The top-left is the highest layer.
+                </p>
                 <div id="mg-stacked-layers-palette"></div>
             </fieldset>
 
 <fieldset><legend>Current Scene</legend><div class=scene-controls-container><div id=scene-actions-container class=action-buttons><button class="mg-btn record" id=mg-record-layer-btn disabled>Record Layer</button><button class=mg-btn id=mg-preview-scene-btn disabled>Preview Scene</button><button class=mg-btn id=mg-delete-scene-btn disabled>Delete Scene</button></div><div id=stop-actions-container class="action-buttons hidden"><button class="mg-btn active" id=mg-stop-layer-btn style=grid-column:span 2>Stop</button></div><div id=recording-status class=hidden><div id=recording-indicator></div><span id=recording-timer>00:00</span></div><button class="mg-btn hidden" id=mg-commit-layer-btn>Commit Layer & Add Next</button></div></fieldset><fieldset><legend>Project</legend><button class="mg-btn generate" id=mg-generate-project-btn disabled>Generate Project</button><div class=action-buttons id=post-generation-actions style=margin-top:.5rem><button class="mg-btn hidden" id=mg-preview-btn>Preview</button><button class="mg-btn hidden" id=mg-movie-download>Download</button></div></fieldset></div><div id=canvas-panel><canvas id=mg-movie-canvas></canvas><canvas id=mg-controls-overlay-canvas></canvas><div id=canvas-placeholder><video src=welcomevid.mp4 autoplay loop muted playsinline></video><h3>Click, Paste, or Drag & Drop File</h3><p>to add a background image or video &amp; begin creating</p></div><div id=video-volume-controls class=hidden><div id=volume-slider-wrapper><input type=range id=video-volume-slider min=0 max=1 step=.05 value=1></div><button id=video-volume-btn>🔊</button></div></div></main><input type=file id=initial-background-input accept=image/*,video/* style=display:none></div><div id=mg-asset-library-overlay class=mg-overlay-base><div id=mg-asset-picker-grid-wrapper class=window><button id=mg-asset-library-close class=overlay-close-btn>X</button><h4>Click an asset to add it to the canvas</h4><div id=mg-asset-picker-grid></div><div id=mg-asset-picker-actions><label class=mg-btn>Upload Custom <input type=file id=mg-asset-picker-file accept=image/png,video/mp4,video/quicktime,video/* style=display:none></label></div></div></div><div id=mg-preview-popup class=mg-overlay-base><div id=mg-preview-container><button id=mg-preview-close-btn class=overlay-close-btn>X</button><video id=mg-preview-video controls autoplay></video></div></div><div id=mg-generation-overlay class=mg-overlay-base><div class=window><h3>Generating Project</h3><p>Please wait while your scene(s) are combined into the final video.</p></div></div><div id=mg-confirmation-overlay class=mg-overlay-base><div id=mg-confirmation-dialog class=window><p id=mg-confirmation-text>Are you sure?</p><div class=action-buttons><button id=mg-confirm-yes-btn class="mg-btn active">Yes</button><button id=mg-confirm-no-btn class=mg-btn>No</button></div></div></div><div id=mg-gravity-menu class="window hidden"><h5>Set Gravity</h5><p id=gravity-instructions style="font-size:.9rem;margin-bottom:.5rem;color:var(--ink);min-height:30px;display:flex;align-items:center;justify-content:center"></p><p>Gravity: <input type=number id=gravity-input value=0 step=.1 style=width:100px></p><div class=action-buttons><button class=mg-btn id=apply-gravity-btn>Apply</button><button class=mg-btn id=cancel-gravity-btn>Cancel</button></div></div><div id=mg-toast></div><div id=mg-countdown-overlay class=hidden><span id=mg-countdown-span>3</span></div></body>
 </html>
+
+
 <script>
     (function () {
         // --- Preloader Logic ---
@@ -312,8 +330,6 @@
     textBtn.disabled = !hasScenes || isRecording || isPendingCommit;
     addNewTextLayerBtn.disabled = isRecording || isPendingCommit || !currentScene;
 
-    // --- NEW, DEFINITIVE LOGIC FOR THE PREVIEW BUTTON ---
-    // A scene is previewable if a take is pending, OR if there are any committed layers.
     const hasPreviewableContent = currentScene && (!!layerRecordingUrl || currentScene.committedLayerSrcs.length > 0);
     
     previewSceneBtn.disabled = !hasPreviewableContent || isRecording;
@@ -323,11 +339,10 @@
     renderTextLayerPalette();
 }
 
-                function handleBackgroundUpload(file, mode, isFromLayerCommit = false) {
+        function handleBackgroundUpload(file, mode, isFromLayerCommit = false) {
             if (!file) return;
             const fileURL = (file instanceof Blob) ? URL.createObjectURL(file) : file;
             
-            // This entire inner function is now reverted to its original state
             const handleNewScene = (element, type, thumb, durMs) => {
                 let sceneToUpdate;
                 if (isFromLayerCommit) {
@@ -360,7 +375,6 @@
                         audioName: null,
                         durationMs: 0,
                         audioDurationMs: 0
-                        // NOTE: The 'dominantColor' property is correctly removed from here.
                     };
                     scenes.push(sceneToUpdate);
                     ensureSceneDurationMs(sceneToUpdate, initialDur);
@@ -371,7 +385,7 @@
                 }
                 requestAnimationFrame(() => {
                     switchScene(sceneToUpdate.id);
-                    updateControlsState()
+                    updateControlsState();
                 })
             };
             
@@ -458,21 +472,23 @@
             })
         }
 
-                function switchScene(sceneId) {
+                        function switchScene(sceneId) {
             stopAnimationLoop();
             activeSceneId = sceneId;
             const currentScene = getCurrentScene();
 
-            // --- THIS IS THE NEW, RELIABLE LOGIC ---
             if (currentScene && !currentScene.dominantColor) {
-                // If the color hasn't been calculated for this scene yet, do it now.
                 currentScene.dominantColor = getDominantColor(currentScene.backgroundElement);
             }
-            // Now, apply the effect. It will use the newly calculated color or a cached one.
             updateCanvasPanelBackground(currentScene);
-            // --- END OF NEW LOGIC ---
             
             if (!currentScene) return;
+
+            // --- FADE-IN LOGIC ---
+            // Add a timestamp to trigger the background fade-in animation.
+            currentScene.sceneFadeInStart = Date.now();
+            // --- END ---
+
             activeMovieLayerId = null;
             projectileVectorStart = null;
             projectileVectorEnd = null;
@@ -628,25 +644,85 @@
             });
         }
         
-        function renderStackedLayersPalette() {
+function addDragAndDropHandlers(thumb) {
+    thumb.setAttribute('draggable', 'true');
+
+    thumb.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', thumb.dataset.layerId);
+        setTimeout(() => {
+            thumb.classList.add('dragging');
+        }, 0);
+    });
+
+    thumb.addEventListener('dragend', () => {
+        document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+        thumb.classList.remove('dragging');
+    });
+
+    thumb.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const dragging = document.querySelector('.dragging');
+        if (dragging && dragging !== thumb) {
+            thumb.classList.add('drag-over');
+        }
+    });
+
+    thumb.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        thumb.classList.remove('drag-over');
+    });
+
+    thumb.addEventListener('drop', (e) => {
+        e.preventDefault();
+        thumb.classList.remove('drag-over');
+        const draggedId = e.dataTransfer.getData('text/plain');
+        const droppedOnId = thumb.dataset.layerId;
+
+        if (draggedId === droppedOnId) return;
+
+        const currentScene = getCurrentScene();
+        if (!currentScene) return;
+
+        const activeVisualLayers = currentScene.layers.filter(l => l.type !== 'text' && !l.committed);
+        const otherLayers = currentScene.layers.filter(l => l.type === 'text' || l.committed);
+
+        const draggedIndex = activeVisualLayers.findIndex(l => l.id.toString() === draggedId);
+        const droppedOnIndex = activeVisualLayers.findIndex(l => l.id.toString() === droppedOnId);
+
+        if (draggedIndex > -1 && droppedOnIndex > -1) {
+            const [draggedItem] = activeVisualLayers.splice(draggedIndex, 1);
+            activeVisualLayers.splice(droppedOnIndex, 0, draggedItem);
+            currentScene.layers = [...activeVisualLayers, ...otherLayers];
+
+            renderLayerPalette();
+            renderStackedLayersPalette();
+            drawMovieFrame();
+        }
+    });
+}
+        
+function renderStackedLayersPalette() {
     const stackPalette = document.getElementById('mg-stacked-layers-palette');
+    const stackFieldset = document.getElementById('stack-assets-fieldset');
     stackPalette.innerHTML = ''; 
 
     const currentScene = getCurrentScene();
     if (!currentScene) {
+        stackFieldset.classList.add('hidden');
         return;
     }
 
     const activeVisualLayers = currentScene.layers.filter(l => l.type !== 'text' && !l.committed);
+    const isPendingCommit = !!layerRecordingUrl;
 
     if (activeVisualLayers.length === 0) {
+        stackFieldset.classList.add('hidden');
         return;
-    }
+    } 
     
-    // --- CHECK FOR THE PENDING STATE ONCE, BEFORE THE LOOP ---
-    const isPendingCommit = !!layerRecordingUrl;
+    stackFieldset.classList.remove('hidden');
     
-    activeVisualLayers.slice(1).forEach(activeLayer => {
+    activeVisualLayers.forEach(activeLayer => {
         const thumb = document.createElement('div');
         thumb.className = 'layer-thumb';
         thumb.classList.toggle('active', activeLayer.id === activeMovieLayerId);
@@ -654,13 +730,13 @@
         
         let thumbContent = activeLayer.type === 'video' ? `<video src="${activeLayer.src}" muted loop autoplay playsinline></video>` : `<img src="${activeLayer.src}">`;
         
-        // --- LOGIC TO LOCK THE THUMBNAILS AND CHANGE THE TITLE ---
+        addDragAndDropHandlers(thumb);
+        thumb.title = isRecording ? "Drag to reorder during recording" : "Click to select or drag to reorder";
+
         if (isPendingCommit || isRecording) {
-            thumb.classList.add('locked'); // This class applies the disabling styles.
-            thumb.title = "This asset is part of the recorded take.";
-            thumb.innerHTML = thumbContent; // Render without the 'x' button.
+            thumb.classList.add('locked');
+            thumb.innerHTML = thumbContent;
         } else {
-            thumb.title = "Click to select";
             thumb.innerHTML = `${thumbContent}<div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
             thumb.addEventListener('click', (e) => {
                 if (e.target.classList.contains('layer-btn')) return;
@@ -675,7 +751,6 @@
             });
             thumb.querySelector('.delete').onclick = (e) => {
                 e.stopPropagation();
-                // The logic here remains the same as our previous fix.
                 if (isPendingCommit) {
                     resetTake();
                     toast('Take cancelled.', 2000);
@@ -691,14 +766,13 @@
     const emptySlot = document.createElement('button');
     emptySlot.className = 'palette-slot empty';
     emptySlot.innerHTML = '+';
-    emptySlot.title = "Add another asset to the stack";
+    emptySlot.title = "Add a new image or video asset";
     emptySlot.onclick = openAssetLibrary;
-
+    
     if (isRecording || isPendingCommit) {
         emptySlot.disabled = true;
-        emptySlot.title = "Commit or re-record the current layer to add more assets.";
+        emptySlot.title = "Commit or re-record to add a new asset.";
     }
-    
     stackPalette.appendChild(emptySlot);
 }
         
@@ -739,7 +813,7 @@ function renderLayerPalette() {
         }
 
         const isLastCommittedLayer = (index === currentScene.committedLayerSrcs.length - 1);
-        if (isLastCommittedLayer) {
+        if (isLastCommittedLayer && !isRecording) {
             thumb.title = "Most recent commit. Click X to revert.";
             const controls = document.createElement('div');
             controls.className = 'layer-controls';
@@ -759,72 +833,31 @@ function renderLayerPalette() {
     });
 
     const activeVisualLayers = currentScene.layers.filter(l => l.type !== 'text' && !l.committed);
+    
     if (activeVisualLayers.length > 0) {
         const primaryAsset = activeVisualLayers[0];
         const thumb = document.createElement('div');
-        thumb.className = 'layer-thumb';
-        thumb.classList.toggle('active', primaryAsset.id === activeMovieLayerId);
-        thumb.title = "Primary active layer. Add more in 'Stack Layers' below.";
-        let thumbContent = primaryAsset.type === 'video' ? `<video src="${primaryAsset.src}" muted loop autoplay playsinline></video>` : `<img src="${primaryAsset.src}">`;
+        thumb.className = 'layer-thumb locked';
+        thumb.title = "Top Layer (manage in Multi-asset Layering below)";
+        thumb.innerHTML = primaryAsset.type === 'video' 
+            ? `<video src="${primaryAsset.src}" muted loop autoplay playsinline></video>` 
+            : `<img src="${primaryAsset.src}">`;
         
-        thumb.innerHTML = `${thumbContent}<div class="layer-controls"><div class="layer-btn delete" title="Delete Layer">x</div></div>`;
-        thumb.addEventListener('click', (e) => {
-            if (e.target.classList.contains('layer-btn')) return;
-            if (activeMovieLayerId !== primaryAsset.id) {
-                 activeMovieLayerId = primaryAsset.id;
-                 renderLayerPalette();
-                 renderStackedLayersPalette();
-                 renderTextLayerPalette();
-                 drawControlsOverlay();
-                 updateEditPanelsUI();
-            }
-        });
-        
-        // --- NEW, DEFINITIVE LOGIC FOR THE PRIMARY ASSET 'X' BUTTON ---
-        thumb.querySelector('.delete').onclick = (e) => {
-            e.stopPropagation();
-            const isPendingCommit = !!layerRecordingUrl;
-
-            if (isPendingCommit) {
-                // If a recording is pending, cancel the take and REMOVE all active layers.
-                const scene = getCurrentScene();
-                if (!scene) return;
-                
-                // Filter out all layers that are not committed.
-                scene.layers = scene.layers.filter(l => l.committed === true);
-                activeMovieLayerId = null;
-
-                // Reset the recording UI.
-                resetToReadyState();
-                
-                // Force a re-render of the palettes and controls to show the new empty state.
-                renderLayerPalette();
-                renderStackedLayersPalette();
-                updateControlsState();
-                toast('Layer cancelled and removed.', 3000);
-
-            } else {
-                // If not pending a commit, delete only the selected layer as normal.
-                deleteMovieLayer(primaryAsset.id);
-            }
-        };
         assetPalette.appendChild(thumb);
-
-    } else {
-        const emptySlot = document.createElement('button');
-        emptySlot.className = 'palette-slot empty';
-        emptySlot.innerHTML = '+';
-        emptySlot.title = "Add a new image or video asset";
-        emptySlot.onclick = openAssetLibrary;
-        
-        const isPendingCommit = !!layerRecordingUrl;
-        if (isRecording || isPendingCommit) {
-            emptySlot.disabled = true;
-            emptySlot.title = "Commit or re-record to add a new primary asset.";
-        }
-
-        assetPalette.appendChild(emptySlot);
     }
+    
+    const emptySlot = document.createElement('button');
+    emptySlot.className = 'palette-slot empty';
+    emptySlot.innerHTML = '+';
+    emptySlot.title = "Add a new image or video asset";
+    emptySlot.onclick = openAssetLibrary;
+    
+    emptySlot.disabled = activeVisualLayers.length > 0 || isRecording || !!layerRecordingUrl;
+    if (emptySlot.disabled) {
+        emptySlot.title = activeVisualLayers.length > 0 ? "Add new assets in the 'Multi-asset Layering' panel" : "Cannot add assets now";
+    }
+
+    assetPalette.appendChild(emptySlot);
 }
 
         function deleteCommittedLayer(indexToDelete) {
@@ -950,7 +983,7 @@ function renderLayerPalette() {
             }
         }
 
-        function addMovieLayer(src, properties = {}) {
+                        function addMovieLayer(src, properties = {}) {
             const currentScene = getCurrentScene();
             if (!currentScene) {
                 toast('Add a background first.', 2000);
@@ -977,7 +1010,7 @@ function renderLayerPalette() {
                     }
                 }
                 const newLayer = {
-                    id: Date.now() + Math.random(),
+                    id: (Date.now() + Math.random()).toString(),
                     src,
                     asset: element,
                     type: assetType,
@@ -986,7 +1019,11 @@ function renderLayerPalette() {
                     size: properties.size || movieCanvas.width * 0.25,
                     rot: properties.rot || 0,
                     flipX: false,
-                    opacity: 1,
+                    // --- FADE-IN LOGIC ---
+                    targetOpacity: 1, // The final opacity it should have
+                    opacity: 0,       // Start completely transparent
+                    fadeInStartTime: Date.now(), // Timestamp to start the animation
+                    // --- END ---
                     brightness: 1,
                     saturation: 1,
                     isProjectileActive: false,
@@ -997,9 +1034,16 @@ function renderLayerPalette() {
                     projectileTimestamp: 0,
                     projectileInitialRotation: 0,
                     projectileInitialFlipX: false,
-                    gravityValue: 0
+                    gravityValue: 0,
+                    committed: false
                 };
-                scene.layers.push(newLayer);
+
+                const visualLayers = scene.layers.filter(l => l.type !== 'text' && !l.committed);
+                const isFirstAsset = visualLayers.length === 0;
+
+                const otherLayers = scene.layers.filter(l => l.type === 'text' || l.committed);
+                scene.layers = [newLayer, ...visualLayers, ...otherLayers];
+
                 activeMovieLayerId = newLayer.id;
                 renderLayerPalette();
                 renderStackedLayersPalette(); 
@@ -1008,7 +1052,16 @@ function renderLayerPalette() {
                 drawMovieFrame();
                 drawControlsOverlay();
                 if (getCurrentScene()) getCurrentScene().layerStartingStates = null;
-                toast('Asset Added! Ready to record.', 3000)
+                toast('Asset Added! Ready to record.', 3000);
+
+                if (isFirstAsset) {
+                    setTimeout(() => {
+                        const layersFieldset = document.getElementById('layers-fieldset'); 
+                        if (layersFieldset) {
+                           layersFieldset.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 100); 
+                }
             };
             if (assetCache[src]) {
                 const cached = assetCache[src];
@@ -1040,8 +1093,7 @@ function renderLayerPalette() {
                 video.src = src
             }
         }
-
-        function addTextLayer() {
+                function addTextLayer() {
             const currentScene = getCurrentScene();
             if (!currentScene) {
                 toast('Add a background first.', 2000);
@@ -1049,7 +1101,7 @@ function renderLayerPalette() {
             }
             
             const newTextLayer = {
-                id: Date.now() + Math.random(),
+                id: (Date.now() + Math.random()).toString(),
                 type: 'text',
                 text: 'New Text',
                 font: "'VT323', monospace",
@@ -1059,7 +1111,11 @@ function renderLayerPalette() {
                 y: movieCanvas.height / 2,
                 rot: 0,
                 flipX: false,
-                opacity: 1,
+                // --- FADE-IN LOGIC ---
+                targetOpacity: 1, // The final opacity it should have
+                opacity: 0,       // Start completely transparent
+                fadeInStartTime: Date.now(), // Timestamp to start the animation
+                // --- END ---
                 brightness: 1,
                 saturation: 1,
                 width: 0,
@@ -1139,24 +1195,37 @@ function renderLayerPalette() {
             return { lines, lineHeight, maxWidth, totalHeight };
         }
 
-        function drawMovieFrame() {
+                function drawMovieFrame() {
             const currentScene = getCurrentScene();
             if (!currentScene || !currentScene.backgroundElement) {
                 movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height);
-                return
+                return;
             }
 
-            const activeLayerForInteraction = getActiveLayer();
-
-            const {backgroundElement, layers: movieLayers, bgBrightness, bgSaturation} = currentScene;
+            const { backgroundElement, layers: movieLayers, bgBrightness, bgSaturation } = currentScene;
             movieCtx.clearRect(0, 0, movieCanvas.width, movieCanvas.height);
             movieCtx.save();
             movieCtx.filter = `brightness(${bgBrightness}) saturate(${bgSaturation})`;
+
+            // --- FADE-IN LOGIC for Scene Background ---
+            const SCENE_FADE_DURATION = 500; // milliseconds
+            if (currentScene.sceneFadeInStart) {
+                const elapsed = Date.now() - currentScene.sceneFadeInStart;
+                const alpha = Math.min(1, elapsed / SCENE_FADE_DURATION);
+                movieCtx.globalAlpha = alpha;
+                if (alpha >= 1) {
+                    delete currentScene.sceneFadeInStart; // Stop calculating when done
+                }
+            }
+            // --- END ---
+
             movieCtx.drawImage(backgroundElement, 0, 0, movieCanvas.width, movieCanvas.height);
             movieCtx.restore();
-            movieLayers.forEach(l => {
+
+            for (let i = movieLayers.length - 1; i >= 0; i--) {
+                const l = movieLayers[i];
                 
-                if (l.committed) return;
+                if (l.committed) continue;
 
                 if (l.type === 'video' && l.asset.duration) {
                     if (l.asset.duration - l.asset.currentTime < 0.1) {
@@ -1166,6 +1235,22 @@ function renderLayerPalette() {
                 }
                 
                 movieCtx.save();
+
+                // --- FADE-IN LOGIC for Assets ---
+                const ASSET_FADE_DURATION = 400; // milliseconds
+                if (l.fadeInStartTime) {
+                    const elapsed = Date.now() - l.fadeInStartTime;
+                    const targetOpacity = l.targetOpacity || 1;
+                    const calculatedOpacity = Math.min(targetOpacity, (elapsed / ASSET_FADE_DURATION) * targetOpacity);
+                    l.opacity = calculatedOpacity;
+                    
+                    if (l.opacity >= targetOpacity) {
+                        delete l.fadeInStartTime; // Stop calculating when done
+                        delete l.targetOpacity;
+                        l.opacity = targetOpacity; // Ensure it ends exactly at the target
+                    }
+                }
+                // --- END ---
 
                 if (isRecording && l.isProjectileActive && l.projectileTimestamp > 0) {
                     const elapsedTimeSeconds = (Date.now() - l.projectileTimestamp) / 1000;
@@ -1189,7 +1274,7 @@ function renderLayerPalette() {
                         const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
                         if (assetWidth === 0) {
                             movieCtx.restore();
-                            return
+                            continue;
                         }
                         const dWidth = l.size;
                         const dHeight = l.size * (assetHeight / assetWidth);
@@ -1208,8 +1293,9 @@ function renderLayerPalette() {
                         movieCtx.fillText(line, 0, startY + (index * metrics.lineHeight));
                     });
                 }
-                movieCtx.restore()
-            });
+                movieCtx.restore();
+            }
+
             if (isRecording) {
                 const bg = backgroundElement;
                 if (masterWidth === 0 || masterHeight === 0) return;
@@ -1222,8 +1308,10 @@ function renderLayerPalette() {
                 recordingCtx.restore();
                 const previewCanvasWidth = movieCanvas.width;
                 const previewCanvasHeight = movieCanvas.height;
-                movieLayers.forEach(l => {
-                    if (l.committed) return;
+
+                for (let i = movieLayers.length - 1; i >= 0; i--) {
+                    const l = movieLayers[i];
+                    if (l.committed) continue;
                     
                     recordingCtx.save();
                     recordingCtx.globalAlpha = l.opacity;
@@ -1244,7 +1332,7 @@ function renderLayerPalette() {
                             const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
                             if (assetWidth === 0) {
                                 recordingCtx.restore();
-                                return
+                                continue;
                             }
                             const scaledSize = l.size * scaleX;
                             const dWidth = scaledSize;
@@ -1265,12 +1353,12 @@ function renderLayerPalette() {
                             recordingCtx.fillText(line, 0, startY + (index * metrics.lineHeight));
                         });
                     }
-                    recordingCtx.restore()
-                })
+                    recordingCtx.restore();
+                }
             }
         }
 
-        function drawControlsOverlay() {
+                function drawControlsOverlay() {
             controlsCtx.clearRect(0, 0, controlsOverlayCanvas.width, controlsOverlayCanvas.height);
             const activeLayer = getActiveLayer();
             if (activeLayer) {
@@ -1334,8 +1422,9 @@ function renderLayerPalette() {
                 }
 
                 if (!isRecording) { 
-                    const projectileHandleLocalX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
-                    const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
+                    const handlePos = getProjectileHandlePosition(activeLayer, dWidth, dHeight);
+                    const projectileHandleLocalX = handlePos.x;
+                    const projectileHandleLocalY = handlePos.y;
 
                     controlsCtx.fillStyle = activeLayer.isProjectileActive ? 'orange' : 'grey'; 
                     controlsCtx.strokeStyle = 'black';
@@ -1803,6 +1892,7 @@ async function generateFinalMovie() {
             }
             
             if (scene.backgroundType === 'video') {
+                scene.backgroundElement.loop = true; 
                 scene.backgroundElement.currentTime = 0;
                 scene.backgroundElement.play();
             }
@@ -1822,7 +1912,10 @@ async function generateFinalMovie() {
                     if (audioSourceNode) audioSourceNode.disconnect();
                     if (videoAudioSourceNode) videoAudioSourceNode.disconnect();
                     if (scene.audioElement) scene.audioElement.pause();
-                    if (scene.backgroundType === 'video') scene.backgroundElement.pause();
+                    if (scene.backgroundType === 'video') {
+                        scene.backgroundElement.pause();
+                        scene.backgroundElement.loop = false; 
+                    }
                     return sceneResolve();
                 }
 
@@ -1856,6 +1949,12 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
     recordingCtx.restore();
 
     layersToDraw.forEach(l => {
+        // --- FIX #1: SKIP COMMITTED LAYERS ---
+        // If the layer is committed, don't draw it in the final render.
+        if (l.committed) {
+            return; 
+        }
+
         recordingCtx.save();
         recordingCtx.globalAlpha = l.opacity;
         recordingCtx.filter = `brightness(${l.brightness}) saturate(${l.saturation})`;
@@ -1866,6 +1965,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
         recordingCtx.translate(finalX, finalY);
         recordingCtx.rotate(l.rot * Math.PI / 180);
         if (l.flipX) recordingCtx.scale(-1, 1);
+
         if (l.type === 'image' || l.type === 'video') {
             const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
             const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
@@ -1876,18 +1976,48 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 recordingCtx.drawImage(l.asset, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
             }
         } else if (l.type === 'text') {
+            // --- FIX #2: USE THE CORRECT MULTI-LINE TEXT RENDERING LOGIC ---
             const scaledFontSize = l.fontSize * scaleY;
             recordingCtx.font = `${scaledFontSize}px ${l.font}`;
             recordingCtx.fillStyle = l.color;
             recordingCtx.textAlign = 'center';
             recordingCtx.textBaseline = 'middle';
-            recordingCtx.fillText(l.text, 0, 0);
+            
+            // This logic correctly handles newlines (\n) in the text content.
+            const metrics = getTextBlockMetrics(recordingCtx, l.text, l.font, scaledFontSize);
+            const startY = -metrics.totalHeight / 2 + metrics.lineHeight / 2 - (scaledFontSize * 0.1);
+
+            metrics.lines.forEach((line, index) => {
+                recordingCtx.fillText(line, 0, startY + (index * metrics.lineHeight));
+            });
         }
         recordingCtx.restore();
     });
 }
 
+                // --- NEW HELPER FUNCTION ---
+        function getProjectileHandlePosition(layer, dWidth, dHeight) {
+            const centerX = movieCanvas.width / 2;
+            const centerY = movieCanvas.height / 2;
 
+            let localX, localY;
+
+            if (layer.x >= centerX && layer.y < centerY) { // Q1 (Top Right) -> Handle is Bottom Left
+                localX = -dWidth / 2 - PROJECTILE_HANDLE_OFFSET;
+                localY = dHeight / 2 + PROJECTILE_HANDLE_OFFSET;
+            } else if (layer.x < centerX && layer.y < centerY) { // Q2 (Top Left) -> Handle is Bottom Right
+                localX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
+                localY = dHeight / 2 + PROJECTILE_HANDLE_OFFSET;
+            } else if (layer.x < centerX && layer.y >= centerY) { // Q3 (Bottom Left) -> Handle is Top Right
+                localX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
+                localY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
+            } else { // Q4 (Bottom Right) -> Handle is Top Left
+                localX = -dWidth / 2 - PROJECTILE_HANDLE_OFFSET;
+                localY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
+            }
+            
+            return { x: localX, y: localY };
+        }
         // --- Interaction Logic ---
         function getMovieCanvasPoint(e) {
             const rect = movieCanvas.getBoundingClientRect();
@@ -1899,64 +2029,64 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             };
         }
 
-        function getMovieHandleAtPoint(point, layer) {
-    const l = layer;
-    let dWidth, dHeight;
+                function getMovieHandleAtPoint(point, layer) {
+            const l = layer;
+            let dWidth, dHeight;
 
-    if (l.type === 'image' || l.type === 'video') {
-        const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
-        const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
-        if (assetWidth === 0) return null;
-        dWidth = l.size;
-        dHeight = l.size * (assetHeight / assetWidth);
-    } else if (l.type === 'text') {
-        const metrics = getTextBlockMetrics(controlsCtx, l.text, l.font, l.fontSize);
-        dWidth = metrics.maxWidth;
-        dHeight = metrics.totalHeight;
-    } else {
-        return null;
-    }
+            if (l.type === 'image' || l.type === 'video') {
+                const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
+                const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
+                if (assetWidth === 0) return null;
+                dWidth = l.size;
+                dHeight = l.size * (assetHeight / assetWidth);
+            } else if (l.type === 'text') {
+                const metrics = getTextBlockMetrics(controlsCtx, l.text, l.font, l.fontSize);
+                dWidth = metrics.maxWidth;
+                dHeight = metrics.totalHeight;
+            } else {
+                return null;
+            }
 
-    const radius = 20;
-    const angle = l.rot * Math.PI / 180;
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
-    const ROTATION_HANDLE_OFFSET = 30;
+            const radius = 20;
+            const angle = l.rot * Math.PI / 180;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const ROTATION_HANDLE_OFFSET = 30;
 
-    if (!isRecording) {
-        const projectileHandleLocalX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
-        const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
-        const projectileHandleWorldX = l.x + (projectileHandleLocalX * cos - projectileHandleLocalY * sin);
-        const projectileHandleWorldY = l.y + (projectileHandleLocalX * sin + projectileHandleLocalY * cos);
+            if (!isRecording) {
+                const handlePos = getProjectileHandlePosition(l, dWidth, dHeight);
+                const projectileHandleLocalX = handlePos.x;
+                const projectileHandleLocalY = handlePos.y;
+                const projectileHandleWorldX = l.x + (projectileHandleLocalX * cos - projectileHandleLocalY * sin);
+                const projectileHandleWorldY = l.y + (projectileHandleLocalX * sin + projectileHandleLocalY * cos);
 
-        if (Math.hypot(point.x - projectileHandleWorldX, point.y - projectileHandleWorldY) < PROJECTILE_HANDLE_SIZE / 2 + 5) {
-            return 'projectile-toggle';
+                if (Math.hypot(point.x - projectileHandleWorldX, point.y - projectileHandleWorldY) < PROJECTILE_HANDLE_SIZE / 2 + 5) {
+                    return 'projectile-toggle';
+                }
+            }
+
+            if (!l.isProjectileActive) {
+                const rotHandleY = -dHeight / 2 - ROTATION_HANDLE_OFFSET;
+                const rotatedRotHandleX = l.x + (0 * cos - rotHandleY * sin);
+                const rotatedRotHandleY = l.y + (0 * sin + rotHandleY * cos);
+
+                if (Math.hypot(point.x - rotatedRotHandleX, point.y - rotatedRotHandleY) < radius) return 'rotate';
+
+                const handles = {
+                    tl: {x: -dWidth / 2, y: -dHeight / 2},
+                    tr: {x: dWidth / 2, y: -dHeight / 2},
+                    bl: {x: -dWidth / 2, y: dHeight / 2},
+                    br: {x: dWidth / 2, y: dHeight / 2}
+                };
+                for (const name in handles) {
+                    const h = handles[name];
+                    const handleWorldX = l.x + h.x * cos - h.y * sin;
+                    const handleWorldY = l.y + h.x * sin + h.y * cos;
+                    if (Math.hypot(point.x - handleWorldX, point.y - handleWorldY) < radius) return name;
+                }
+            }
+            return null;
         }
-    }
-
-    if (!l.isProjectileActive) {
-        const rotHandleY = -dHeight / 2 - ROTATION_HANDLE_OFFSET;
-        const rotatedRotHandleX = l.x + (0 * cos - rotHandleY * sin);
-        const rotatedRotHandleY = l.y + (0 * sin + rotHandleY * cos);
-
-        if (Math.hypot(point.x - rotatedRotHandleX, point.y - rotatedRotHandleY) < radius) return 'rotate';
-
-        const handles = {
-            tl: {x: -dWidth / 2, y: -dHeight / 2},
-            tr: {x: dWidth / 2, y: -dHeight / 2},
-            bl: {x: -dWidth / 2, y: dHeight / 2},
-            br: {x: dWidth / 2, y: dHeight / 2}
-        };
-        for (const name in handles) {
-            const h = handles[name];
-            const handleWorldX = l.x + h.x * cos - h.y * sin;
-            const handleWorldY = l.y + h.x * sin + h.y * cos;
-            if (Math.hypot(point.x - handleWorldX, point.y - handleWorldY) < radius) return name;
-        }
-    }
-
-    return null;
-}
 
         function isPointInMovieLayer(point, layer) {
             const l = layer;
@@ -1985,178 +2115,250 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
         }
 
         function positionGravityMenu(layer) {
-            const canvasRect = movieCanvas.getBoundingClientRect();
-            const panelRect = canvasPanel.getBoundingClientRect();
+  const canvasRect = movieCanvas.getBoundingClientRect();
+  const panelRect = canvasPanel.getBoundingClientRect();
 
-            let dWidth, dHeight;
-            if (layer.type === 'image' || layer.type === 'video') {
-                const assetWidth = layer.type === 'image' ? layer.asset.naturalWidth : layer.asset.videoWidth;
-                const assetHeight = layer.type === 'image' ? layer.asset.naturalHeight : layer.asset.videoHeight;
-                dWidth = layer.size;
-                dHeight = layer.size * (assetHeight / assetWidth);
-            } else if (layer.type === 'text') {
-                controlsCtx.font = `${layer.fontSize}px ${layer.font}`;
-                const textMetrics = controlsCtx.measureText(layer.text);
-                dWidth = textMetrics.width;
-                dHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
-            } else {
+  // --- 0) Compute displayed layer dimensions ---
+  let dWidth, dHeight;
+  if (layer.type === 'image' || layer.type === 'video') {
+    const assetWidth  = layer.type === 'image' ? (layer.asset?.naturalWidth  || 1) : (layer.asset?.videoWidth  || 1);
+    const assetHeight = layer.type === 'image' ? (layer.asset?.naturalHeight || 1) : (layer.asset?.videoHeight || 1);
+    dWidth  = layer.size;
+    dHeight = layer.size * (assetHeight / assetWidth);
+  } else if (layer.type === 'text') {
+    const metrics = getTextBlockMetrics(controlsCtx, layer.text, layer.font, layer.fontSize);
+    dWidth = metrics.maxWidth;
+    dHeight = metrics.totalHeight;
+  } else {
+    return;
+  }
+
+  // --- 1) On-screen bbox for the rotated layer (viewport coords) ---
+  const angle = layer.rot * Math.PI / 180;
+  const cos = Math.cos(angle), sin = Math.sin(angle);
+  const scaleX = canvasRect.width / movieCanvas.width;
+  const scaleY = canvasRect.height / movieCanvas.height;
+
+  const corners = [
+    { x: -dWidth/2, y: -dHeight/2 }, { x:  dWidth/2, y: -dHeight/2 },
+    { x:  dWidth/2, y:  dHeight/2 }, { x: -dWidth/2, y:  dHeight/2 }
+  ];
+
+  const screenCorners = corners.map(c => {
+    const rx = c.x * cos - c.y * sin;
+    const ry = c.x * sin + c.y * cos;
+    return {
+      x: (layer.x + rx) * scaleX + panelRect.left,
+      y: (layer.y + ry) * scaleY + panelRect.top
+    };
+  });
+
+  const bbox = {
+    minX: Math.min(...screenCorners.map(c => c.x)),
+    maxX: Math.max(...screenCorners.map(c => c.x)),
+    minY: Math.min(...screenCorners.map(c => c.y)),
+    maxY: Math.max(...screenCorners.map(c => c.y))
+  };
+
+  // --- 2) Measure the menu while it's rendered but invisible ---
+  // Remove "display:none" before measuring
+  const wasHidden = gravityMenu.classList.contains('hidden') || gravityMenu.style.display === 'none';
+  const prevVis = gravityMenu.style.visibility;
+  const prevDisp = gravityMenu.style.display;
+
+  if (wasHidden) {
+    gravityMenu.classList.remove('hidden');
+    gravityMenu.style.visibility = 'hidden';
+    gravityMenu.style.display = 'block';
+  }
+
+  // Use getBoundingClientRect for accurate size
+  const menuRect = gravityMenu.getBoundingClientRect();
+  const menuWidth = menuRect.width;
+  const menuHeight = menuRect.height;
+
+  // --- 3) Quadrant logic in viewport coordinates (unchanged rules) ---
+  const margin = 10;
+  const assetCX = (bbox.minX + bbox.maxX) / 2;
+  const assetCY = (bbox.minY + bbox.maxY) / 2;
+  const panelCX = panelRect.left + panelRect.width / 2;
+  const panelCY = panelRect.top  + panelRect.height / 2;
+
+  let finalLeft_vp, finalTop_vp; // viewport-based
+
+  if (assetCX >= panelCX && assetCY < panelCY) {
+    // Q1: popup top-right near asset bottom-left
+    finalLeft_vp = bbox.minX - menuWidth - margin;
+    finalTop_vp  = bbox.maxY + margin;
+  } else if (assetCX < panelCX && assetCY < panelCY) {
+    // Q2: popup top-left near asset bottom-right
+    finalLeft_vp = bbox.maxX + margin;
+    finalTop_vp  = bbox.maxY + margin;
+  } else if (assetCX < panelCX && assetCY >= panelCY) {
+    // Q3: popup bottom-left near asset top-right
+    finalLeft_vp = bbox.maxX + margin;
+    finalTop_vp  = bbox.minY - menuHeight - margin;
+  } else {
+    // Q4: popup bottom-right near asset top-left
+    finalLeft_vp = bbox.minX - menuWidth - margin;
+    finalTop_vp  = bbox.minY - menuHeight - margin;
+  }
+
+  // --- 4) Convert viewport coords to the menu's offsetParent coords ---
+  const parentEl = gravityMenu.offsetParent || document.body;
+  const parentRect = parentEl.getBoundingClientRect();
+
+  let finalLeft = finalLeft_vp - parentRect.left;
+  let finalTop  = finalTop_vp  - parentRect.top;
+
+  // (Optional) Clamp inside parent
+  finalLeft = Math.max(0, Math.min(finalLeft, parentRect.width  - menuWidth));
+  finalTop  = Math.max(0, Math.min(finalTop,  parentRect.height - menuHeight));
+
+  // --- 5) Apply position + restore visibility ---
+  gravityMenu.style.left = `${finalLeft}px`;
+  gravityMenu.style.top  = `${finalTop}px`;
+
+  gravityMenu.style.visibility = 'visible';
+  gravityMenu.style.display = 'block';
+
+  
+  if (!wasHidden) {
+    
+  }
+
+  
+  gravityInput.value = Number(layer.gravityValue ?? 0).toFixed(1);
+  gravityInstructions.textContent =
+    'Click & drag on asset to set initial speed. Use "Gravity" for acceleration.';
+}
+
+        
+                function handleMovieInteractionStart(e) {
+            e.preventDefault();
+            const point = getMovieCanvasPoint(e);
+            const currentScene = getCurrentScene();
+            if (!currentScene) return;
+
+            let clickedLayer = null;
+            let clickedHandle = null;
+
+            for (let i = 0; i < currentScene.layers.length; i++) {
+                const l = currentScene.layers[i];
+                if (l.type === 'text' && l.committed) continue;
+
+                const handle = getMovieHandleAtPoint(point, l);
+                if (handle) {
+                    clickedLayer = l;
+                    clickedHandle = handle;
+                    break;
+                }
+                if (isPointInMovieLayer(point, l)) {
+                    clickedLayer = l;
+                    break;
+                }
+            }
+
+            if (clickedHandle) {
+                if (activeMovieLayerId !== clickedLayer.id) {
+                    activeMovieLayerId = clickedLayer.id;
+                    renderLayerPalette();
+                    renderStackedLayersPalette();
+                    renderTextLayerPalette();
+                    updateEditPanelsUI();
+                }
+
+                const activeLayer = getActiveLayer();
+                if (!activeLayer) return;
+
+                if (!isRecording && clickedHandle === 'projectile-toggle') {
+                    
+                    ignoreNextWindowClick = true;
+                    
+                    
+                    activeLayer.isProjectileActive = !activeLayer.isProjectileActive;
+                    if (!activeLayer.isProjectileActive) {
+                        activeLayer.projectileVectorX = 0;
+                        activeLayer.projectileVectorY = 0;
+                        activeLayer.gravityValue = 0;
+                        gravityMenu.classList.add('hidden');
+                        gravityInstructions.textContent = 'Projectile motion OFF.';
+                    } else {
+                        positionGravityMenu(activeLayer);
+                    }
+                    projectileVectorStart = null;
+                    projectileVectorEnd = null;
+                    drawControlsOverlay();
+                    return;
+                }
+
+                movieInteraction = {
+                    active: true,
+                    type: clickedHandle === 'rotate' ? 'rotate' : 'resize',
+                    layerId: activeLayer.id,
+                    handle: clickedHandle,
+                    startX: point.x,
+                    startY: point.y,
+                    initialState: JSON.parse(JSON.stringify(activeLayer))
+                };
+                startAnimationLoop();
                 return;
             }
 
-            const angle = layer.rot * Math.PI / 180;
-            const cos = Math.cos(angle);
-            const sin = Math.sin(angle);
+            if (clickedLayer) {
+                if (activeMovieLayerId !== clickedLayer.id) {
+                    activeMovieLayerId = clickedLayer.id;
+                    renderLayerPalette();
+                    renderStackedLayersPalette();
+                    renderTextLayerPalette();
+                    updateEditPanelsUI();
+                }
+                
+                const activeLayer = getActiveLayer();
+                if (!activeLayer) return;
 
-            const projectileHandleLocalX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
-            const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET; 
+                if (!isRecording && activeLayer.isProjectileActive) {
+                    movieInteraction = {
+                        active: true,
+                        type: 'projectile-draw',
+                        layerId: activeLayer.id,
+                        startX: activeLayer.x,
+                        startY: activeLayer.y,
+                    };
+                    projectileVectorStart = { x: activeLayer.x, y: activeLayer.y };
+                    projectileVectorEnd = point;
+                    gravityMenu.classList.add('hidden');
+                    drawControlsOverlay();
+                    return;
+                }
 
-            const rotatedHandleX = (projectileHandleLocalX * cos - projectileHandleLocalY * sin);
-            const rotatedHandleY = (projectileHandleLocalX * sin + projectileHandleLocalY * cos);
-
-            const projectileHandleWorldX = layer.x + rotatedHandleX;
-            const projectileHandleWorldY = layer.y + rotatedHandleY;
-
-            const scaleFactorX = canvasRect.width / movieCanvas.width;
-            const scaleFactorY = canvasRect.height / movieCanvas.height;
-
-            const displayX = (projectileHandleWorldX * scaleFactorX);
-            const displayY = (projectileHandleWorldY * scaleFactorY);
-
-            gravityMenu.style.left = `${panelRect.left + displayX + 10}px`;
-            gravityMenu.style.top = `${panelRect.top + displayY - gravityMenu.offsetHeight / 2}px`; 
-
-            gravityMenu.classList.remove('hidden');
-            gravityMenu.style.display = 'block';
-
-            gravityInput.value = layer.gravityValue.toFixed(1);
-            gravityInstructions.textContent = 'Click & drag on the asset to set initial speed & direction. Use "Gravity" below for vertical acceleration (+/-).';
-        }
-
-
-        let ignoreNextWindowClick = false;
-
-        function handleMovieInteractionStart(e) {
-    e.preventDefault();
-    const point = getMovieCanvasPoint(e);
-    const currentScene = getCurrentScene();
-    if (!currentScene) return;
-
-    let clickedLayer = null;
-    let clickedHandle = null;
-
-    for (let i = currentScene.layers.length - 1; i >= 0; i--) {
-        const l = currentScene.layers[i];
-        if (l.type === 'text' && l.committed) continue;
-
-        const handle = getMovieHandleAtPoint(point, l);
-        if (handle) {
-            clickedLayer = l;
-            clickedHandle = handle;
-            break;
-        }
-        if (isPointInMovieLayer(point, l)) {
-            clickedLayer = l;
-            break;
-        }
-    }
-
-    if (clickedHandle) {
-        if (activeMovieLayerId !== clickedLayer.id) {
-            activeMovieLayerId = clickedLayer.id;
-            renderLayerPalette();
-            renderStackedLayersPalette();
-            renderTextLayerPalette();
-            updateEditPanelsUI();
-        }
-
-        const activeLayer = getActiveLayer();
-        if (!activeLayer) return;
-
-        if (!isRecording && clickedHandle === 'projectile-toggle') {
-            activeLayer.isProjectileActive = !activeLayer.isProjectileActive;
-            if (!activeLayer.isProjectileActive) {
-                activeLayer.projectileVectorX = 0;
-                activeLayer.projectileVectorY = 0;
-                activeLayer.gravityValue = 0;
-                gravityMenu.classList.add('hidden');
-                gravityInstructions.textContent = 'Projectile motion OFF.';
-            } else {
-                ignoreNextWindowClick = true;
-                positionGravityMenu(activeLayer);
+                movieInteraction = {
+                    active: true,
+                    type: 'drag',
+                    layerId: activeLayer.id,
+                    offsetX: point.x - activeLayer.x,
+                    offsetY: point.y - activeLayer.y,
+                    targetX: activeLayer.x,
+                    targetY: activeLayer.y,
+                    primed: isCountdownActive
+                };
+                startAnimationLoop();
+                return;
             }
-            projectileVectorStart = null;
-            projectileVectorEnd = null;
-            drawControlsOverlay();
-            return;
+
+            if (activeMovieLayerId) {
+                activeMovieLayerId = null;
+                projectileVectorStart = null;
+                projectileVectorEnd = null;
+                gravityMenu.classList.add('hidden');
+                gravityInstructions.textContent = '';
+                drawControlsOverlay();
+                updateEditPanelsUI();
+                renderLayerPalette();
+                renderStackedLayersPalette();
+                renderTextLayerPalette();
+            }
         }
-
-        movieInteraction = {
-            active: true,
-            type: clickedHandle === 'rotate' ? 'rotate' : 'resize',
-            layerId: activeLayer.id,
-            handle: clickedHandle,
-            startX: point.x,
-            startY: point.y,
-            initialState: JSON.parse(JSON.stringify(activeLayer))
-        };
-        startAnimationLoop();
-        return;
-    }
-
-    if (clickedLayer) {
-        if (activeMovieLayerId !== clickedLayer.id) {
-            activeMovieLayerId = clickedLayer.id;
-            renderLayerPalette();
-            renderStackedLayersPalette();
-            renderTextLayerPalette();
-            updateEditPanelsUI();
-        }
-        
-        const activeLayer = getActiveLayer();
-        if (!activeLayer) return;
-
-        if (!isRecording && activeLayer.isProjectileActive) {
-            movieInteraction = {
-                active: true,
-                type: 'projectile-draw',
-                layerId: activeLayer.id,
-                startX: activeLayer.x,
-                startY: activeLayer.y,
-            };
-            projectileVectorStart = { x: activeLayer.x, y: activeLayer.y };
-            projectileVectorEnd = point;
-            gravityMenu.classList.add('hidden');
-            drawControlsOverlay();
-            return;
-        }
-
-        movieInteraction = {
-            active: true,
-            type: 'drag',
-            layerId: activeLayer.id,
-            offsetX: point.x - activeLayer.x,
-            offsetY: point.y - activeLayer.y,
-            targetX: activeLayer.x,
-            targetY: activeLayer.y,
-            primed: isCountdownActive
-        };
-        startAnimationLoop();
-        return;
-    }
-
-    if (activeMovieLayerId) {
-        activeMovieLayerId = null;
-        projectileVectorStart = null;
-        projectileVectorEnd = null;
-        gravityMenu.classList.add('hidden');
-        gravityInstructions.textContent = '';
-        drawControlsOverlay();
-        updateEditPanelsUI();
-        renderLayerPalette();
-        renderStackedLayersPalette();
-        renderTextLayerPalette();
-    }
-}
 
         function handleMovieInteractionMove(e) {
             if (!movieInteraction.active) {
@@ -2359,6 +2561,36 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             }
             
             if (!activeLayer) return;
+            
+            if (!activeLayer.committed && activeLayer.type !== 'text' && (key === 'q' || key === 'w')) {
+                e.preventDefault();
+                const scene = getCurrentScene();
+                if (!scene) return;
+
+                const activeVisualLayers = scene.layers.filter(l => l.type !== 'text' && !l.committed);
+                const otherLayers = scene.layers.filter(l => l.type === 'text' || l.committed);
+
+                const currentIndex = activeVisualLayers.findIndex(l => l.id === activeLayer.id);
+                if (currentIndex === -1) return; 
+
+                let newIndex;
+                if (key === 'q') { 
+                    newIndex = currentIndex - 1;
+                } else { 
+                    newIndex = currentIndex + 1;
+                }
+
+                if (newIndex >= 0 && newIndex < activeVisualLayers.length) {
+                    const temp = activeVisualLayers[currentIndex];
+                    activeVisualLayers[currentIndex] = activeVisualLayers[newIndex];
+                    activeVisualLayers[newIndex] = temp;
+                    scene.layers = [...activeVisualLayers, ...otherLayers];
+                    renderLayerPalette();
+                    renderStackedLayersPalette();
+                }
+                return;
+            }
+
 
             if (key === 's') {
                 e.preventDefault();
@@ -2407,8 +2639,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             updateEditPanelsUI();
             updateAudioUI();
             gravityMenu.classList.add('hidden');
-            // --- EFFECT ADDED ---
-            // Clear the foggy background when the project is cleared.
             updateCanvasPanelBackground(null);
             toast("Project cleared.", 2000);
         }
@@ -2514,7 +2744,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 shortcutsDropdown.classList.remove('visible');
                 visualsDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
-                gravityMenu.classList.add('hidden');
             });
             
             addNewTextLayerBtn.addEventListener('click', e => {
@@ -2665,7 +2894,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 visualsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
-                gravityMenu.classList.add('hidden');
             });
             visualsBtn.addEventListener('click', e => {
                 e.stopPropagation();
@@ -2673,10 +2901,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 shortcutsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
-                gravityMenu.classList.add('hidden');
-                if (visualsDropdown.classList.contains('visible')) {
-                    updateEditPanelsUI()
-                }
             });
             audioBtn.addEventListener('click', e => {
                 e.stopPropagation();
@@ -2684,10 +2908,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 shortcutsDropdown.classList.remove('visible');
                 visualsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
-                gravityMenu.classList.add('hidden');
-                if (audioDropdown.classList.contains('visible')) {
-                    updateAudioUI()
-                }
             });
 
             visualsDropdown.addEventListener('click', e => e.stopPropagation());
@@ -2857,76 +3077,22 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             window.addEventListener('mouseup', endDrag);
 
             window.addEventListener('click', (e) => {
-                if (isDraggingSlider) return;
-                if (movieInteraction.active && movieInteraction.type === 'projectile-draw') return;
-
                 if (ignoreNextWindowClick) {
                     ignoreNextWindowClick = false;
                     return;
                 }
 
+                shortcutsDropdown.classList.remove('visible');
+                visualsDropdown.classList.remove('visible');
+                textDropdown.classList.remove('visible');
+                audioDropdown.classList.remove('visible');
+                
                 if (gravityMenu.style.display === 'block') {
-                    const activeLayer = getActiveLayer();
-                    if (activeLayer) {
-                        const canvasRect = movieCanvas.getBoundingClientRect();
-                        const panelRect = canvasPanel.getBoundingClientRect();
-
-                        let dWidth, dHeight;
-                        if (activeLayer.type === 'image' || activeLayer.type === 'video') {
-                            const assetWidth = activeLayer.type === 'image' ? activeLayer.asset.naturalWidth : activeLayer.asset.videoWidth;
-                            const assetHeight = activeLayer.type === 'image' ? activeLayer.asset.naturalHeight : activeLayer.asset.videoHeight;
-                            dWidth = activeLayer.size;
-                            dHeight = activeLayer.size * (assetHeight / assetWidth);
-                        } else if (activeLayer.type === 'text') {
-                            controlsCtx.font = `${activeLayer.fontSize}px ${activeLayer.font}`;
-                            const textMetrics = controlsCtx.measureText(activeLayer.text);
-                            dWidth = textMetrics.width;
-                            dHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + 4;
-                        } else {
-                            dWidth = 0; dHeight = 0;
-                        }
-
-                        const angle = activeLayer.rot * Math.PI / 180;
-                        const cos = Math.cos(angle);
-                        const sin = Math.sin(angle);
-
-                        const projectileHandleLocalX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
-                        const projectileHandleLocalY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
-                        const projectileHandleWorldX = activeLayer.x + (projectileHandleLocalX * cos - projectileHandleLocalY * sin);
-                        const projectileHandleWorldY = activeLayer.y + (projectileHandleLocalX * sin + projectileHandleLocalY * cos);
-
-                        const projectileHandleDisplayX = (projectileHandleWorldX / movieCanvas.width) * canvasRect.width + panelRect.left;
-                        const projectileHandleDisplayY = (projectileHandleWorldY / movieCanvas.height) * canvasRect.height + panelRect.top;
-
-                        const handleHitbox = {
-                            x: projectileHandleDisplayX - PROJECTILE_HANDLE_SIZE / 2 - 5,
-                            y: projectileHandleDisplayY - PROJECTILE_HANDLE_SIZE / 2 - 5,
-                            width: PROJECTILE_HANDLE_SIZE + 10,
-                            height: PROJECTILE_HANDLE_SIZE + 10
-                        };
-
-                        const clickX = e.clientX;
-                        const clickY = e.clientY;
-
-                        if (!gravityMenu.contains(e.target) &&
-                            !(clickX >= handleHitbox.x && clickX <= handleHitbox.x + handleHitbox.width &&
-                            clickY >= handleHitbox.y && clickY <= handleHitbox.y + handleHitbox.height))
-                        {
-                            gravityMenu.classList.add('hidden');
-                            gravityInstructions.textContent = '';
-                            drawControlsOverlay();
-                        }
-                    } else {
-                         gravityMenu.classList.add('hidden');
-                         gravityInstructions.textContent = '';
-                    }
+                     gravityMenu.classList.add('hidden');
                 }
-
-                if (videoVolumeControls.classList.contains('open')) videoVolumeControls.classList.remove('open');
-                if (shortcutsDropdown.classList.contains('visible')) shortcutsDropdown.classList.remove('visible');
-                if (visualsDropdown.classList.contains('visible')) visualsDropdown.classList.remove('visible');
-                if (textDropdown.classList.contains('visible')) textDropdown.classList.remove('visible');
-                if (audioDropdown.classList.contains('visible')) audioDropdown.classList.remove('visible');
+                if (videoVolumeControls.classList.contains('open')) {
+                    videoVolumeControls.classList.remove('open');
+                }
             });
 
             window.addEventListener('paste', e => {
