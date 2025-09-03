@@ -541,7 +541,7 @@
             updateControlsState()
         }
 
-        function populateAssetLibraryGrid() {
+               function populateAssetLibraryGrid() {
             document.getElementById('mg-asset-picker-grid').innerHTML = '';
             const addAssetFromLibrary = (src) => {
                 const currentScene = getCurrentScene();
@@ -552,7 +552,8 @@
                 addMovieLayer(src, { type: 'image' });
                 closeAssetLibrary()
             };
-            Array.from({ length: 107 }, (_, i) => i + 1).forEach(i => {
+            // To remove the last 3 slots, we change the length from 107 to 104.
+            Array.from({ length: 104 }, (_, i) => i + 1).forEach(i => {
                 const src = `./assets/maker/${i}.png`;
                 const div = document.createElement('div');
                 div.className = 'mg-template';
