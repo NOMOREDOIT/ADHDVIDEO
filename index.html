@@ -375,9 +375,11 @@ function addMovieLayer(src, properties = {}) {
     }
 }
 async function removeBackground() {
+    console.log("Starting background removal process...");
     const activeLayer = getActiveLayer();
+
     if (!activeLayer || activeLayer.type !== 'image') {
-        toast('Please select an image asset to remove its background.', 4000);
+        toast('Please select an image asset.', 4000);
         return;
     }
 
@@ -387,7 +389,20 @@ async function removeBackground() {
 
     try {
         const imageSrc = activeLayer.asset.src;
-        const resultBlob = await imglyRemoveBackground(imageSrc);
+        
+        // This line tells the library where to find the model you just uploaded.
+        const resultBlob = await imglyRemoveBackground(imageSrc, {
+            publicPath: './assets/', // This is the crucial line!
+            progress: (prog) => {
+                const percentage = Math.round(prog * 100);
+                if (prog < 1) {
+                    toast(`Loading AI model: ${percentage}%`, null);
+                } else {
+                    toast('Processing image with AI...', null);
+                }
+            }
+        });
+        
         const newSrcUrl = URL.createObjectURL(resultBlob);
         const newImg = new Image();
         newImg.onload = () => {
@@ -404,8 +419,8 @@ async function removeBackground() {
         newImg.src = newSrcUrl;
 
     } catch (error) {
-        console.error("Background removal failed:", error);
-        toast('Could not remove background. The AI may have had an issue.', 5000);
+        console.error("An error occurred during background removal:", error);
+        toast('Could not remove background. Check console for details.', 5000);
         removeBgBtn.disabled = false;
         removeBgBtn.textContent = 'Remove Background of Asset';
     }
