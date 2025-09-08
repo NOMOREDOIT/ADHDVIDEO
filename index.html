@@ -5,109 +5,56 @@
 <title>Movie Meme Maker Studio</title>
 <link rel="icon" type="image/png" href="favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Indie+Flower&family=Londrina+Outline&family=Patua+One&family=Pixelify+Sans&family=Press+Start+2P&family=Roboto:wght@400;700&family=Rubik+Mono+One&family=Young+Serif&display=swap" rel="stylesheet">
+<!-- ADDED LIBRARIES -->
+<script src="https://unpkg.com/wavesurfer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal/dist/browser.js"></script>
 <style>
 /* --- In-Window Loading Overlay Styles --- */
-#loading-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background-color:#faf9f5;color:#2b2b2b;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease-in-out}#loading-overlay h1{font-family:'VT323',monospace;font-size:2.5rem;text-shadow:2px 2px 0 #000}#loading-overlay h1::after{content:'.';display:inline-block;width:3ch;text-align:left;animation:ellipsis 1.4s infinite}:root{--bg:#f2efe8;--ink:#2b2b2b;--mid:#c2c2c2;--light:#faf9f5;--light-rgb:250,249,245;--shadow:#7a7a7a;--danger-color:#cc4444;--action-color:#4477cc;--success-color:#55cc55;--bg-rgb:242,239,232;--action-color-rgb:68,119,204}html{box-sizing:border-box}*,:before,:after{box-sizing:inherit}body{font-family:'VT323',monospace;background:var(--bg) url(./assets/wallpaper.png) repeat fixed;color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:10px;margin:0;height:100vh;overflow:hidden;transition:background-color .3s,color .3s}body.dark-mode{--bg:#1a1d2d;--ink:#e0e5f0;--mid:#3d4a6e;--light:#252a40;--light-rgb:37,42,64;--shadow:#0d0f16;--danger-color:#a83e3e;--action-color:#5a8de8;--success-color:#4a9d4a;--bg-rgb:26,29,45;--action-color-rgb:90,141,232}.window{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);width:100%;max-width:1600px;margin:0 auto;height:calc(100vh - 20px);display:flex;flex-direction:column;overflow:hidden;transition:background-color .3s,border-color .3s,box-shadow .3s}.titlebar{height:28px;background:var(--mid);display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-bottom:2px solid var(--ink);font-size:20px;flex-shrink:0;cursor:default;position:relative;transition:background-color .3s,border-color .3s}body.dark-mode .titlebar{color:var(--ink)}.titlebar-controls{display:flex;align-items:center;gap:8px}.controls-fake{display:flex;gap:4px}.btn-square{width:16px;height:16px;background:var(--light);border:2px solid var(--ink)}.controls-fake .btn-square:first-child{background-color:var(--success-color)}.controls-fake .btn-square:last-child{background-color:var(--danger-color)}#shortcuts-btn,#visuals-btn,#audio-btn,#text-btn,#theme-toggle-btn,#toggle-view-btn{font-family:inherit;font-size:16px;background:var(--light);border:2px solid var(--ink);padding:0 8px;cursor:pointer;transition:background-color .3s,border-color .3s,color .3s;color:var(--ink)}#theme-toggle-btn,#toggle-view-btn{padding:0 4px;font-size:18px}#shortcuts-dropdown{right:8px}#shortcuts-dropdown.visible{display:block}#shortcuts-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#shortcuts-dropdown ul{margin:0;padding:0;list-style:none;font-size:1rem}#shortcuts-dropdown li{display:flex;justify-content:space-between;padding:2px 0}#shortcuts-dropdown li kbd{font-family:inherit;border:2px solid var(--ink);padding:0 4px;background:var(--bg)}#visuals-dropdown,#audio-dropdown,#text-dropdown,#shortcuts-dropdown{display:none;position:absolute;top:28px;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;z-index:100;width:250px;transition:background .2s,backdrop-filter .2s,box-shadow .2s,border-color .2s}body.dark-mode #shortcuts-dropdown li kbd{border-color:var(--mid)}#visuals-dropdown{right:320px}#text-dropdown{right:216px}#audio-dropdown{right:102px}#visuals-dropdown.visible,#audio-dropdown.visible,#text-dropdown.visible{display:block}#visuals-dropdown h5,#visuals-dropdown h6,#visuals-dropdown .slider-container,#audio-dropdown h5,#audio-dropdown p,#audio-dropdown .action-buttons,#text-dropdown h5,#text-dropdown h6,#text-dropdown .slider-container{transition:opacity .2s}#visuals-dropdown h5,#audio-dropdown h5,#text-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#visuals-dropdown h6,#text-dropdown h6{font-size:1.1rem;font-weight:700;text-align:left;margin-top:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid);padding-bottom:2px}#visuals-dropdown label,#text-dropdown label{display:block;margin-top:.5rem;font-size:.9rem}#visuals-dropdown.is-scrubbing{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;border-color:transparent}#visuals-dropdown.is-scrubbing>h5,#visuals-dropdown.is-scrubbing>div>h6,#visuals-dropdown.is-scrubbing .slider-container{opacity:0;pointer-events:none}#visuals-dropdown.is-scrubbing .slider-container.is-active-slider{opacity:1;pointer-events:auto}#visuals-dropdown input[type=range],#text-dropdown input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--ink);outline:0}#visuals-dropdown input[type=range]::-webkit-slider-thumb,#text-dropdown input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #visuals-dropdown input[type=range]::-webkit-slider-thumb,body.dark-mode #text-dropdown input[type=range]::-webkit-slider-thumb{background:var(--action-color)}#visuals-dropdown input[type=range]::-moz-range-thumb,#text-dropdown input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #visuals-dropdown input[type=range]::-moz-range-thumb,body.dark-mode #text-dropdown input[type=range]::-moz-range-thumb{background:var(--action-color)}#asset-visuals-controls.disabled,#text-visuals-controls.disabled,#audio-controls.disabled{opacity:.5;pointer-events:none}#audio-file-name{font-size:.9rem;text-align:center;word-break:break-all;padding:.5rem;background:var(--bg);border:2px inset var(--mid);min-height:40px}.mg-btn{font-family:inherit;font-size:18px;background:var(--light);border:2px solid var(--ink);padding:8px 16px;margin:4px;cursor:pointer;text-decoration:none;color:var(--ink);transition:.2s all;box-shadow:2px 2px 0 var(--shadow);width:100%;white-space:nowrap}body.dark-mode .mg-btn:hover{filter:brightness(1.2)}.mg-btn:hover{transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow)}.mg-btn:disabled,.mg-btn.disabled{opacity:.5;pointer-events:none;box-shadow:none;transform:none}.mg-btn.active{background-color:var(--danger-color);color:var(--light);box-shadow:none;transform:translate(2px,2px)}.mg-btn.success{background-color:var(--success-color)}.mg-btn.record{background-color:var(--danger-color);color:var(--light)}.mg-btn.generate{background-color:var(--ink);color:var(--light)}body.dark-mode .mg-btn.generate{background-color:var(--action-color);color:var(--ink)}body.dark-mode .mg-btn.record,body.dark-mode .mg-btn.active{color:var(--ink)}.hidden{display:none!important}#studio-container{display:grid;grid-template-columns:320px 1fr;grid-template-rows:minmax(0,1fr);gap:1.5rem;padding:1.5rem;flex-grow:1;min-height:0}#controls-panel{display:flex;flex-direction:column;gap:1rem;overflow-y:auto;min-height:0}#canvas-panel{display:flex;align-items:center;justify-content:center;border:2px solid var(--ink);background-color:var(--mid);position:relative;min-height:0;transition:background-color .5s ease-in-out;overflow:hidden}#controls-panel fieldset{background:var(--light);border:2px solid var(--ink);padding:.8rem;margin:0;text-align:left;transition:background-color .3s,border-color .3s,color .3s}#controls-panel legend{font-size:1.2rem;font-weight:400;padding:0 .25rem}.action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.scene-controls-container{display:flex;flex-direction:column;gap:.5rem}.scene-controls-container>.mg-btn{margin-left:0;margin-right:0}#scene-actions-container .mg-btn,#mg-commit-layer-btn{white-space:normal;text-align:center}#recording-status{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.2rem;color:var(--danger-color)}#recording-indicator{width:12px;height:12px;background-color:var(--danger-color);border:1px solid var(--ink);border-radius:50%;animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}.placeholder-text{color:var(--shadow);font-size:.9rem;text-align:center;padding:1rem;width:100%}body.dark-mode .placeholder-text{color:var(--ink)}#mg-asset-palette{display:flex;gap:.5rem;flex-wrap:wrap;min-height:70px;align-content:flex-start}.palette-slot,.layer-thumb{width:60px;height:60px;border:2px solid var(--ink);background:var(--light);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow)}.layer-thumb.locked{opacity:.6;cursor:default;box-shadow:none}.layer-thumb.locked .layer-controls{display:none}.layer-thumb.locked:hover .layer-controls{display:flex}.layer-thumb{cursor:grab}.palette-slot.empty{display:flex;align-items:center;justify-content:center;font-size:3rem;line-height:1;color:var(--mid);transition:all .2s}.palette-slot.empty:hover{background-color:#e0e0e0;color:var(--ink)}body.dark-mode .palette-slot.empty:hover{background-color:var(--mid);color:var(--ink)}.layer-thumb img,.layer-thumb video{width:100%;height:100%;object-fit:cover;pointer-events:none}.layer-thumb.active{border:2px solid var(--action-color);transform:scale(1.05);box-shadow:none}.layer-controls{position:absolute;top:-5px;right:-5px;display:flex;gap:2px}.layer-btn{background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center}#scene-tray{display:flex;gap:.5rem;flex-wrap:wrap;min-height:65px;align-content:flex-start;padding-bottom:.5rem;border-bottom:2px solid var(--mid);margin-bottom:.5rem}.scene-thumb{width:80px;height:55px;border:2px solid var(--ink);background-color:var(--mid);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow);background-size:cover;background-position:center;display:flex;color:var(--light);text-shadow:1px 1px 0 var(--ink);align-items:center;justify-content:center;font-size:1.5rem;transition:all .2s}body.dark-mode .scene-thumb{text-shadow:1px 1px 0 var(--shadow)}.scene-thumb.active{border-color:var(--action-color);transform:scale(1.05);box-shadow:0 0 0 var(--shadow)}.scene-delete-btn{position:absolute;top:-5px;right:-5px;background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center;opacity:0;transition:opacity .2s}.scene-thumb:hover .scene-delete-btn{opacity:1}.scene-thumb.active:hover .scene-delete-btn{display:none}#mg-movie-canvas,#mg-controls-overlay-canvas,#mg-pasteboard-overlay-canvas{position:absolute}#mg-controls-overlay-canvas,#mg-pasteboard-overlay-canvas{pointer-events:none}#mg-movie-canvas{pointer-events:auto}.mg-overlay-base{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s .3s;background:rgba(10,10,10,.25)}body.dark-mode .mg-overlay-base{background:rgba(var(--bg-rgb),.5)}.mg-overlay-base.visible{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .3s,visibility 0s 0s}.overlay-close-btn{position:absolute;top:8px;right:10px;background:0 0;border:none;line-height:1;cursor:pointer;padding:5px;font-family:'VT323',monospace;color:var(--ink);font-size:2rem;z-index:10;transition:opacity .2s}.overlay-close-btn:hover{opacity:.6}#mg-asset-picker-grid-wrapper{background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:1.5rem;max-width:800px;width:90vw;max-height:85vh;display:flex;flex-direction:column;position:relative}#mg-asset-picker-grid-wrapper h4{font-size:1.5rem;text-align:center;font-weight:400;margin:0 0 1rem}#mg-asset-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:.5rem;overflow-y:auto;padding:.5rem;flex-grow:1}.mg-template{width:auto;height:80px}.mg-template img{width:100%;height:100%;object-fit:contain;cursor:pointer}#mg-asset-picker-actions{margin-top:1rem;text-align:center;display:flex;gap:.5rem;justify-content:center}#mg-toast{visibility:hidden;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--light);border:2px solid var(--ink);padding:.5rem 1rem;color:var(--ink);font-size:1rem;z-index:2000;box-shadow:4px 4px 0 var(--ink)}#mg-countdown-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;display:flex;align-items:center;justify-content:center;z-index:3000;color:var(--light);text-shadow:2px 2px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink);font-size:15vw;pointer-events:auto}body.dark-mode #mg-countdown-overlay{color:var(--ink);text-shadow:2px 2px 0 var(--action-color),-2px -2px 0 var(--action-color),2px -2px 0 var(--action-color),-2px 2px 0 var(--action-color)}#canvas-placeholder{position:absolute;width:calc(100% - 20px);height:calc(100% - 20px);border:4px dashed var(--shadow);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;color:var(--shadow);transition:all .2s;padding:2rem;overflow:hidden;position:relative}#canvas-placeholder h3,#canvas-placeholder p{position:relative;z-index:2}#canvas-placeholder video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:.6}#canvas-placeholder h3{font-size:2rem;margin:0 0 .5rem}#canvas-placeholder p{font-size:1.2rem}#canvas-placeholder:hover,#canvas-panel.drag-over #canvas-placeholder{border-color:var(--ink);color:var(--ink);background-color:rgba(255,255,255,.5)}body.dark-mode #canvas-placeholder:hover,body.dark-mode #canvas-panel.drag-over #canvas-placeholder{background-color:rgba(var(--light-rgb),.5)}#canvas-panel.drag-over{background-color:var(--shadow)}#layer-instructions{padding:0 0 .5rem 0;margin:0;font-size:1rem}#mg-preview-container{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px}#mg-preview-container .overlay-close-btn{top:-10px;right:-10px;background:var(--danger-color);color:var(--light);border:2px solid var(--ink)}#mg-preview-video{display:block;max-width:80vw;max-height:75vh;background:#000}#mg-generation-overlay{z-index:4000}
-/* --- CSS FIX STARTS HERE --- */
+#loading-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background-color:#faf9f5;color:#2b2b2b;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease-in-out}#loading-overlay h1{font-family:'VT323',monospace;font-size:2.5rem;text-shadow:2px 2px 0 #000}#loading-overlay h1::after{content:'.';display:inline-block;width:3ch;text-align:left;animation:ellipsis 1.4s infinite}:root{--bg:#f2efe8;--ink:#2b2b2b;--mid:#c2c2c2;--light:#faf9f5;--light-rgb:250,249,245;--shadow:#7a7a7a;--danger-color:#cc4444;--action-color:#4477cc;--success-color:#55cc55;--bg-rgb:242,239,232;--action-color-rgb:68,119,204}html{box-sizing:border-box}*,:before,:after{box-sizing:inherit}body{font-family:'VT323',monospace;background:var(--bg) url(./assets/wallpaper.png) repeat fixed;color:var(--ink);display:flex;flex-direction:column;align-items:center;padding:10px;margin:0;height:100vh;overflow:hidden;transition:background-color .3s,color .3s}body.dark-mode{--bg:#1a1d2d;--ink:#e0e5f0;--mid:#3d4a6e;--light:#252a40;--light-rgb:37,42,64;--shadow:#0d0f16;--danger-color:#a83e3e;--action-color:#5a8de8;--success-color:#4a9d4a;--bg-rgb:26,29,45;--action-color-rgb:90,141,232}.window{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);width:100%;max-width:1600px;margin:0 auto;height:calc(100vh - 20px);display:flex;flex-direction:column;overflow:hidden;transition:background-color .3s,border-color .3s,box-shadow .3s}.titlebar{height:28px;background:var(--mid);display:flex;align-items:center;justify-content:space-between;padding:0 8px;border-bottom:2px solid var(--ink);font-size:20px;flex-shrink:0;cursor:default;position:relative;transition:background-color .3s,border-color .3s}body.dark-mode .titlebar{color:var(--ink)}.titlebar-controls{display:flex;align-items:center;gap:8px}.controls-fake{display:flex;gap:4px}.btn-square{width:16px;height:16px;background:var(--light);border:2px solid var(--ink)}.controls-fake .btn-square:first-child{background-color:var(--success-color)}.controls-fake .btn-square:last-child{background-color:var(--danger-color)}#shortcuts-btn,#visuals-btn,#audio-btn,#text-btn,#theme-toggle-btn,#toggle-view-btn,#background-remover-btn{font-family:inherit;font-size:16px;background:var(--light);border:2px solid var(--ink);padding:0 8px;cursor:pointer;transition:background-color .3s,border-color .3s,color .3s;color:var(--ink)}#theme-toggle-btn,#toggle-view-btn{padding:0 4px;font-size:18px}#shortcuts-dropdown{right:8px}#shortcuts-dropdown.visible{display:block}#shortcuts-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#shortcuts-dropdown ul{margin:0;padding:0;list-style:none;font-size:1rem}#shortcuts-dropdown li{display:flex;justify-content:space-between;padding:2px 0}#shortcuts-dropdown li kbd{font-family:inherit;border:2px solid var(--ink);padding:0 4px;background:var(--bg)}#visuals-dropdown,#audio-dropdown,#text-dropdown,#shortcuts-dropdown, #background-remover-dropdown{display:none;position:absolute;top:28px;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;z-index:100;width:250px;transition:background .2s,backdrop-filter .2s,box-shadow .2s,border-color .2s}body.dark-mode #shortcuts-dropdown li kbd{border-color:var(--mid)}#visuals-dropdown{right:430px}#background-remover-dropdown{right:320px}#text-dropdown{right:216px}#audio-dropdown{right:102px}#visuals-dropdown.visible,#audio-dropdown.visible,#text-dropdown.visible, #background-remover-dropdown.visible{display:block}#visuals-dropdown h5,#visuals-dropdown h6,#visuals-dropdown .slider-container,#audio-dropdown h5,#audio-dropdown p,#audio-dropdown .action-buttons,#text-dropdown h5,#text-dropdown h6,#text-dropdown .slider-container, #background-remover-dropdown h5{transition:opacity .2s}#visuals-dropdown h5,#audio-dropdown h5,#text-dropdown h5, #background-remover-dropdown h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#visuals-dropdown h6,#text-dropdown h6{font-size:1.1rem;font-weight:700;text-align:left;margin-top:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid);padding-bottom:2px}#visuals-dropdown label,#text-dropdown label{display:block;margin-top:.5rem;font-size:.9rem}#visuals-dropdown.is-scrubbing{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;box-shadow:none;border-color:transparent}#visuals-dropdown.is-scrubbing>h5,#visuals-dropdown.is-scrubbing>div>h6,#visuals-dropdown.is-scrubbing .slider-container{opacity:0;pointer-events:none}#visuals-dropdown.is-scrubbing .slider-container.is-active-slider{opacity:1;pointer-events:auto}#visuals-dropdown input[type=range],#text-dropdown input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:2px;background:var(--ink);outline:0}#visuals-dropdown input[type=range]::-webkit-slider-thumb,#text-dropdown input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer}body.dark-mode #visuals-dropdown input[type=range]::-webkit-slider-thumb,body.dark-mode #text-dropdown input[type=range]::-webkit-slider-thumb{background:var(--action-color)}#visuals-dropdown input[type=range]::-moz-range-thumb,#text-dropdown input[type=range]::-moz-range-thumb{width:16px;height:16px;background:var(--ink);border-radius:50%;cursor:pointer;border:none}body.dark-mode #visuals-dropdown input[type=range]::-moz-range-thumb,body.dark-mode #text-dropdown input[type=range]::-moz-range-thumb{background:var(--action-color)}#asset-visuals-controls.disabled,#text-visuals-controls.disabled,#audio-controls.disabled{opacity:.5;pointer-events:none}#audio-file-name{font-size:.9rem;text-align:center;word-break:break-all;padding:.5rem;background:var(--bg);border:2px inset var(--mid);min-height:40px}.mg-btn{font-family:inherit;font-size:18px;background:var(--light);border:2px solid var(--ink);padding:8px 16px;margin:4px;cursor:pointer;text-decoration:none;color:var(--ink);transition:.2s all;box-shadow:2px 2px 0 var(--shadow);width:100%;white-space:nowrap}body.dark-mode .mg-btn:hover{filter:brightness(1.2)}.mg-btn:hover{transform:translate(2px,2px);box-shadow:0 0 0 var(--shadow)}.mg-btn:disabled,.mg-btn.disabled{opacity:.5;pointer-events:none;box-shadow:none;transform:none}.mg-btn.active{background-color:var(--danger-color);color:var(--light);box-shadow:none;transform:translate(2px,2px)}.mg-btn.success{background-color:var(--success-color)}.mg-btn.record{background-color:var(--danger-color);color:var(--light)}.mg-btn.generate{background-color:var(--ink);color:var(--light)}body.dark-mode .mg-btn.generate{background-color:var(--action-color);color:var(--ink)}body.dark-mode .mg-btn.record,body.dark-mode .mg-btn.active{color:var(--ink)}.hidden{display:none!important}#studio-container{display:grid;grid-template-columns:320px 1fr;grid-template-rows:minmax(0,1fr);gap:1.5rem;padding:1.5rem;flex-grow:1;min-height:0}#controls-panel{display:flex;flex-direction:column;gap:1rem;overflow-y:auto;min-height:0}#canvas-panel{display:flex;align-items:center;justify-content:center;border:2px solid var(--ink);background-color:var(--mid);position:relative;min-height:0;transition:background-color .5s ease-in-out;overflow:hidden}#controls-panel fieldset{background:var(--light);border:2px solid var(--ink);padding:.8rem;margin:0;text-align:left;transition:background-color .3s,border-color .3s,color .3s}#controls-panel legend{font-size:1.2rem;font-weight:400;padding:0 .25rem}.action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}.scene-controls-container{display:flex;flex-direction:column;gap:.5rem}.scene-controls-container>.mg-btn{margin-left:0;margin-right:0}#scene-actions-container .mg-btn,#mg-commit-layer-btn{white-space:normal;text-align:center}#recording-status{display:flex;align-items:center;justify-content:center;gap:8px;font-size:1.2rem;color:var(--danger-color)}#recording-indicator{width:12px;height:12px;background-color:var(--danger-color);border:1px solid var(--ink);border-radius:50%;animation:blink 1s infinite}@keyframes blink{50%{opacity:.3}}.placeholder-text{color:var(--shadow);font-size:.9rem;text-align:center;padding:1rem;width:100%}body.dark-mode .placeholder-text{color:var(--ink)}#mg-asset-palette{display:flex;gap:.5rem;flex-wrap:wrap;min-height:70px;align-content:flex-start}.palette-slot,.layer-thumb{width:60px;height:60px;border:2px solid var(--ink);background:var(--light);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow)}.layer-thumb.locked{opacity:.6;cursor:default;box-shadow:none}.layer-thumb.locked .layer-controls{display:none}.layer-thumb.locked:hover .layer-controls{display:flex}.layer-thumb{cursor:grab}.palette-slot.empty{display:flex;align-items:center;justify-content:center;font-size:3rem;line-height:1;color:var(--mid);transition:all .2s}.palette-slot.empty:hover{background-color:#e0e0e0;color:var(--ink)}body.dark-mode .palette-slot.empty{color:var(--ink)}body.dark-mode .palette-slot.empty:hover{background-color:var(--mid);color:var(--ink)}.layer-thumb img,.layer-thumb video{width:100%;height:100%;object-fit:cover;pointer-events:none}.layer-thumb.active{border:2px solid var(--action-color);transform:scale(1.05);box-shadow:none}.layer-controls{position:absolute;top:-5px;right:-5px;display:flex;gap:2px}.layer-btn{background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center}#scene-tray{display:flex;gap:.5rem;flex-wrap:wrap;min-height:65px;align-content:flex-start;padding-bottom:.5rem;border-bottom:2px solid var(--mid);margin-bottom:.5rem}.scene-thumb{width:80px;height:55px;border:2px solid var(--ink);background-color:var(--mid);cursor:pointer;position:relative;box-shadow:2px 2px 0 var(--shadow);background-size:cover;background-position:center;display:flex;color:var(--light);text-shadow:1px 1px 0 var(--ink);align-items:center;justify-content:center;font-size:1.5rem;transition:all .2s}body.dark-mode .scene-thumb{text-shadow:1px 1px 0 var(--shadow)}.scene-thumb.active{border-color:var(--action-color);transform:scale(1.05);box-shadow:0 0 0 var(--shadow)}.scene-delete-btn{position:absolute;top:-5px;right:-5px;background-color:var(--danger-color);border:1px solid var(--ink);color:#fff;font-size:.8rem;font-weight:700;line-height:1;padding:1px 4px;cursor:pointer;width:18px;height:18px;text-align:center;opacity:0;transition:opacity .2s}.scene-thumb:hover .scene-delete-btn{opacity:1}.scene-thumb.active:hover .scene-delete-btn{display:none}#mg-movie-canvas,#mg-controls-overlay-canvas,#mg-pasteboard-overlay-canvas{position:absolute}#mg-controls-overlay-canvas,#mg-pasteboard-overlay-canvas{pointer-events:none}#mg-movie-canvas{pointer-events:auto}.mg-overlay-base{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s,visibility 0s .3s;background:rgba(10,10,10,.25)}body.dark-mode .mg-overlay-base{background:rgba(var(--bg-rgb),.5)}.mg-overlay-base.visible{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .3s,visibility 0s 0s}.overlay-close-btn{position:absolute;top:8px;right:10px;background:0 0;border:none;line-height:1;cursor:pointer;padding:5px;font-family:'VT323',monospace;color:var(--ink);font-size:2rem;z-index:10;transition:opacity .2s}.overlay-close-btn:hover{opacity:.6}#mg-asset-picker-grid-wrapper{background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:1.5rem;max-width:800px;width:90vw;max-height:85vh;display:flex;flex-direction:column;position:relative}#mg-asset-picker-grid-wrapper h4{font-size:1.5rem;text-align:center;font-weight:400;margin:0 0 1rem}#mg-asset-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:.5rem;overflow-y:auto;padding:.5rem;flex-grow:1}.mg-template{width:auto;height:80px}.mg-template img{width:100%;height:100%;object-fit:contain;cursor:pointer}#mg-asset-picker-actions{margin-top:1rem;text-align:center;display:flex;gap:.5rem;justify-content:center}#mg-toast{visibility:hidden;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--light);border:2px solid var(--ink);padding:.5rem 1rem;color:var(--ink);font-size:1rem;z-index:2000;box-shadow:4px 4px 0 var(--ink)}#mg-countdown-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:transparent;display:flex;align-items:center;justify-content:center;z-index:3000;color:var(--light);text-shadow:2px 2px 0 var(--ink),-2px -2px 0 var(--ink),2px -2px 0 var(--ink),-2px 2px 0 var(--ink);font-size:15vw;pointer-events:auto}body.dark-mode #mg-countdown-overlay{color:var(--ink);text-shadow:2px 2px 0 var(--action-color),-2px -2px 0 var(--action-color),2px -2px 0 var(--action-color),-2px 2px 0 var(--action-color)}#canvas-placeholder{position:absolute;width:calc(100% - 20px);height:calc(100% - 20px);border:4px dashed var(--shadow);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;color:var(--shadow);transition:all .2s;padding:2rem;overflow:hidden;position:relative}#canvas-placeholder h3,#canvas-placeholder p{position:relative;z-index:2}#canvas-placeholder video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;opacity:.6}#canvas-placeholder h3{font-size:2rem;margin:0 0 .5rem}#canvas-placeholder p{font-size:1.2rem}#canvas-placeholder:hover,#canvas-panel.drag-over #canvas-placeholder{border-color:var(--ink);color:var(--ink);background-color:rgba(255,255,255,.5)}body.dark-mode #canvas-placeholder:hover,body.dark-mode #canvas-panel.drag-over #canvas-placeholder{background-color:rgba(var(--light-rgb),.5)}#canvas-panel.drag-over{background-color:var(--shadow)}#layer-instructions{padding:0 0 .5rem 0;margin:0;font-size:1rem}#mg-preview-container{position:relative;background:var(--light);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:10px}#mg-preview-container .overlay-close-btn{top:-10px;right:-10px;background:var(--danger-color);color:var(--light);border:2px solid var(--ink)}#mg-preview-video{display:block;max-width:80vw;max-height:75vh;background:#000}#mg-generation-overlay{z-index:4000}
 #mg-generation-overlay .window{max-width:400px;height:auto;padding:2rem;text-align:center;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
-/* --- CSS FIX ENDS HERE --- */
 #mg-generation-overlay h3{font-size:2rem;margin:0 0 1rem}#mg-generation-overlay h3::after{display:inline-block;animation:ellipsis 1.4s infinite;content:".";width:1em;text-align:left}@keyframes ellipsis{0%{content:"."}33%{content:".."}66%{content:"..."}}#mg-confirmation-overlay{z-index:5000}#mg-confirmation-dialog{padding:1.5rem;text-align:center;width:90%;max-width:400px;height:auto}#mg-confirmation-dialog p{font-size:1.2rem;margin:0 0 1.5rem}#mg-confirmation-dialog .action-buttons{display:flex;justify-content:center}#scene-actions-container{grid-template-columns:2fr 1fr 1fr;gap:.5rem}#scene-actions-container #mg-record-layer-btn{font-size:20px}#mg-gravity-menu.window{position:absolute;z-index:101;background:rgba(var(--light-rgb),.3);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink);padding:.5rem 1rem;width:200px;height:auto;text-align:center;display:none}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#mg-gravity-menu h5{margin:0 0 .5rem 0;font-size:1.2rem;text-align:center}#mg-gravity-menu p{margin:.2rem 0;font-size:1rem;display:flex;align-items:center;justify-content:space-between}#mg-gravity-menu input[type=number]{font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg);flex-grow:1;margin-left:.5rem;text-align:center;box-shadow:inset 1px 1px 0 var(--shadow)}body.dark-mode #mg-gravity-menu input[type=number]{border-color:var(--mid);color:var(--ink)}#mg-gravity-menu .action-buttons{display:flex;gap:.5rem;margin-top:.5rem;justify-content:space-around}#mg-gravity-menu .mg-btn{padding:4px 10px;font-size:16px;margin:0;width:auto;flex-grow:1}#text-content,#text-font{transition:background-color .3s,border-color .3s,color .3s}#text-layer-manager{display:flex;gap:.5rem;align-items:center;padding-bottom:.5rem;margin-bottom:.5rem;border-bottom:2px solid var(--mid)}#text-layer-palette{display:flex;gap:.5rem;flex-wrap:wrap;flex-grow:1;min-height:44px}#add-new-text-layer-btn{width:40px;height:40px;flex-shrink:0;font-size:2rem;line-height:1;padding:0}.text-thumb{width:60px;height:40px;display:flex;align-items:center;justify-content:center;overflow:hidden;background-color:var(--ink);color:var(--light);font-size:.8rem;padding:2px;text-align:center}.text-thumb span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
-
-/* --- VISUALLY DISABLE THE '+' BUTTON --- */
-.palette-slot.empty:disabled {
-    opacity: 0.4;
-    cursor: default;
-    pointer-events: none;
-    background-color: var(--light);
-}
-.palette-slot.empty:disabled:hover {
-    background-color: var(--light);
-    color: var(--mid);
-}
-
-/* --- VISUALLY DISABLE THE TITLE BAR BUTTONS --- */
-#shortcuts-btn:disabled,
-#visuals-btn:disabled,
-#audio-btn:disabled,
-#text-btn:disabled {
-    opacity: 0.5;
-    pointer-events: none;
-    cursor: default;
-}
-
-/* --- STACK ASSETS & COLLAGE THUMB --- */
-#mg-stacked-layers-palette {
-    display:flex;
-    gap:.5rem;
-    flex-wrap:wrap;
-    min-height: 0; /* <<< FIX FOR VERTICAL SPACE */
-    align-content:flex-start
-}
-.committed-collage-thumb {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-.committed-collage-thumb img {
-    width: 100%;
-    flex-grow: 1; /* Each image takes up equal space */
-    object-fit: cover;
-    min-height: 0; /* Important for flexbox shrinking */
-}
-
-/* --- DRAG AND DROP STYLES --- */
-.layer-thumb.dragging {
-    opacity: 0.4;
-    transform: rotate(-3deg) scale(1.05);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    cursor: grabbing;
-}
-.layer-thumb.drag-over {
-    border: 3px dashed var(--action-color);
-    transform: scale(1.02);
-    background-color: rgba(var(--action-color-rgb), 0.1);
-}
-
-/* --- PASTEBOARD / ZOOM VIEW STYLES --- */
-#mg-pasteboard-overlay-canvas {
-    position: absolute;
-    pointer-events: none;
-    display: none;
-}
-#canvas-panel.is-zoomed-out {
-    background-color: var(--shadow);
-}
-#mg-movie-canvas, #mg-controls-overlay-canvas, #mg-pasteboard-overlay-canvas {
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
+.palette-slot.empty:disabled {opacity: 0.4;cursor: default;pointer-events: none;background-color: var(--light);}
+.palette-slot.empty:disabled:hover {background-color: var(--light);color: var(--mid);}
+#shortcuts-btn:disabled, #visuals-btn:disabled, #audio-btn:disabled, #text-btn:disabled, #background-remover-btn:disabled {opacity: 0.5;pointer-events: none;cursor: default;}
+#mg-stacked-layers-palette {display:flex;gap:.5rem;flex-wrap:wrap;min-height: 0; align-content:flex-start}
+.committed-collage-thumb {width: 100%;height: 100%;display: flex;flex-direction: column;overflow: hidden;}
+.committed-collage-thumb img {width: 100%;flex-grow: 1; object-fit: cover;min-height: 0;}
+.layer-thumb.dragging {opacity: 0.4;transform: rotate(-3deg) scale(1.05);box-shadow: 0 8px 20px rgba(0,0,0,0.3);cursor: grabbing;}
+.layer-thumb.drag-over {border: 3px dashed var(--action-color);transform: scale(1.02);background-color: rgba(var(--action-color-rgb), 0.1);}
+#mg-pasteboard-overlay-canvas {position: absolute;pointer-events: none;display: none;}
+#canvas-panel.is-zoomed-out {background-color: var(--shadow);}
+#mg-movie-canvas, #mg-controls-overlay-canvas, #mg-pasteboard-overlay-canvas {transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;}
 #canvas-panel.is-zoomed-out #mg-movie-canvas,
 #canvas-panel.is-zoomed-out #mg-controls-overlay-canvas,
-#canvas-panel.is-zoomed-out #mg-pasteboard-overlay-canvas {
-    transform: scale(0.8);
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-}
-#canvas-panel.is-zoomed-out #mg-controls-overlay-canvas {
-    display: none;
-}
-#canvas-panel.is-zoomed-out #mg-pasteboard-overlay-canvas {
-    display: block;
-}
-#toggle-view-btn:disabled,
-#toggle-view-btn:disabled:hover {
-     opacity: 0.5;
-     pointer-events: none;
-     cursor: default;
-}
-
+#canvas-panel.is-zoomed-out #mg-pasteboard-overlay-canvas {transform: scale(0.8);box-shadow: 0 0 15px rgba(0,0,0,0.5);}
+#canvas-panel.is-zoomed-out #mg-controls-overlay-canvas {display: none;}
+#canvas-panel.is-zoomed-out #mg-pasteboard-overlay-canvas {display: block;}
+#toggle-view-btn:disabled,#toggle-view-btn:disabled:hover {opacity: 0.5;pointer-events: none;cursor: default;}
 </style>
 </head>
 <body>
 <div class=window>
 <div id="loading-overlay"><h1>Generating Movie-Maker-Studio.exe</h1></div>
-<div class=titlebar><span>Movie-Maker-Studio.exe</span><div class=titlebar-controls><button id="theme-toggle-btn" title="Toggle Dark/Light Theme">◐</button><button id="toggle-view-btn" title="Toggle Canvas View (Z)">⬚</button><button id=visuals-btn>Edit Visuals</button><div id=visuals-dropdown><h5>Visuals Editor</h5><div id=asset-visuals-controls class=disabled><h6>Selected Asset</h6><div class=slider-container><label for=asset-opacity>Opacity</label><input type=range id=asset-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=asset-brightness>Brightness</label><input type=range id=asset-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=asset-saturation>Saturation</label><input type=range id=asset-saturation min=0 max=2 step=.01 value=1></div></div><div id=background-visuals-controls><h6>Background</h6><div class=slider-container><label for=bg-brightness>Brightness</label><input type=range id=bg-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=bg-saturation>Saturation</label><input type=range id=bg-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=text-btn>Text Layers</button><div id=text-dropdown><h5>Text Editor</h5><div id=text-layer-manager><div id=text-layer-palette></div><button id=add-new-text-layer-btn class="palette-slot empty" title="Add new text layer">+</button></div><div id=text-visuals-controls class=disabled><div class=slider-container><label for=text-content>Text Content</label><textarea id=text-content rows=3 style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)>New Text</textarea></div><div class=slider-container><label for=text-font>Font</label><select id=text-font style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)><option value="'VT323', monospace">VT323</option><option value="Arial, sans-serif">Arial</option><option value="Verdana, sans-serif">Verdana</option><option value="Georgia, serif">Georgia</option><option value="Times New Roman, serif">Times New Roman</option><option value="Courier New, monospace">Courier New</option><option value="Impact, fantasy">Impact</option><option value="Comic Sans MS, cursive">Comic Sans MS</option></select></div><div class=slider-container><label for=text-size>Size</label><input type=range id=text-size min=20 max=200 step=1 value=60></div><div class=slider-container><label for=text-color>Color</label><input type=color id=text-color value=#FFFFFF style=width:100%;border:none;padding:0></div><div class=slider-container><label for=text-opacity>Opacity</label><input type=range id=text-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=text-brightness>Brightness</label><input type=range id=text-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=text-saturation>Saturation</label><input type=range id=text-saturation min=0 max=2 step=.01 value=1></div></div></div><button id=audio-btn>+ Scene Audio</button><div id=audio-dropdown><h5>Scene Audio</h5><div id=audio-controls><p id=audio-file-name>No audio added.</p><div class=action-buttons><label class=mg-btn>Upload <input type=file id=scene-audio-input accept=audio/* style=display:none></label><button class=mg-btn id=remove-audio-btn>Remove</button></div></div></div><button id=shortcuts-btn>Shortcuts</button><div class=controls-fake><div class=btn-square></div><div class=btn-square></div></div><div id=shortcuts-dropdown><h5>Keyboard Shortcuts</h5><ul><li><span>Start/Stop Recording</span><kbd>R</kbd></li><li><span>Toggle Canvas View</span><kbd>Z</kbd></li><li><span>Enlarge Asset</span><kbd>D</kbd></li><li><span>Shrink Asset</span><kbd>F</kbd></li><li><span>Flip Asset Horizontally</span><kbd>S</kbd></li><li><span>Move Layer Up/Left</span><kbd>Q</kbd></li><li><span>Move Layer Down/Right</span><kbd>W</kbd></li><li><span>Toggle Gravity Menu</span><kbd>G</kbd></li><li><span>Delete Asset</span><kbd>Delete</kbd></li></ul></div></div></div><main id=studio-container><div id=controls-panel><fieldset><legend>Scenes</legend><div id=scene-tray></div><button class=mg-btn id=add-scene-btn style=margin-top:.5rem title="Add a new scene with an image or video background">+ Create Scene</button></fieldset><fieldset id="layers-fieldset"><legend>Layers</legend><p id=layer-instructions class=placeholder-text>Create a scene to begin.</p><div id=mg-asset-palette></div></fieldset>
-
+<div class=titlebar><span>Movie-Maker-Studio.exe</span><div class=titlebar-controls><button id="theme-toggle-btn" title="Toggle Dark/Light Theme">◐</button><button id="toggle-view-btn" title="Toggle Canvas View (Z)">⬚</button><button id=visuals-btn>Edit Visuals</button><div id=visuals-dropdown><h5>Visuals Editor</h5><div id=asset-visuals-controls class=disabled><h6>Selected Asset</h6><div class=slider-container><label for=asset-opacity>Opacity</label><input type=range id=asset-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=asset-brightness>Brightness</label><input type=range id=asset-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=asset-saturation>Saturation</label><input type=range id=asset-saturation min=0 max=2 step=.01 value=1></div></div><div id=background-visuals-controls><h6>Background</h6><div class=slider-container><label for=bg-brightness>Brightness</label><input type=range id=bg-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=bg-saturation>Saturation</label><input type=range id=bg-saturation min=0 max=2 step=.01 value=1></div></div></div><button id="background-remover-btn">BG Remover</button><div id="background-remover-dropdown"><h5>Background Remover</h5><p class="placeholder-text" style="font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 0.8rem;">Requires a selected image asset.</p><button class="mg-btn" id="remove-bg-btn" disabled>Remove Background of Asset</button></div><button id=text-btn>Text Layers</button><div id=text-dropdown><h5>Text Editor</h5><div id=text-layer-manager><div id=text-layer-palette></div><button id=add-new-text-layer-btn class="palette-slot empty" title="Add new text layer">+</button></div><div id=text-visuals-controls class=disabled><div class=slider-container><label for=text-content>Text Content</label><textarea id=text-content rows=3 style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)>New Text</textarea></div><div class=slider-container><label for=text-font>Font</label><select id=text-font style=width:100%;font-family:inherit;font-size:1rem;padding:4px;border:2px solid var(--ink);background:var(--bg)><option value="'VT323', monospace">VT323</option><option value="'Anton', sans-serif">Anton</option><option value="'Indie Flower', cursive">Indie Flower</option><option value="'Londrina Outline', cursive">Londrina Outline</option><option value="'Patua One', cursive">Patua One</option><option value="'Pixelify Sans', sans-serif">Pixelify Sans</option><option value="'Press Start 2P', cursive">Press Start 2P</option><option value="'Roboto', sans-serif">Roboto</option><option value="'Rubik Mono One', sans-serif">Rubik Mono One</option><option value="'Young Serif', serif">Young Serif</option><option value="Arial, sans-serif">Arial</option><option value="Verdana, sans-serif">Verdana</option><option value="Georgia, serif">Georgia</option><option value="Times New Roman, serif">Times New Roman</option><option value="Courier New, monospace">Courier New</option><option value="Impact, fantasy">Impact</option><option value="Comic Sans MS, cursive">Comic Sans MS</option></select></div><div class=slider-container><label for=text-size>Size</label><input type=range id=text-size min=20 max=800 step=1 value=410></div><div class=slider-container><label for=text-color>Color</label><input type=color id=text-color value=#FFFFFF style=width:100%;border:none;padding:0></div><div class="slider-container"><label for="text-stroke-color">Stroke Color</label><input type="color" id="text-stroke-color" value="#000000" style="width: 100%; border: none; padding: 0;"></div><div class="slider-container"><label for="text-stroke-width">Stroke Width</label><input type="range" id="text-stroke-width" min="0" max="20" step="1" value="0"></div><div class=slider-container><label for=text-opacity>Opacity</label><input type=range id=text-opacity min=0 max=1 step=.01 value=1></div><div class=slider-container><label for=text-brightness>Brightness</label><input type=range id=text-brightness min=0 max=2 step=.01 value=1></div><div class=slider-container><label for=text-saturation>Saturation</label><input type=range id=text-saturation min=0 max=2 step=.01 value=1></div></div></div>
+<button id=audio-btn>+ Scene Audio</button>
+<div id=audio-dropdown>
+    <h5>Scene Audio</h5>
+    <div id=audio-controls>
+        <div id="waveform" style="border: 1px solid var(--ink); margin-bottom: 10px; min-height: 100px; display: none;"></div>
+        <div id="waveform-loading" style="display: none; text-align: center; padding: 10px;">Loading waveform...</div>
+        <div class="action-buttons" id="audio-playback-controls" style="display: none;">
+            <button class="mg-btn" id="play-pause-audio-btn">Play</button>
+            <button class="mg-btn" id="set-start-time-btn">Set Start Time</button>
+        </div>
+        <p id=audio-file-name>No audio added.</p>
+        <div class=action-buttons>
+            <label class=mg-btn>Upload <input type=file id=scene-audio-input accept=audio/* style=display:none></label>
+            <button class=mg-btn id=remove-audio-btn>Remove</button>
+        </div>
+    </div>
+</div>
+<button id=shortcuts-btn>Shortcuts</button><div class=controls-fake><div class=btn-square></div><div class=btn-square></div></div><div id=shortcuts-dropdown><h5>Keyboard Shortcuts</h5><ul><li><span>Start/Stop Recording</span><kbd>R</kbd></li><li><span>Toggle Canvas View</span><kbd>Z</kbd></li><li><span>Enlarge Asset</span><kbd>D</kbd></li><li><span>Shrink Asset</span><kbd>F</kbd></li><li><span>Flip Asset Horizontally</span><kbd>S</kbd></li><li><span>Move Layer Up/Left</span><kbd>Q</kbd></li><li><span>Move Layer Down/Right</span><kbd>W</kbd></li><li><span>Toggle Gravity Menu</span><kbd>G</kbd></li><li><span>Delete Asset</span><kbd>Delete</kbd></li></ul></div></div></div><main id=studio-container><div id=controls-panel><fieldset><legend>Scenes</legend><div id=scene-tray></div><button class=mg-btn id=add-scene-btn style=margin-top:.5rem title="Add a new scene with an image or video background">+ Create Scene</button></fieldset><fieldset id="layers-fieldset"><legend>Layers</legend><p id=layer-instructions class=placeholder-text>Create a scene to begin.</p><div id=mg-asset-palette></div></fieldset>
             <fieldset id="stack-assets-fieldset" class="hidden"><legend>Multi-asset Layering</legend>
                 <p class="placeholder-text" style="font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 0.8rem;">
                     Click & drag assets to re-order your stack. The top-left is the highest layer.
@@ -168,7 +115,7 @@
         recordingCtx.imageSmoothingEnabled = true;
         recordingCtx.imageSmoothingQuality = 'high';
         const previewBtn = document.getElementById('mg-preview-btn');
-        const previewSceneBtn = document = document.getElementById('mg-preview-scene-btn');
+        const previewSceneBtn = document.getElementById('mg-preview-scene-btn');
         const previewPopup = document.getElementById('mg-preview-popup');
         const previewVideo = document.getElementById('mg-preview-video');
         const generateProjectBtn = document.getElementById('mg-generate-project-btn');
@@ -203,6 +150,8 @@
         const textFontSelect = document.getElementById('text-font');
         const textSizeSlider = document.getElementById('text-size');
         const textColorInput = document.getElementById('text-color');
+        const textStrokeColorInput = document.getElementById('text-stroke-color');
+        const textStrokeWidthSlider = document.getElementById('text-stroke-width');
         const textOpacitySlider = document.getElementById('text-opacity');
         const textBrightnessSlider = document.getElementById('text-brightness');
         const textSaturationSlider = document.getElementById('text-saturation');
@@ -210,6 +159,9 @@
         const textLayerPalette = document.getElementById('text-layer-palette');
         const themeToggleBtn = document.getElementById('theme-toggle-btn');
         const toggleViewBtn = document.getElementById('toggle-view-btn');
+        const backgroundRemoverBtn = document.getElementById('background-remover-btn');
+        const backgroundRemoverDropdown = document.getElementById('background-remover-dropdown');
+        const removeBgBtn = document.getElementById('remove-bg-btn');
         let isCanvasViewZoomedOut = false;
         const DAMPING_FACTOR = 0.5;
         const RESIZE_SPEED = 1.546875;
@@ -244,40 +196,24 @@
         const GRAVITY_TRAJECTORY_STEPS = 50;
         const TRAJECTORY_TIME_SCALING_FACTOR = 0.2;
         const MAX_TRAJECTORY_TIME_SECONDS = 15;
+        let wavesurfer = null;
+        let selectedAudioStartTime = 0;
 
         const getCurrentScene = () => scenes.find(s => s.id === activeSceneId);
         const getActiveLayer = () => getCurrentScene()?.layers.find(l => l.id === activeMovieLayerId);
 
-        // --- EFFECT ADDED ---
-        // Two new helper functions to calculate and apply the "foggy glass" background effect.
-        /**
-         * Calculates the average color of an image or video element.
-         * @param {HTMLImageElement|HTMLVideoElement} element The media element.
-         * @returns {string} An RGB color string like "123, 45, 67".
-         */
-
-        // --- SOLUTION: Add this new helper function near the top ---
-/**
- * Seeks a video to a specific time and returns a Promise that resolves when seeking is complete.
- * @param {HTMLVideoElement} video The video element to seek.
- * @param {number} time The time in seconds to seek to.
- * @returns {Promise<void>}
- */
 function seekVideo(video, time) {
     return new Promise((resolve, reject) => {
-        // This is a safeguard for videos that might have loading errors
         const onError = () => {
             video.removeEventListener('seeked', onSeeked);
             video.removeEventListener('error', onError);
             reject(new Error('Video seeking failed.'));
         };
-
         const onSeeked = () => {
             video.removeEventListener('seeked', onSeeked);
             video.removeEventListener('error', onError);
             resolve();
         };
-        
         video.addEventListener('seeked', onSeeked, { once: true });
         video.addEventListener('error', onError, { once: true });
         video.currentTime = time;
@@ -294,22 +230,14 @@ function seekVideo(video, time) {
             return `${data[0]}, ${data[1]}, ${data[2]}`;
         }
 
-        /**
-         * Applies the foggy glass background effect to the canvas panel.
-         * @param {object|null} scene The scene object, or null to clear the effect.
-         */
-
-        // --- SOLUTION: Add this new function at the top of your script, near the other helpers ---
 function updateAllVideoProxies() {
     const scene = getCurrentScene();
-    if (!scene || isRecording) return; // Don't update proxies during final recording
+    if (!scene || isRecording) return; 
 
     for (const layer of scene.layers) {
-        // Only update for video layers that have a proxy canvas and are ready
         if (layer.type === 'video' && layer.proxyCanvas && layer.asset.readyState >= 2) {
             const video = layer.asset;
             const pCtx = layer.proxyCtx;
-            
             pCtx.clearRect(0, 0, layer.proxyCanvas.width, layer.proxyCanvas.height);
             pCtx.drawImage(video, 0, 0, layer.proxyCanvas.width, layer.proxyCanvas.height);
         }
@@ -369,30 +297,27 @@ function addMovieLayer(src, properties = {}) {
             gravityValue: 0,
             projectileRotationRate: 0,
             committed: false,
-            // --- SOLUTION 1: PROXY CANVAS FOR VIDEO ASSETS ---
-            // Create a low-res off-screen canvas for smoother live playback
             proxyCanvas: null,
             proxyCtx: null,
         };
 
         if (assetType === 'video') {
-            const PROXY_MAX_DIM = 256; // Max width/height for the proxy, adjust if needed
+            const PROXY_MAX_DIM = 256;
             element.addEventListener('loadedmetadata', () => {
                 const w = element.videoWidth;
                 const h = element.videoHeight;
                 const aspect = w / h;
                 newLayer.proxyCanvas = document.createElement('canvas');
-                if (aspect >= 1) { // Landscape or square
+                if (aspect >= 1) { 
                     newLayer.proxyCanvas.width = PROXY_MAX_DIM;
                     newLayer.proxyCanvas.height = PROXY_MAX_DIM / aspect;
-                } else { // Portrait
+                } else { 
                     newLayer.proxyCanvas.height = PROXY_MAX_DIM;
                     newLayer.proxyCanvas.width = PROXY_MAX_DIM * aspect;
                 }
                 newLayer.proxyCtx = newLayer.proxyCanvas.getContext('2d');
             }, { once: true });
         }
-        // --- END SOLUTION ---
 
         const visualLayers = scene.layers.filter(l => l.type !== 'text' && !l.committed);
         const isFirstAsset = visualLayers.length === 0;
@@ -449,12 +374,47 @@ function addMovieLayer(src, properties = {}) {
         video.src = src
     }
 }
+async function removeBackground() {
+    const activeLayer = getActiveLayer();
+    if (!activeLayer || activeLayer.type !== 'image') {
+        toast('Please select an image asset to remove its background.', 4000);
+        return;
+    }
 
+    toast('AI is removing background, please wait...', null);
+    removeBgBtn.disabled = true;
+    removeBgBtn.textContent = 'Processing...';
+
+    try {
+        const imageSrc = activeLayer.asset.src;
+        const resultBlob = await imglyRemoveBackground(imageSrc);
+        const newSrcUrl = URL.createObjectURL(resultBlob);
+        const newImg = new Image();
+        newImg.onload = () => {
+            activeLayer.asset = newImg;
+            activeLayer.src = newSrcUrl;
+
+            toast('Background removed successfully!', 4000);
+            removeBgBtn.disabled = false;
+            removeBgBtn.textContent = 'Remove Background of Asset';
+            drawMovieFrame();
+            renderLayerPalette();
+            renderStackedLayersPalette();
+        };
+        newImg.src = newSrcUrl;
+
+    } catch (error) {
+        console.error("Background removal failed:", error);
+        toast('Could not remove background. The AI may have had an issue.', 5000);
+        removeBgBtn.disabled = false;
+        removeBgBtn.textContent = 'Remove Background of Asset';
+    }
+}
         function updateCanvasPanelBackground(scene) {
             if (scene && scene.dominantColor) {
                 canvasPanel.style.backgroundColor = `rgba(${scene.dominantColor}, 0.4)`;
                 canvasPanel.style.backdropFilter = 'blur(15px)';
-                canvasPanel.style.webkitBackdropFilter = 'blur(15px)'; // For Safari support
+                canvasPanel.style.webkitBackdropFilter = 'blur(15px)';
             } else {
                 canvasPanel.style.backgroundColor = '';
                 canvasPanel.style.backdropFilter = '';
@@ -544,6 +504,7 @@ function addMovieLayer(src, properties = {}) {
     recordLayerBtn.disabled = !hasAnyLayers || isRecording;
     
     textBtn.disabled = !hasScenes || isRecording || isPendingCommit;
+    backgroundRemoverBtn.disabled = !hasScenes || isRecording || isPendingCommit;
     addNewTextLayerBtn.disabled = isRecording || isPendingCommit || !currentScene;
 
     const hasPreviewableContent = currentScene && (!!layerRecordingUrl || currentScene.committedLayerSrcs.length > 0);
@@ -698,7 +659,6 @@ function addMovieLayer(src, properties = {}) {
                         function switchScene(sceneId) {
     stopAnimationLoop();
 
-    // --- SOLUTION 2: PAUSE VIDEOS IN THE OLD SCENE ---
     const oldScene = getCurrentScene();
     if (oldScene) {
         oldScene.layers.forEach(layer => {
@@ -707,7 +667,6 @@ function addMovieLayer(src, properties = {}) {
             }
         });
     }
-    // --- END SOLUTION ---
 
     activeSceneId = sceneId;
     const currentScene = getCurrentScene();
@@ -721,13 +680,11 @@ function addMovieLayer(src, properties = {}) {
 
     currentScene.sceneFadeInStart = Date.now();
 
-    // --- SOLUTION 2: PLAY VIDEOS IN THE NEW SCENE ---
     currentScene.layers.forEach(layer => {
         if (layer.type === 'video') {
-            layer.asset.play().catch(() => {}); // Autoplay might be blocked, so we catch errors
+            layer.asset.play().catch(() => {});
         }
     });
-    // --- END SOLUTION ---
 
     activeMovieLayerId = null;
     projectileVectorStart = null;
@@ -785,7 +742,6 @@ function addMovieLayer(src, properties = {}) {
                 addMovieLayer(src, { type: 'image' });
                 closeAssetLibrary()
             };
-            // To remove the last 3 slots, we change the length from 107 to 104.
             Array.from({ length: 104 }, (_, i) => i + 1).forEach(i => {
                 const src = `./assets/maker/${i}.png`;
                 const div = document.createElement('div');
@@ -1153,14 +1109,16 @@ function renderLayerPalette() {
             const activeLayer = getActiveLayer();
             if (activeLayer && (activeLayer.type === 'image' || activeLayer.type === 'video')) {
                 assetVisualsControls.classList.remove('disabled');
-                assetOpacitySlider.value = activeLayer.opacity;
+                assetOpacitySlider.value = activeLayer.targetOpacity ?? activeLayer.opacity;
                 assetBrightnessSlider.value = activeLayer.brightness;
                 assetSaturationSlider.value = activeLayer.saturation;
+                removeBgBtn.disabled = activeLayer.type !== 'image';
             } else {
                 assetVisualsControls.classList.add('disabled');
                 assetOpacitySlider.value = 1;
                 assetBrightnessSlider.value = 1;
                 assetSaturationSlider.value = 1;
+                removeBgBtn.disabled = true;
             }
         }
 
@@ -1172,7 +1130,9 @@ function renderLayerPalette() {
                 textFontSelect.value = activeLayer.font;
                 textSizeSlider.value = activeLayer.fontSize;
                 textColorInput.value = activeLayer.color;
-                textOpacitySlider.value = activeLayer.opacity;
+                textStrokeColorInput.value = activeLayer.strokeColor;
+                textStrokeWidthSlider.value = activeLayer.strokeWidth;
+                textOpacitySlider.value = activeLayer.targetOpacity ?? activeLayer.opacity;
                 textBrightnessSlider.value = activeLayer.brightness;
                 textSaturationSlider.value = activeLayer.saturation;
             } else {
@@ -1181,6 +1141,8 @@ function renderLayerPalette() {
                 textFontSelect.value = "'VT323', monospace";
                 textSizeSlider.value = 60;
                 textColorInput.value = "#FFFFFF";
+                textStrokeColorInput.value = '#000000';
+                textStrokeWidthSlider.value = 0;
                 textOpacitySlider.value = 1;
                 textBrightnessSlider.value = 1;
                 textSaturationSlider.value = 1;
@@ -1217,118 +1179,7 @@ function renderLayerPalette() {
             }
         }
 
-                        function addMovieLayer(src, properties = {}) {
-            const currentScene = getCurrentScene();
-            if (!currentScene) {
-                toast('Add a background first.', 2000);
-                return
-            }
-            const assetType = properties.type || 'image';
-
-            const createLayer = (element) => {
-                const scene = getCurrentScene();
-                if (!scene) return;
-                if (assetType === 'video') {
-                    element.preload = 'auto';
-                    element.muted = true;
-                    element.playsinline = true;
-                    element.loop = true;
-                    const prime = () => {
-                        try { element.currentTime = 0.001 } catch (e) {}
-                        element.play().catch(() => {})
-                    };
-                    if (element.readyState >= 2) {
-                        prime()
-                    } else {
-                        element.addEventListener('loadeddata', prime, {once: true})
-                    }
-                }
-                const newLayer = {
-                    id: (Date.now() + Math.random()).toString(),
-                    src,
-                    asset: element,
-                    type: assetType,
-                    x: properties.x || movieCanvas.width / 2,
-                    y: properties.y || movieCanvas.height / 2,
-                    size: properties.size || movieCanvas.width * 0.25,
-                    rot: properties.rot || 0,
-                    flipX: false,
-                    // --- FADE-IN LOGIC ---
-                    targetOpacity: 1, // The final opacity it should have
-                    opacity: 0,       // Start completely transparent
-                    fadeInStartTime: Date.now(), // Timestamp to start the animation
-                    // --- END ---
-                    brightness: 1,
-                    saturation: 1,
-                    isProjectileActive: false,
-                    projectileVectorX: 0,
-                    projectileVectorY: 0,
-                    projectileStartX: 0,
-                    projectileStartY: 0,
-                    projectileTimestamp: 0,
-                    projectileInitialRotation: 0,
-                    projectileInitialFlipX: false,
-                    gravityValue: 0,
-                    projectileRotationRate: 0,
-                    committed: false
-                };
-
-                const visualLayers = scene.layers.filter(l => l.type !== 'text' && !l.committed);
-                const isFirstAsset = visualLayers.length === 0;
-
-                const otherLayers = scene.layers.filter(l => l.type === 'text' || l.committed);
-                scene.layers = [newLayer, ...visualLayers, ...otherLayers];
-
-                activeMovieLayerId = newLayer.id;
-                renderLayerPalette();
-                renderStackedLayersPalette(); 
-                updateControlsState();
-                updateEditPanelsUI();
-                drawMovieFrame();
-                drawControlsOverlay();
-                if (getCurrentScene()) getCurrentScene().layerStartingStates = null;
-                toast('Asset Added! Ready to record.', 3000);
-
-                if (isFirstAsset) {
-                    setTimeout(() => {
-                        const layersFieldset = document.getElementById('layers-fieldset'); 
-                        if (layersFieldset) {
-                           layersFieldset.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }, 100); 
-                }
-            };
-            if (assetCache[src]) {
-                const cached = assetCache[src];
-                if (assetType === 'video') {
-                    cached.preload = 'auto';
-                    cached.muted = true;
-                    cached.playsinline = true;
-                    cached.loop = true;
-                    try { cached.currentTime = 0.001 } catch (e) {}
-                    cached.play().catch(() => {})
-                }
-                createLayer(cached);
-                return
-            }
-            if (assetType === 'image') {
-                const image = new Image();
-                image.onload = () => { assetCache[src] = image; createLayer(image) };
-                image.onerror = () => toast(`Could not load asset: ${src}`);
-                image.src = src
-            } else if (assetType === 'video') {
-                const video = document.createElement('video');
-                video.preload = 'auto';
-                video.muted = true;
-                video.playsinline = true;
-                video.loop = true;
-                const onLoaded = () => { assetCache[src] = video; createLayer(video) };
-                video.addEventListener('loadeddata', onLoaded, {once: true});
-                video.onerror = () => toast(`Could not load video asset: ${src}`);
-                video.src = src
-            }
-        }
-                function addTextLayer() {
+        function addTextLayer() {
             const currentScene = getCurrentScene();
             if (!currentScene) {
                 toast('Add a background first.', 2000);
@@ -1340,17 +1191,17 @@ function renderLayerPalette() {
                 type: 'text',
                 text: 'New Text',
                 font: "'VT323', monospace",
-                fontSize: 60,
+                fontSize: 150,
                 color: '#FFFFFF',
+                strokeColor: '#000000',
+                strokeWidth: 0,
                 x: movieCanvas.width / 2,
                 y: movieCanvas.height / 2,
                 rot: 0,
                 flipX: false,
-                // --- FADE-IN LOGIC ---
-                targetOpacity: 1, // The final opacity it should have
-                opacity: 0,       // Start completely transparent
-                fadeInStartTime: Date.now(), // Timestamp to start the animation
-                // --- END ---
+                targetOpacity: 1,
+                opacity: 0,
+                fadeInStartTime: Date.now(),
                 brightness: 1,
                 saturation: 1,
                 width: 0,
@@ -1500,7 +1351,6 @@ function renderLayerPalette() {
             movieCtx.scale(-1, 1)
         }
         if (l.type === 'image' || l.type === 'video') {
-            // --- SOLUTION 1: USE PROXY CANVAS FOR LIVE DRAWING ---
             const elementToDraw = l.type === 'video' && l.proxyCanvas ? l.proxyCanvas : l.asset;
             const isReady = (l.type === 'image' && l.asset.complete) || (l.type === 'video' && l.asset.readyState > 1);
             if (elementToDraw && isReady) {
@@ -1514,24 +1364,29 @@ function renderLayerPalette() {
                 const dHeight = l.size * (assetHeight / assetWidth);
                 movieCtx.drawImage(elementToDraw, -dWidth / 2, -dHeight / 2, dWidth, dHeight)
             }
-            // --- END SOLUTION ---
         } else if (l.type === 'text') {
             movieCtx.font = `${l.fontSize}px ${l.font}`;
             movieCtx.fillStyle = l.color;
             movieCtx.textAlign = 'center';
             movieCtx.textBaseline = 'middle';
+            if (l.strokeWidth > 0) {
+                movieCtx.strokeStyle = l.strokeColor;
+                movieCtx.lineWidth = l.strokeWidth;
+            }
             const metrics = getTextBlockMetrics(movieCtx, l.text, l.font, l.fontSize);
             l.width = metrics.maxWidth;
             l.height = metrics.totalHeight;
             const startY = -metrics.totalHeight / 2 + metrics.lineHeight / 2 - (l.fontSize * 0.1);
             metrics.lines.forEach((line, index) => {
+                if (l.strokeWidth > 0) {
+                    movieCtx.strokeText(line, 0, startY + (index * metrics.lineHeight));
+                }
                 movieCtx.fillText(line, 0, startY + (index * metrics.lineHeight));
             });
         }
         movieCtx.restore();
     }
 
-    // IMPORTANT: For recording, we still draw the HIGH-QUALITY original asset.
     if (isRecording) {
         const bg = backgroundElement;
         if (masterWidth === 0 || masterHeight === 0) return;
@@ -1563,7 +1418,6 @@ function renderLayerPalette() {
             }
             if (l.type === 'image' || l.type === 'video') {
                 const isReady = (l.type === 'image' && l.asset.complete) || (l.type === 'video' && l.asset.readyState > 1);
-                // --- NOTICE: We use l.asset here for full quality recording ---
                 if (l.asset && isReady) {
                     const assetWidth = l.type === 'image' ? l.asset.naturalWidth : l.asset.videoWidth;
                     const assetHeight = l.type === 'image' ? l.asset.naturalHeight : l.asset.videoHeight;
@@ -1582,11 +1436,16 @@ function renderLayerPalette() {
                 recordingCtx.fillStyle = l.color;
                 recordingCtx.textAlign = 'center';
                 recordingCtx.textBaseline = 'middle';
-                
+                if (l.strokeWidth > 0) {
+                    recordingCtx.strokeStyle = l.strokeColor;
+                    recordingCtx.lineWidth = l.strokeWidth * scaleY;
+                }
                 const metrics = getTextBlockMetrics(recordingCtx, l.text, l.font, finalFontSize);
                 const startY = -metrics.totalHeight / 2 + metrics.lineHeight / 2 - (finalFontSize * 0.1);
-
                 metrics.lines.forEach((line, index) => {
+                    if (l.strokeWidth > 0) {
+                        recordingCtx.strokeText(line, 0, startY + (index * metrics.lineHeight));
+                    }
                     recordingCtx.fillText(line, 0, startY + (index * metrics.lineHeight));
                 });
             }
@@ -1596,9 +1455,7 @@ function renderLayerPalette() {
 }
 
 function animationLoop() {
-    // --- SOLUTION 1: UPDATE PROXIES ONCE PER FRAME ---
     updateAllVideoProxies();
-    // --- END SOLUTION ---
     drawMovieFrame();
     drawControlsOverlay();
     animationFrameId = requestAnimationFrame(animationLoop);
@@ -1789,6 +1646,52 @@ function animationLoop() {
             ctx.setLineDash([]);
         }
 
+        function initWaveform(audioUrl) {
+            if (wavesurfer) {
+                wavesurfer.destroy();
+            }
+
+            const waveformContainer = document.getElementById('waveform');
+            const waveformLoading = document.getElementById('waveform-loading');
+            const audioPlaybackControls = document.getElementById('audio-playback-controls');
+
+            waveformContainer.style.display = 'block';
+            waveformLoading.style.display = 'block';
+            audioPlaybackControls.style.display = 'none';
+
+            wavesurfer = WaveSurfer.create({
+                container: '#waveform',
+                waveColor: 'var(--mid)',
+                progressColor: 'var(--action-color)',
+                barWidth: 2,
+                barRadius: 3,
+                cursorWidth: 2,
+                cursorColor: 'var(--danger-color)',
+                height: 100,
+                barGap: 3
+            });
+
+            wavesurfer.load(audioUrl);
+
+            wavesurfer.on('ready', function () {
+                waveformLoading.style.display = 'none';
+                audioPlaybackControls.style.display = 'grid';
+                document.getElementById('play-pause-audio-btn').textContent = 'Play';
+            });
+
+            wavesurfer.on('finish', function () {
+                document.getElementById('play-pause-audio-btn').textContent = 'Play';
+            });
+            
+             wavesurfer.on('play', function () {
+                document.getElementById('play-pause-audio-btn').textContent = 'Pause';
+            });
+
+            wavesurfer.on('pause', function () {
+                document.getElementById('play-pause-audio-btn').textContent = 'Play';
+            });
+        }
+
 
         function animationLoop() {
             drawMovieFrame();
@@ -1893,7 +1796,7 @@ function animationLoop() {
 
                 const audioSourceElement = currentScene.audioElement || (currentScene.backgroundType === 'video' ? currentScene.backgroundElement : null);
                 if (audioSourceElement) {
-                    audioSourceElement.currentTime = 0;
+                    audioSourceElement.currentTime = audioSourceElement === currentScene.audioElement ? selectedAudioStartTime : 0;
                     if (audioSourceElement.tagName === 'VIDEO') {
                         audioSourceElement.volume = 1;
                     }
@@ -1935,6 +1838,7 @@ function animationLoop() {
                     currentScene.backgroundElement.play();
                 }
                 if (currentScene.audioElement) {
+                    currentScene.audioElement.currentTime = selectedAudioStartTime;
                     currentScene.audioElement.play();
                 }
                 toast('Recording started!', 2000);
@@ -2078,7 +1982,6 @@ function animationLoop() {
             }
         }
 
-// --- Replace your entire existing function with this one ---
 async function generateFinalMovie() {
     if (scenes.length === 0) {
         toast('Please create at least one scene to generate a project.', 3000);
@@ -2143,10 +2046,7 @@ async function generateFinalMovie() {
         const mediaMs = (scene.backgroundType === 'video') ? getMediaDurationMs(scene.backgroundElement, 'video') : getMediaDurationMs(scene.backgroundElement, 'image');
         ensureSceneDurationMs(scene, mediaMs);
         const sceneDur = Math.max(scene.durationMs || 0, 1000);
-
-        // --- ROBUST SOLUTION: PREPARE ALL MEDIA BEFORE RENDERING ---
         
-        // 1. Collect all video elements in the current scene
         const videosToPrepare = [];
         if (scene.backgroundType === 'video') {
             videosToPrepare.push(scene.backgroundElement);
@@ -2157,13 +2057,8 @@ async function generateFinalMovie() {
             }
         });
 
-        // 2. Create a list of promises, one for each video to be seeked
         const seekPromises = videosToPrepare.map(video => seekVideo(video, 0));
-
-        // 3. Wait for ALL videos to confirm they have seeked to the start
         await Promise.all(seekPromises);
-        
-        // --- All media is now guaranteed to be ready at frame 0 ---
         
         await new Promise(sceneResolve => {
             const startTs = performance.now();
@@ -2249,8 +2144,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
     recordingCtx.restore();
 
     layersToDraw.forEach(l => {
-        // --- FIX #1: SKIP COMMITTED LAYERS ---
-        // If the layer is committed, don't draw it in the final render.
         if (l.committed) {
             return; 
         }
@@ -2276,18 +2169,22 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 recordingCtx.drawImage(l.asset, -dWidth / 2, -dHeight / 2, dWidth, dHeight);
             }
         } else if (l.type === 'text') {
-            // --- FIX #2: USE THE CORRECT MULTI-LINE TEXT RENDERING LOGIC ---
             const scaledFontSize = l.fontSize * scaleY;
             recordingCtx.font = `${scaledFontSize}px ${l.font}`;
             recordingCtx.fillStyle = l.color;
             recordingCtx.textAlign = 'center';
             recordingCtx.textBaseline = 'middle';
-            
-            // This logic correctly handles newlines (\n) in the text content.
+            if (l.strokeWidth > 0) {
+                recordingCtx.strokeStyle = l.strokeColor;
+                recordingCtx.lineWidth = l.strokeWidth * scaleY;
+            }
             const metrics = getTextBlockMetrics(recordingCtx, l.text, l.font, scaledFontSize);
             const startY = -metrics.totalHeight / 2 + metrics.lineHeight / 2 - (scaledFontSize * 0.1);
 
             metrics.lines.forEach((line, index) => {
+                if (l.strokeWidth > 0) {
+                    recordingCtx.strokeText(line, 0, startY + (index * metrics.lineHeight));
+                }
                 recordingCtx.fillText(line, 0, startY + (index * metrics.lineHeight));
             });
         }
@@ -2301,16 +2198,16 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
 
             let localX, localY;
 
-            if (layer.x >= centerX && layer.y < centerY) { // Q1 (Top Right) -> Handle is Bottom Left
+            if (layer.x >= centerX && layer.y < centerY) { 
                 localX = -dWidth / 2 - PROJECTILE_HANDLE_OFFSET;
                 localY = dHeight / 2 + PROJECTILE_HANDLE_OFFSET;
-            } else if (layer.x < centerX && layer.y < centerY) { // Q2 (Top Left) -> Handle is Bottom Right
+            } else if (layer.x < centerX && layer.y < centerY) { 
                 localX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
                 localY = dHeight / 2 + PROJECTILE_HANDLE_OFFSET;
-            } else if (layer.x < centerX && layer.y >= centerY) { // Q3 (Bottom Left) -> Handle is Top Right
+            } else if (layer.x < centerX && layer.y >= centerY) { 
                 localX = dWidth / 2 + PROJECTILE_HANDLE_OFFSET;
                 localY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
-            } else { // Q4 (Bottom Right) -> Handle is Top Left
+            } else { 
                 localX = -dWidth / 2 - PROJECTILE_HANDLE_OFFSET;
                 localY = -dHeight / 2 - PROJECTILE_HANDLE_OFFSET;
             }
@@ -2327,7 +2224,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             const activeLayer = getActiveLayer();
             let interactionFound = false;
 
-            // Priority 1: Check for interaction with the ALREADY ACTIVE layer
             if (activeLayer) {
                 const handle = getMovieHandleAtPoint(point, activeLayer);
                 if (handle) {
@@ -2345,7 +2241,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                             positionGravityMenu(activeLayer);
                         }
                         drawControlsOverlay();
-                        return; // End interaction here
+                        return;
                     }
                     movieInteraction = {
                         active: true,
@@ -2379,7 +2275,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 }
             }
 
-            // Priority 2: If no interaction, check for a NEW layer selection
             if (!interactionFound) {
                 for (let i = 0; i < currentScene.layers.length; i++) {
                     const l = currentScene.layers[i];
@@ -2405,7 +2300,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 }
             }
             
-            // Priority 3: If still nothing, deselect
             if (!interactionFound && activeMovieLayerId) {
                 activeMovieLayerId = null;
                 gravityMenu.classList.add('hidden');
@@ -2420,27 +2314,15 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             }
         }
         function getMovieCanvasPoint(e) {
-            // This version correctly calculates the logical canvas coordinates
-            // regardless of whether the view is zoomed out or not.
-            const rect = canvasPanel.getBoundingClientRect(); // Use the panel for stable dimensions
+            const rect = canvasPanel.getBoundingClientRect();
             const clientX = e.clientX;
             const clientY = e.clientY;
-
-            // Get the displayed dimensions of the movie canvas (which is scaled by CSS)
             const movieCanvasRect = movieCanvas.getBoundingClientRect();
-
-            // Calculate the ratio of logical size to displayed size
             const scaleX = movieCanvas.width / movieCanvasRect.width;
             const scaleY = movieCanvas.height / movieCanvasRect.height;
-            
-            // Calculate the click position relative to the displayed canvas, then scale it up
             const logicalX = (clientX - movieCanvasRect.left) * scaleX;
             const logicalY = (clientY - movieCanvasRect.top) * scaleY;
-
-            return {
-                x: logicalX,
-                y: logicalY
-            };
+            return {x: logicalX, y: logicalY};
         }
 
                 function getMovieHandleAtPoint(point, layer) {
@@ -2531,8 +2413,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
         function positionGravityMenu(layer) {
   const canvasRect = movieCanvas.getBoundingClientRect();
   const panelRect = canvasPanel.getBoundingClientRect();
-
-  // --- 0) Compute displayed layer dimensions ---
   let dWidth, dHeight;
   if (layer.type === 'image' || layer.type === 'video') {
     const assetWidth  = layer.type === 'image' ? (layer.asset?.naturalWidth  || 1) : (layer.asset?.videoWidth  || 1);
@@ -2546,18 +2426,14 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
   } else {
     return;
   }
-
-  // --- 1) On-screen bbox for the rotated layer (viewport coords) ---
   const angle = layer.rot * Math.PI / 180;
   const cos = Math.cos(angle), sin = Math.sin(angle);
   const scaleX = canvasRect.width / movieCanvas.width;
   const scaleY = canvasRect.height / movieCanvas.height;
-
   const corners = [
     { x: -dWidth/2, y: -dHeight/2 }, { x:  dWidth/2, y: -dHeight/2 },
     { x:  dWidth/2, y:  dHeight/2 }, { x: -dWidth/2, y:  dHeight/2 }
   ];
-
   const screenCorners = corners.map(c => {
     const rx = c.x * cos - c.y * sin;
     const ry = c.x * sin + c.y * cos;
@@ -2566,82 +2442,50 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
       y: (layer.y + ry) * scaleY + panelRect.top
     };
   });
-
   const bbox = {
     minX: Math.min(...screenCorners.map(c => c.x)),
     maxX: Math.max(...screenCorners.map(c => c.x)),
     minY: Math.min(...screenCorners.map(c => c.y)),
     maxY: Math.max(...screenCorners.map(c => c.y))
   };
-
-  // --- 2) Measure the menu while it's rendered but invisible ---
-  // Remove "display:none" before measuring
   const wasHidden = gravityMenu.classList.contains('hidden') || gravityMenu.style.display === 'none';
-  const prevVis = gravityMenu.style.visibility;
-  const prevDisp = gravityMenu.style.display;
-
   if (wasHidden) {
     gravityMenu.classList.remove('hidden');
     gravityMenu.style.visibility = 'hidden';
     gravityMenu.style.display = 'block';
   }
-
-  // Use getBoundingClientRect for accurate size
   const menuRect = gravityMenu.getBoundingClientRect();
   const menuWidth = menuRect.width;
   const menuHeight = menuRect.height;
-
-  // --- 3) Quadrant logic in viewport coordinates (unchanged rules) ---
   const margin = 10;
   const assetCX = (bbox.minX + bbox.maxX) / 2;
   const assetCY = (bbox.minY + bbox.maxY) / 2;
   const panelCX = panelRect.left + panelRect.width / 2;
   const panelCY = panelRect.top  + panelRect.height / 2;
-
-  let finalLeft_vp, finalTop_vp; // viewport-based
-
+  let finalLeft_vp, finalTop_vp;
   if (assetCX >= panelCX && assetCY < panelCY) {
-    // Q1: popup top-right near asset bottom-left
     finalLeft_vp = bbox.minX - menuWidth - margin;
     finalTop_vp  = bbox.maxY + margin;
   } else if (assetCX < panelCX && assetCY < panelCY) {
-    // Q2: popup top-left near asset bottom-right
     finalLeft_vp = bbox.maxX + margin;
     finalTop_vp  = bbox.maxY + margin;
   } else if (assetCX < panelCX && assetCY >= panelCY) {
-    // Q3: popup bottom-left near asset top-right
     finalLeft_vp = bbox.maxX + margin;
     finalTop_vp  = bbox.minY - menuHeight - margin;
   } else {
-    // Q4: popup bottom-right near asset top-left
     finalLeft_vp = bbox.minX - menuWidth - margin;
     finalTop_vp  = bbox.minY - menuHeight - margin;
   }
-
-  // --- 4) Convert viewport coords to the menu's offsetParent coords ---
   const parentEl = gravityMenu.offsetParent || document.body;
   const parentRect = parentEl.getBoundingClientRect();
-
   let finalLeft = finalLeft_vp - parentRect.left;
   let finalTop  = finalTop_vp  - parentRect.top;
-
-  // (Optional) Clamp inside parent
   finalLeft = Math.max(0, Math.min(finalLeft, parentRect.width  - menuWidth));
   finalTop  = Math.max(0, Math.min(finalTop,  parentRect.height - menuHeight));
-
-  // --- 5) Apply position + restore visibility ---
   gravityMenu.style.left = `${finalLeft}px`;
   gravityMenu.style.top  = `${finalTop}px`;
-
   gravityMenu.style.visibility = 'visible';
   gravityMenu.style.display = 'block';
-
-  // If it was previously hidden and you want it hidden until shown explicitly, flip this:
-  if (!wasHidden) {
-    // leave as-is
-  }
-
-  // --- 6) Update UI fields ---
     gravityInput.value = Number(layer.gravityValue ?? 0).toFixed(1);
     const rotationRateInput = document.getElementById('gravity-rotation-rate');
     const currentRate = layer.projectileRotationRate || 0;
@@ -2649,8 +2493,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
     gravityInstructions.textContent =
         'Click & drag on asset for initial speed. Set gravity & rotation below.';
 }
-
-        
                 function handleMovieInteractionMove(e) {
             if (!movieInteraction.active) {
                 updateCursor(e);
@@ -2681,6 +2523,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                     const scaleFactor = currentDist / initialDist;
                     if (l.type === 'text') {
                         l.fontSize = Math.max(10, iState.fontSize * scaleFactor);
+                        textSizeSlider.value = l.fontSize; // ADD THIS LINE TO SYNC THE SLIDER
                     } else {
                         l.size = Math.max(20, iState.size * scaleFactor);
                     }
@@ -3043,6 +2886,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 shortcutsDropdown.classList.remove('visible');
                 visualsDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
+                backgroundRemoverDropdown.classList.remove('visible');
             });
             
             addNewTextLayerBtn.addEventListener('click', e => {
@@ -3181,11 +3025,21 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 visualsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
+                backgroundRemoverDropdown.classList.remove('visible');
             });
             visualsBtn.addEventListener('click', e => {
                 e.stopPropagation();
                 visualsDropdown.classList.toggle('visible');
                 shortcutsDropdown.classList.remove('visible');
+                textDropdown.classList.remove('visible');
+                audioDropdown.classList.remove('visible');
+                backgroundRemoverDropdown.classList.remove('visible');
+            });
+             backgroundRemoverBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                backgroundRemoverDropdown.classList.toggle('visible');
+                shortcutsDropdown.classList.remove('visible');
+                visualsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
             });
@@ -3195,12 +3049,16 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 shortcutsDropdown.classList.remove('visible');
                 visualsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
+                backgroundRemoverDropdown.classList.remove('visible');
             });
 
             visualsDropdown.addEventListener('click', e => e.stopPropagation());
             textDropdown.addEventListener('click', e => e.stopPropagation());
             audioDropdown.addEventListener('click', e => e.stopPropagation());
             shortcutsDropdown.addEventListener('click', e => e.stopPropagation());
+            backgroundRemoverDropdown.addEventListener('click', e => e.stopPropagation());
+
+            removeBgBtn.addEventListener('click', removeBackground);
 
             applyGravityBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -3243,14 +3101,19 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 const audioURL = URL.createObjectURL(file);
                 currentScene.audioElement = new Audio(audioURL);
                 currentScene.audioName = file.name;
+                selectedAudioStartTime = 0;
                 currentScene.audioElement.addEventListener('loadedmetadata', () => {
                     const aDur = Math.floor((currentScene.audioElement.duration || 0) * 1000);
                     currentScene.audioDurationMs = aDur
                 });
-                toast('Audio added! It will play during recording.', 4000);
+
+                initWaveform(audioURL);
+
+                toast('Audio added! Select a start time and preview.', 4000);
                 updateAudioUI();
                 setValNull(e)
             });
+
             removeAudioBtn.addEventListener('click', () => {
                 const currentScene = getCurrentScene();
                 if (currentScene && currentScene.audioElement) {
@@ -3258,10 +3121,33 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                     currentScene.audioElement = null;
                     currentScene.audioName = null;
                     currentScene.audioDurationMs = 0;
+                    selectedAudioStartTime = 0;
+
+                    if (wavesurfer) {
+                        wavesurfer.destroy();
+                        wavesurfer = null;
+                    }
+                    document.getElementById('waveform').style.display = 'none';
+                    document.getElementById('audio-playback-controls').style.display = 'none';
+                    
                     toast('Audio removed from scene.', 2000);
                     updateAudioUI()
                 }
             });
+
+            document.getElementById('play-pause-audio-btn').addEventListener('click', () => {
+                if (wavesurfer) {
+                    wavesurfer.playPause();
+                }
+            });
+
+            document.getElementById('set-start-time-btn').addEventListener('click', () => {
+                if (wavesurfer) {
+                    selectedAudioStartTime = wavesurfer.getCurrentTime();
+                    toast(`Start time set to ${selectedAudioStartTime.toFixed(2)} seconds.`, 3000);
+                }
+            });
+
 
             assetOpacitySlider.addEventListener('input', e => {
                 const activeLayer = getActiveLayer();
@@ -3280,8 +3166,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 const activeLayer = getActiveLayer();
                 if (activeLayer && activeLayer.type === 'text') {
                     activeLayer.text = e.target.value;
-                    drawMovieFrame();
-                    drawControlsOverlay();
                     renderTextLayerPalette();
                 }
             });
@@ -3289,8 +3173,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 const activeLayer = getActiveLayer();
                 if (activeLayer && activeLayer.type === 'text') {
                     activeLayer.font = e.target.value;
-                    drawMovieFrame();
-                    drawControlsOverlay();
                     renderTextLayerPalette();
                 }
             });
@@ -3298,15 +3180,24 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 const activeLayer = getActiveLayer();
                 if (activeLayer && activeLayer.type === 'text') {
                     activeLayer.fontSize = parseFloat(e.target.value);
-                    drawMovieFrame();
-                    drawControlsOverlay();
                 }
             });
             textColorInput.addEventListener('input', e => {
                 const activeLayer = getActiveLayer();
                 if (activeLayer && activeLayer.type === 'text') {
                     activeLayer.color = e.target.value;
-                    drawMovieFrame();
+                }
+            });
+            textStrokeColorInput.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.strokeColor = e.target.value;
+                }
+            });
+            textStrokeWidthSlider.addEventListener('input', e => {
+                const activeLayer = getActiveLayer();
+                if (activeLayer && activeLayer.type === 'text') {
+                    activeLayer.strokeWidth = parseInt(e.target.value, 10);
                 }
             });
             textOpacitySlider.addEventListener('input', e => {
@@ -3381,6 +3272,7 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
                 visualsDropdown.classList.remove('visible');
                 textDropdown.classList.remove('visible');
                 audioDropdown.classList.remove('visible');
+                backgroundRemoverDropdown.classList.remove('visible');
                 
                 if (gravityMenu.style.display === 'block') {
                      gravityMenu.classList.add('hidden');
@@ -3422,7 +3314,6 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             canvasResizeObserver.observe(canvasPanel);
         };
         
-        // Initial UI State setup
         renderLayerPalette();
         renderStackedLayersPalette();
         updateEditPanelsUI();
@@ -3431,31 +3322,26 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
         startAnimationLoop();
     })();
     
-    // This function runs when a user clicks anywhere on the page
     document.addEventListener('click', function(event) {
         
-        // This is an array holding the IDs of your dropdown menus and their matching buttons.
         const dropdowns = [
             { menuId: 'visuals-dropdown', buttonId: 'visuals-btn' },
             { menuId: 'text-dropdown', buttonId: 'text-btn' },
             { menuId: 'audio-dropdown', buttonId: 'audio-btn' },
-            { menuId: 'shortcuts-dropdown', buttonId: 'shortcuts-btn' }
+            { menuId: 'shortcuts-dropdown', buttonId: 'shortcuts-btn' },
+            { menuId: 'background-remover-dropdown', buttonId: 'background-remover-btn'}
         ];
 
-        // We go through each dropdown/button pair.
         dropdowns.forEach(pair => {
             const menu = document.getElementById(pair.menuId);
             const button = document.getElementById(pair.buttonId);
 
-            // If the menu or button doesn't exist, we skip it.
             if (!menu || !button) {
                 return;
             }
             
-            // Check if the click happened INSIDE the current menu OR on its button.
             const isClickInside = menu.contains(event.target) || button.contains(event.target);
             
-            // If the click was OUTSIDE, and the menu is currently visible, hide it.
             if (!isClickInside && menu.classList.contains('visible')) {
                 menu.classList.remove('visible');
             }
