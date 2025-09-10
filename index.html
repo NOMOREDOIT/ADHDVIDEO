@@ -1817,176 +1817,133 @@ function animationLoop() {
         }
 
         function startMovieRecording() {
-            const currentScene = getCurrentScene();
-            if (!currentScene || !currentScene.layers.some(l => !l.committed)) {
-                toast('Please add an asset to the scene first.', 2000);
-                return;
+    const currentScene = getCurrentScene();
+    if (!currentScene || !currentScene.layers.some(l => !l.committed)) {
+        toast('Please add an asset to the scene first.', 2000);
+        return;
+    }
+
+    // Reset chunks each recording
+    recordedChunks = [];
+
+    recordingCanvas.width = masterWidth;
+    recordingCanvas.height = masterHeight;
+
+    sceneActionsContainer.classList.add('hidden');
+    stopActionsContainer.classList.remove('hidden');
+    recordingStatus.classList.remove('hidden');
+    updateControlsState();
+    startAnimationLoop();
+
+    runCountdown(() => {
+        isRecording = true;
+        recordingStartTime = Date.now();
+        recordingIntervalId = setInterval(updateTimer, 1000);
+
+        const canvasStream = recordingCanvas.captureStream(30);
+
+        // Add audio if available
+        const audioSourceElement = currentScene.audioElement;
+        if (audioSourceElement) {
+            audioSourceElement.currentTime = currentScene.audioStartTime || 0;
+            audioSourceElement.loop = true;
+            let audioStream;
+            if (audioSourceElement.captureStream) audioStream = audioSourceElement.captureStream();
+            else if (audioSourceElement.mozCaptureStream) audioStream = audioSourceElement.mozCaptureStream();
+            if (audioStream && audioStream.getAudioTracks().length > 0) {
+                canvasStream.addTrack(audioStream.getAudioTracks()[0]);
             }
+        }
 
-            // --- FIX STARTS HERE: Mute the background video to prevent echo ---
-            // If the background is a video, it may have audio baked in from a previous layer.
-            // We mute it here to ensure only the clean, separate audio track is heard and recorded.
-            if (currentScene.backgroundType === 'video') {
-                // We store its original state so we can restore it when the recording stops.
-                currentScene.preRecordingMutedState = currentScene.backgroundElement.muted;
-                currentScene.backgroundElement.muted = true;
-            }
-            // --- FIX ENDS HERE ---
+        const hasAudio = canvasStream.getAudioTracks().length > 0;
 
-            currentScene.layerStartingStates = {};
-            currentScene.layers.forEach(layer => {
-                currentScene.layerStartingStates[layer.id] = {
-                    x: layer.x,
-                    y: layer.y,
-                    rot: layer.rot,
-                    flipX: layer.flipX
-                };
-            });
+        // ✅ Force WebM only
+        const mimeType = hasAudio ? 'video/webm;codecs=vp9,opus' : 'video/webm;codecs=vp9';
+        const blobFileType = 'video/webm';
 
-            recordingCanvas.width = masterWidth;
-            recordingCanvas.height = masterHeight;
+        mediaRecorder = new MediaRecorder(canvasStream, { mimeType, videoBitsPerSecond: 2500000 });
 
-            sceneActionsContainer.classList.add('hidden');
-            stopActionsContainer.classList.remove('hidden');
-            recordingStatus.classList.remove('hidden');
+        mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(recordedChunks, { type: blobFileType });
+            layerRecordingUrl = URL.createObjectURL(blob);
+            commitLayerBtn.classList.remove('hidden');
+            commitLayerBtn.classList.add('success');
             updateControlsState();
-            startAnimationLoop();
+        };
 
-            runCountdown(() => {
-                const baselineVisualMs = currentScene._padBaselineMs || 0;
-                currentScene._padBaselineMs = baselineVisualMs;
+        // ✅ Use timeslice to flush chunks every second
+        mediaRecorder.start(1000);
 
-                isRecording = true;
-                
-                if (movieInteraction.active && movieInteraction.primed) {
-                    movieInteraction.primed = false;
-                }
-                recordingStartTime = Date.now();
-                currentScene.layers.forEach(l => {
-                    if (l.isProjectileActive) {
-                        l.projectileStartX = l.x;
-                        l.projectileStartY = l.y;
-                        l.projectileTimestamp = recordingStartTime;
-                        l.projectileInitialRotation = l.rot;
-                        l.projectileInitialFlipX = l.flipX;
-                    }
-                });
-                recordingIntervalId = setInterval(updateTimer, 1000);
+        if (currentScene.backgroundType === 'video') {
+            currentScene.backgroundElement.play();
+        }
+        if (currentScene.audioElement) {
+            currentScene.audioElement.play();
+        }
 
-                const canvasStream = recordingCanvas.captureStream(30);
+        toast('Recording started!', 2000);
+    });
+}
+        async function stopMovieRecording() {
+    const currentScene = getCurrentScene();
+    if (!currentScene) return;
 
-                // This will now ONLY use the separate audio element, because the background is muted.
-                const audioSourceElement = currentScene.audioElement;
-                if (audioSourceElement) {
-                    audioSourceElement.currentTime = currentScene.audioStartTime || 0;
-                    audioSourceElement.loop = true; // Ensure it plays for the full duration
-                    
-                    let audioStream;
-                    if (audioSourceElement.captureStream) audioStream = audioSourceElement.captureStream();
-                    else if (audioSourceElement.mozCaptureStream) audioStream = audioSourceElement.mozCaptureStream();
+    stopActionsContainer.classList.add('hidden');
+    recordingTimer.textContent = 'Finalizing...';
+    toast('Finalizing recording...', null);
 
-                    if (audioStream && audioStream.getAudioTracks().length > 0) {
-                        canvasStream.addTrack(audioStream.getAudioTracks()[0]);
-                    }
-                }
+    const elapsedMs = Date.now() - recordingStartTime;
+    const baseline = currentScene.durationMs || 0;
+    const targetMs = Math.max(baseline, Math.max(500, elapsedMs));
 
-                const hasAudio = canvasStream.getAudioTracks().length > 0;
-                const videoBitsPerSecond = 2500000;
-                let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
-                let blobFileType = 'video/webm';
+    const finalizeStop = async () => {
+        if (currentScene.backgroundType === 'video') {
+            currentScene.backgroundElement.pause();
+            currentScene.backgroundElement.currentTime = 0;
+        }
+        if (currentScene.audioElement) {
+            currentScene.audioElement.pause();
+            currentScene.audioElement.currentTime = 0;
+            currentScene.audioElement.loop = false;
+        }
 
-                const mp4MimeType = hasAudio ? 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' : 'video/mp4; codecs="avc1.42E01E"';
-                if (MediaRecorder.isTypeSupported(mp4MimeType)) {
-                    mimeType = mp4MimeType;
-                    blobFileType = 'video/mp4';
-                }
-
-                mediaRecorder = new MediaRecorder(canvasStream, {mimeType, videoBitsPerSecond});
-
-                mediaRecorder.ondataavailable = (e) => {
-                    if (e.data.size > 0) recordedChunks.push(e.data);
-                };
+        if (mediaRecorder?.state !== 'inactive') {
+            await new Promise(resolve => {
                 mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, {type: blobFileType});
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
                     layerRecordingUrl = URL.createObjectURL(blob);
-                    commitLayerBtn.classList.remove('hidden');
-                    commitLayerBtn.classList.add('success');
-                    updateControlsState();
+                    resolve();
                 };
-                mediaRecorder.start();
-                
-                // Play the (now silent) background and the clean audio track
-                if (currentScene && currentScene.backgroundType === 'video') {
-                    currentScene.backgroundElement.play();
-                }
-                if (currentScene.audioElement) {
-                    currentScene.audioElement.play();
-                }
-                toast('Recording started!', 2000);
+                mediaRecorder.stop();
             });
         }
-        function stopMovieRecording() {
-            const currentScene = getCurrentScene();
-            if (!currentScene) return;
 
-            stopActionsContainer.classList.add('hidden');
-            recordingTimer.textContent = 'Finalizing...';
-            toast('Finalizing recording...', null);
+        lastRecordingDurationMs = targetMs;
+        ensureSceneDurationMs(currentScene, targetMs);
+        isRecording = false;
 
-            const elapsedMs = Date.now() - recordingStartTime;
-            
-            const baseline = currentScene.durationMs || 0;
-            
-            const targetMs = Math.max(baseline, Math.max(500, elapsedMs));
+        sceneActionsContainer.classList.remove('hidden');
+        recordLayerBtn.textContent = 'Re-record Layer';
+        recordLayerBtn.classList.remove('record');
+        recordingStatus.classList.add('hidden');
 
-            const finalizeStop = () => {
-                // --- FIX STARTS HERE: Restore the background's original muted state ---
-                if (currentScene.backgroundType === 'video') {
-                    currentScene.backgroundElement.pause();
-                    currentScene.backgroundElement.currentTime = 0;
-                    // Restore the muted state to whatever it was before recording started.
-                    if (typeof currentScene.preRecordingMutedState !== 'undefined') {
-                        currentScene.backgroundElement.muted = currentScene.preRecordingMutedState;
-                    }
-                    // Clean up the temporary property from the scene object.
-                    delete currentScene.preRecordingMutedState;
-                }
-                // --- FIX ENDS HERE ---
+        clearInterval(recordingIntervalId);
+        recordingTimer.textContent = '00:00';
 
-                if (currentScene.audioElement) {
-                    currentScene.audioElement.pause();
-                    currentScene.audioElement.currentTime = 0;
-                    currentScene.audioElement.loop = false;
-                }
+        toast('Layer recorded successfully! Commit it to add another layer.', 4000);
+        updateControlsState();
+    };
 
-                if (mediaRecorder?.state !== 'inactive') {
-                    mediaRecorder.stop();
-                }
-
-                lastRecordingDurationMs = targetMs;
-                ensureSceneDurationMs(currentScene, targetMs); // Keep the scene duration updated
-                isRecording = false;
-                
-                delete currentScene._padBaselineMs;
-
-                sceneActionsContainer.classList.remove('hidden');
-                recordLayerBtn.textContent = 'Re-record Layer';
-                recordLayerBtn.classList.remove('record');
-                recordingStatus.classList.add('hidden');
-
-                clearInterval(recordingIntervalId);
-                recordingTimer.textContent = '00:00';
-
-                toast('Layer recorded successfully! Commit it to add another layer.', 4000);
-                updateControlsState();
-            };
-
-            if (elapsedMs >= targetMs) {
-                finalizeStop();
-            } else {
-                padRecordingUntil(targetMs, finalizeStop);
-            }
-        }
+    if (elapsedMs >= targetMs) {
+        await finalizeStop();
+    } else {
+        padRecordingUntil(targetMs, finalizeStop);
+    }
+}
         function resetTake() {
             const currentScene = getCurrentScene();
             if (!currentScene) return;
@@ -2084,7 +2041,7 @@ async function generateFinalMovie() {
     }
 
     generationOverlay.classList.add('visible');
-    const finalChunks = [];
+    const finalChunks = []; // ✅ reset per run
 
     masterWidth = scenes[0].backgroundElement.naturalWidth || scenes[0].backgroundElement.videoWidth || 1280;
     masterHeight = scenes[0].backgroundElement.naturalHeight || scenes[0].backgroundElement.videoHeight || 720;
@@ -2100,28 +2057,23 @@ async function generateFinalMovie() {
         finalStream.addTrack(destinationNode.stream.getAudioTracks()[0]);
     }
 
-    const videoBitsPerSecond = 8000000;
-    let mimeType = hasAudio ? 'video/webm; codecs=vp9,opus' : 'video/webm; codecs=vp9';
-    let finalFileType = 'video/webm';
-    const mp4MimeType = hasAudio ? 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' : 'video/mp4; codecs="avc1.42E01E"';
-    if (MediaRecorder.isTypeSupported(mp4MimeType)) {
-        mimeType = mp4MimeType;
-        finalFileType = 'video/mp4';
-    }
+    // ✅ Force WebM only
+    const mimeType = hasAudio ? 'video/webm;codecs=vp9,opus' : 'video/webm;codecs=vp9';
+    const finalFileType = 'video/webm';
 
-    const finalRecorder = new MediaRecorder(finalStream, {mimeType, videoBitsPerSecond});
+    const finalRecorder = new MediaRecorder(finalStream, { mimeType, videoBitsPerSecond: 8000000 });
+
     finalRecorder.ondataavailable = e => {
         if (e.data.size > 0) finalChunks.push(e.data);
     };
 
     const generationPromise = new Promise(resolve => {
         finalRecorder.onstop = () => {
-            const finalBlob = new Blob(finalChunks, {type: finalFileType});
+            const finalBlob = new Blob(finalChunks, { type: finalFileType });
             finalProjectUrl = URL.createObjectURL(finalBlob);
-            
+
             generationOverlay.classList.remove('visible');
             toast('Project generation complete!', 4000);
-            movieDownloadBtn.dataset.filetype = finalFileType;
             previewBtn.classList.remove('hidden');
             movieDownloadBtn.classList.remove('hidden');
             postGenerationActions.classList.remove('hidden');
@@ -2131,42 +2083,40 @@ async function generateFinalMovie() {
         };
     });
 
-    finalRecorder.start();
+    // ✅ Use timeslice for reliable flushing
+    finalRecorder.start(1000);
 
+    // Render each scene sequentially
     for (const scene of scenes) {
-        const mediaMs = (scene.backgroundType === 'video') ? getMediaDurationMs(scene.backgroundElement, 'video') : getMediaDurationMs(scene.backgroundElement, 'image');
+        const mediaMs = (scene.backgroundType === 'video')
+            ? getMediaDurationMs(scene.backgroundElement, 'video')
+            : getMediaDurationMs(scene.backgroundElement, 'image');
         ensureSceneDurationMs(scene, mediaMs);
         const sceneDur = Math.max(scene.durationMs || 0, 1000);
-        
+
         const videosToPrepare = [];
-        if (scene.backgroundType === 'video') {
-            videosToPrepare.push(scene.backgroundElement);
-        }
-        scene.layers.forEach(l => {
-            if (l.type === 'video') {
-                videosToPrepare.push(l.asset);
-            }
-        });
+        if (scene.backgroundType === 'video') videosToPrepare.push(scene.backgroundElement);
+        scene.layers.forEach(l => { if (l.type === 'video') videosToPrepare.push(l.asset); });
 
         const seekPromises = videosToPrepare.map(video => seekVideo(video, 0));
         await Promise.all(seekPromises);
-        
+
         await new Promise(sceneResolve => {
             const startTs = performance.now();
             let audioSourceNode = null;
             let videoAudioSourceNode = null;
-            
+
             if (scene.audioElement) {
                 audioSourceNode = audioContext.createMediaElementSource(scene.audioElement);
                 audioSourceNode.connect(destinationNode);
                 scene.audioElement.loop = true;
-                scene.audioElement.currentTime = scene.audioStartTime || 0; 
+                scene.audioElement.currentTime = scene.audioStartTime || 0;
                 scene.audioElement.play();
             } else if (scene.backgroundType === 'video' && !scene.backgroundElement.muted) {
                 videoAudioSourceNode = audioContext.createMediaElementSource(scene.backgroundElement);
                 videoAudioSourceNode.connect(destinationNode);
             }
-            
+
             videosToPrepare.forEach(video => {
                 video.loop = true;
                 video.play();
@@ -2187,21 +2137,7 @@ async function generateFinalMovie() {
                     if (audioSourceNode) audioSourceNode.disconnect();
                     if (videoAudioSourceNode) videoAudioSourceNode.disconnect();
                     if (scene.audioElement) scene.audioElement.pause();
-                    
-                    videosToPrepare.forEach(video => {
-                        video.pause();
-                        video.loop = true; 
-                    });
-                    
-                    const activeScene = getCurrentScene();
-                    if (activeScene && scene.id === activeScene.id) {
-                         activeScene.layers.forEach(layer => {
-                             if (layer.type === 'video') {
-                                layer.asset.play().catch(() => {});
-                            }
-                         });
-                    }
-                    
+                    videosToPrepare.forEach(video => { video.pause(); video.loop = true; });
                     return sceneResolve();
                 }
 
@@ -3046,17 +2982,18 @@ function renderSceneFrameForGeneration(scene, layersToDraw) {
             });
 
             generateProjectBtn.addEventListener('click', generateFinalMovie);
-            movieDownloadBtn.addEventListener('click', () => {
-                if (finalProjectUrl) {
-                    const link = document.createElement('a');
-                    link.href = finalProjectUrl;
-                    const fileExtension = movieDownloadBtn.dataset.filetype === 'video/mp4' ? '.mp4' : '.webm';
-                    link.download = `movie-maker-masterpiece${fileExtension}`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link)
-                } else toast('No final project available.', 2000)
-            });
+movieDownloadBtn.addEventListener('click', () => {
+    if (finalProjectUrl) {
+        const link = document.createElement('a');
+        link.href = finalProjectUrl;
+        link.download = `movie-maker-masterpiece.webm`; // ✅ always correct extension
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } else {
+        toast('No final project available.', 2000);
+    }
+});
             previewBtn.addEventListener('click', () => {
                 if (finalProjectUrl) {
                     previewVideo.src = finalProjectUrl;
